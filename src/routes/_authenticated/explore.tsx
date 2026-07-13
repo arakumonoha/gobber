@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Globe2, MapPin, Users, X, Plus, Loader2, Check } from "lucide-react";
 import { format } from "date-fns";
 import { GoogleMap } from "@/components/google-map";
+import { MapTypeToggle, type MapView } from "@/components/map-type-toggle";
 import { BottomNav } from "@/components/bottom-nav";
 import { useActivities, type Activity } from "@/lib/activities";
 import { CATEGORIES } from "@/lib/categories";
