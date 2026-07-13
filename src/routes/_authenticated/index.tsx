@@ -55,6 +55,7 @@ function Discover() {
             <p className="text-[11px] font-medium uppercase tracking-widest text-muted-foreground">Right now</p>
             <h1 className="text-2xl font-semibold tracking-tight text-ink">Discover</h1>
           </div>
+          <MapTypeToggle value={mapView} onChange={setMapView} />
         </div>
 
         <div className="mt-4 flex items-center gap-2 rounded-full glass px-4 py-2.5 shadow-glass">
