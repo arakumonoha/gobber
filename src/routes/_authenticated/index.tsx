@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, MapPin } from "lucide-react";
-import { SatelliteMap } from "@/components/satellite-map";
+import { GoogleMap } from "@/components/google-map";
 import { BottomNav } from "@/components/bottom-nav";
 import { useActivities, type Activity } from "@/lib/activities";
 import { CATEGORIES } from "@/lib/categories";
@@ -36,7 +36,7 @@ function Discover() {
 
   return (
     <div className="relative h-[100dvh] w-full overflow-hidden bg-background">
-      <SatelliteMap pins={pins} className="absolute inset-0" onPinClick={(id) => navigate({ to: "/activity/$id", params: { id } })} />
+      <GoogleMap pins={pins} mapTypeId="hybrid" className="absolute inset-0" onPinClick={(id: string) => navigate({ to: "/activity/$id", params: { id } })} />
 
       {/* Top gradient */}
       <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-40 bg-gradient-to-b from-background/70 to-transparent" />
