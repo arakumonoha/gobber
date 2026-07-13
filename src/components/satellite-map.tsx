@@ -21,6 +21,7 @@ interface Props {
   variant?: "dot" | "glass";
   cursor?: "default" | "crosshair";
   ghostPin?: { lat: number; lng: number } | null;
+  mapStyle?: "satellite" | "classy";
 }
 
 const SATELLITE_STYLE: maplibregl.StyleSpecification = {
@@ -51,11 +52,46 @@ const SATELLITE_STYLE: maplibregl.StyleSpecification = {
   ],
 };
 
+// Warm editorial cartography — CARTO Voyager raster tiles on a sand wash.
+// Clean, muted, professional; complements the Warm Sand palette.
+const CLASSY_STYLE: maplibregl.StyleSpecification = {
+  version: 8,
+  glyphs: "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
+  sources: {
+    basemap: {
+      type: "raster",
+      tiles: [
+        "https://a.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}@2x.png",
+        "https://b.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}@2x.png",
+        "https://c.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}@2x.png",
+      ],
+      tileSize: 256,
+      attribution: "© OpenStreetMap contributors © CARTO",
+      maxzoom: 19,
+    },
+    labels: {
+      type: "raster",
+      tiles: [
+        "https://a.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}@2x.png",
+        "https://b.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}@2x.png",
+        "https://c.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}@2x.png",
+      ],
+      tileSize: 256,
+      maxzoom: 19,
+    },
+  },
+  layers: [
+    { id: "bg", type: "background", paint: { "background-color": "#f3ead9" } },
+    { id: "base", type: "raster", source: "basemap", paint: { "raster-saturation": -0.15, "raster-contrast": 0.02 } },
+    { id: "labels", type: "raster", source: "labels", paint: { "raster-opacity": 0.9 } },
+  ],
+};
+
 function iconFor(category?: string) {
   return CATEGORIES.find((c) => c.id === category)?.icon ?? "📍";
 }
 
-export function SatelliteMap({ pins, onPinClick, onMapClick, center = [10, 25], zoom = 1.6, className, interactive = true, variant = "dot", cursor = "default", ghostPin = null }: Props) {
+export function SatelliteMap({ pins, onPinClick, onMapClick, center = [10, 25], zoom = 1.6, className, interactive = true, variant = "dot", cursor = "default", ghostPin = null, mapStyle = "satellite" }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<MLMap | null>(null);
   const markersRef = useRef<Marker[]>([]);
@@ -66,10 +102,10 @@ export function SatelliteMap({ pins, onPinClick, onMapClick, center = [10, 25], 
     if (!containerRef.current) return;
     const map = new maplibregl.Map({
       container: containerRef.current,
-      style: SATELLITE_STYLE,
+      style: mapStyle === "classy" ? CLASSY_STYLE : SATELLITE_STYLE,
       center,
       zoom,
-      pitch: 30,
+      pitch: mapStyle === "classy" ? 0 : 30,
       bearing: 0,
       attributionControl: false,
       interactive,
