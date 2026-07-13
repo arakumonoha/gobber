@@ -1,12 +1,18 @@
-import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Globe2, MapPin, Users, X, Plus } from "lucide-react";
+import { Globe2, MapPin, Users, X, Plus, Loader2, Check } from "lucide-react";
 import { format } from "date-fns";
 import { SatelliteMap } from "@/components/satellite-map";
 import { BottomNav } from "@/components/bottom-nav";
 import { useActivities, type Activity } from "@/lib/activities";
 import { CATEGORIES } from "@/lib/categories";
+import { supabase } from "@/integrations/supabase/client";
+import { useUser } from "@/hooks/use-user";
+import { useQueryClient } from "@tanstack/react-query";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/explore")({
   head: () => ({
@@ -18,10 +24,14 @@ export const Route = createFileRoute("/_authenticated/explore")({
   component: Explore,
 });
 
+type DropCoords = { lat: number; lng: number; city?: string; country?: string };
+
 function Explore() {
   const { data: activities = [] } = useActivities();
   const [category, setCategory] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [dropMode, setDropMode] = useState(false);
+  const [drop, setDrop] = useState<DropCoords | null>(null);
   const navigate = useNavigate();
 
   const filtered = useMemo(
@@ -32,6 +42,31 @@ function Explore() {
   const pins = filtered.map((a) => ({ id: a.id, lat: a.lat, lng: a.lng, label: a.title, category: a.category }));
   const selected = selectedId ? activities.find((a) => a.id === selectedId) ?? null : null;
 
+  async function handleMapClick(c: { lng: number; lat: number }) {
+    if (!dropMode) return;
+    setDrop({ lat: c.lat, lng: c.lng });
+    setSelectedId(null);
+    // Reverse geocode (best-effort)
+    try {
+      const r = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${c.lat}&lon=${c.lng}`);
+      const j = await r.json();
+      const addr = j.address ?? {};
+      setDrop({
+        lat: c.lat,
+        lng: c.lng,
+        city: addr.city || addr.town || addr.village || addr.hamlet || addr.state || "Somewhere",
+        country: addr.country ?? "",
+      });
+    } catch {
+      setDrop({ lat: c.lat, lng: c.lng, city: "Somewhere", country: "" });
+    }
+  }
+
+  function cancelDrop() {
+    setDrop(null);
+    setDropMode(false);
+  }
+
   return (
     <div className="relative h-[100dvh] w-full overflow-hidden bg-background">
       <SatelliteMap
@@ -40,11 +75,32 @@ function Explore() {
         center={[10, 25]}
         zoom={1.8}
         className="absolute inset-0"
-        onPinClick={(id) => setSelectedId(id)}
+        cursor={dropMode ? "crosshair" : "default"}
+        onPinClick={(id) => { if (!dropMode) setSelectedId(id); }}
+        onMapClick={dropMode ? handleMapClick : undefined}
+        ghostPin={drop}
       />
 
       {/* Vignette */}
       <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-52 bg-gradient-to-b from-background/60 via-background/10 to-transparent" />
+
+      {/* Drop-mode banner */}
+      <AnimatePresence>
+        {dropMode && !drop && (
+          <motion.div
+            initial={{ y: -30, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: -30, opacity: 0 }}
+            className="absolute inset-x-0 top-0 z-30 flex justify-center px-4 pt-3"
+          >
+            <div className="flex items-center gap-3 rounded-full bg-primary/95 px-4 py-2 text-xs font-medium text-primary-foreground shadow-float backdrop-blur">
+              <span className="flex h-2 w-2 animate-pulse rounded-full bg-white" />
+              Tap anywhere on the map to drop your pin
+              <button onClick={cancelDrop} className="ml-1 rounded-full bg-white/20 px-2 py-0.5 text-[10px] uppercase tracking-wider">Cancel</button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Header */}
       <motion.div
@@ -63,13 +119,15 @@ function Explore() {
               <h1 className="text-2xl font-semibold tracking-tight text-ink">Explore</h1>
             </div>
           </div>
-          <Link
-            to="/host"
-            className="flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground shadow-float transition hover:-translate-y-0.5"
+          <button
+            onClick={() => { setDropMode((v) => !v); setDrop(null); setSelectedId(null); }}
+            className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold shadow-float transition hover:-translate-y-0.5 ${
+              dropMode ? "bg-ink text-background" : "bg-primary text-primary-foreground"
+            }`}
           >
-            <Plus className="h-3.5 w-3.5" />
-            Pin a gathering
-          </Link>
+            <Plus className={`h-3.5 w-3.5 transition-transform ${dropMode ? "rotate-45" : ""}`} />
+            {dropMode ? "Cancel pin" : "Drop a pin"}
+          </button>
         </div>
 
         <div className="mt-4 flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
@@ -92,18 +150,36 @@ function Explore() {
       </motion.div>
 
       {/* Stat chip */}
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="pointer-events-none absolute left-1/2 top-40 z-10 -translate-x-1/2 rounded-full glass px-4 py-1.5 text-[11px] font-medium text-foreground shadow-glass"
-      >
-        {filtered.length} gathering{filtered.length === 1 ? "" : "s"} pinned worldwide
-      </motion.div>
+      {!dropMode && (
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="pointer-events-none absolute left-1/2 top-40 z-10 -translate-x-1/2 rounded-full glass px-4 py-1.5 text-[11px] font-medium text-foreground shadow-glass"
+        >
+          {filtered.length > 0
+            ? `${filtered.length} gathering${filtered.length === 1 ? "" : "s"} pinned worldwide`
+            : "Nothing pinned yet — tap Drop a pin to start"}
+        </motion.div>
+      )}
+
+      {/* Quick create sheet */}
+      <AnimatePresence>
+        {drop && (
+          <QuickCreate
+            drop={drop}
+            onClose={cancelDrop}
+            onCreated={(id) => {
+              cancelDrop();
+              navigate({ to: "/activity/$id", params: { id } });
+            }}
+          />
+        )}
+      </AnimatePresence>
 
       {/* Selected activity glass card */}
       <AnimatePresence>
-        {selected && (
+        {selected && !drop && (
           <motion.div
             key={selected.id}
             initial={{ y: 200, opacity: 0 }}
@@ -151,8 +227,8 @@ function Explore() {
         )}
       </AnimatePresence>
 
-      {/* Recently pinned rail (only when nothing selected) */}
-      {!selected && (
+      {/* Recently pinned rail — only when we actually have pins and no overlay */}
+      {!selected && !drop && filtered.length > 0 && (
         <motion.div
           initial={{ y: 120, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -167,12 +243,6 @@ function Explore() {
             {filtered.slice(0, 10).map((a) => (
               <MiniCard key={a.id} a={a} onClick={() => setSelectedId(a.id)} />
             ))}
-            {filtered.length === 0 && (
-              <div className="w-full rounded-2xl glass p-6 text-center shadow-glass">
-                <p className="text-sm font-medium">No pins yet in this category</p>
-                <p className="mt-1 text-xs text-muted-foreground">Drop the first one from Host.</p>
-              </div>
-            )}
           </div>
         </motion.div>
       )}
@@ -198,5 +268,156 @@ function MiniCard({ a, onClick }: { a: Activity; onClick: () => void }) {
         <p className="line-clamp-1 text-[11px] text-muted-foreground">{a.city}, {a.country}</p>
       </div>
     </button>
+  );
+}
+
+function QuickCreate({
+  drop,
+  onClose,
+  onCreated,
+}: {
+  drop: DropCoords;
+  onClose: () => void;
+  onCreated: (id: string) => void;
+}) {
+  const { user } = useUser();
+  const qc = useQueryClient();
+  const [loading, setLoading] = useState(false);
+  const [form, setForm] = useState({
+    title: "",
+    description: "",
+    category: "Dinner",
+    starts_at: "",
+    max_spots: 6,
+    cover_url: "",
+  });
+
+  const geocoded = drop.city || drop.country;
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!user) return;
+    setLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from("activities")
+        .insert({
+          host_id: user.id,
+          title: form.title,
+          description: form.description,
+          category: form.category,
+          city: drop.city || "Somewhere",
+          country: drop.country || "—",
+          lat: drop.lat,
+          lng: drop.lng,
+          starts_at: new Date(form.starts_at).toISOString(),
+          max_spots: form.max_spots,
+          cover_url: form.cover_url || null,
+        })
+        .select()
+        .single();
+      if (error) throw error;
+      qc.invalidateQueries({ queryKey: ["activities"] });
+      toast.success("Pinned to the globe ✨");
+      onCreated(data.id);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to create");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <motion.div
+      initial={{ y: 260, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      exit={{ y: 260, opacity: 0 }}
+      transition={{ type: "spring", stiffness: 240, damping: 28 }}
+      className="absolute inset-x-3 bottom-24 z-30 sm:inset-x-auto sm:right-6 sm:left-auto sm:bottom-24 sm:w-[26rem]"
+    >
+      <div className="overflow-hidden rounded-3xl glass shadow-float">
+        <div className="flex items-start justify-between gap-3 border-b border-white/40 p-4">
+          <div>
+            <p className="text-[10px] font-medium uppercase tracking-widest text-clay">New gathering</p>
+            <h3 className="text-base font-semibold text-ink">
+              {geocoded ? `${drop.city}${drop.country ? `, ${drop.country}` : ""}` : "Locating…"}
+            </h3>
+            <p className="text-[11px] text-muted-foreground">
+              {drop.lat.toFixed(3)}, {drop.lng.toFixed(3)}
+            </p>
+          </div>
+          <button
+            onClick={onClose}
+            className="flex h-8 w-8 items-center justify-center rounded-full bg-white/60 backdrop-blur ring-1 ring-white/70"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+
+        <form onSubmit={submit} className="space-y-3 p-4">
+          <Input
+            required
+            placeholder="Title (e.g. Sunset ramen)"
+            value={form.title}
+            onChange={(e) => setForm({ ...form, title: e.target.value })}
+            className="h-10 rounded-xl bg-white/70"
+          />
+          <Textarea
+            required
+            rows={2}
+            placeholder="What's the vibe?"
+            value={form.description}
+            onChange={(e) => setForm({ ...form, description: e.target.value })}
+            className="rounded-xl bg-white/70"
+          />
+          <div className="flex flex-wrap gap-1.5">
+            {CATEGORIES.map((c) => (
+              <button
+                key={c.id}
+                type="button"
+                onClick={() => setForm({ ...form, category: c.id })}
+                className={`rounded-full px-3 py-1 text-[11px] font-medium transition ${
+                  form.category === c.id ? "bg-primary text-primary-foreground" : "bg-white/60 text-foreground"
+                }`}
+              >
+                {c.icon} {c.label}
+              </button>
+            ))}
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <Input
+              required
+              type="datetime-local"
+              value={form.starts_at}
+              onChange={(e) => setForm({ ...form, starts_at: e.target.value })}
+              className="h-10 rounded-xl bg-white/70"
+            />
+            <Input
+              required
+              type="number"
+              min={2}
+              max={30}
+              value={form.max_spots}
+              onChange={(e) => setForm({ ...form, max_spots: parseInt(e.target.value) || 6 })}
+              className="h-10 rounded-xl bg-white/70"
+            />
+          </div>
+          <Input
+            placeholder="Cover image URL (optional)"
+            value={form.cover_url}
+            onChange={(e) => setForm({ ...form, cover_url: e.target.value })}
+            className="h-10 rounded-xl bg-white/70"
+          />
+          <button
+            type="submit"
+            disabled={loading || !geocoded}
+            className="mt-1 flex h-11 w-full items-center justify-center gap-2 rounded-full bg-primary text-sm font-semibold text-primary-foreground shadow-lg transition hover:-translate-y-0.5 disabled:opacity-60"
+          >
+            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
+            Pin this gathering
+          </button>
+        </form>
+      </div>
+    </motion.div>
   );
 }

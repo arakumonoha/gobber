@@ -13,11 +13,14 @@ export interface MapPin {
 interface Props {
   pins: MapPin[];
   onPinClick?: (id: string) => void;
+  onMapClick?: (lngLat: { lng: number; lat: number }) => void;
   center?: [number, number];
   zoom?: number;
   className?: string;
   interactive?: boolean;
   variant?: "dot" | "glass";
+  cursor?: "default" | "crosshair";
+  ghostPin?: { lat: number; lng: number } | null;
 }
 
 const SATELLITE_STYLE: maplibregl.StyleSpecification = {
@@ -52,10 +55,12 @@ function iconFor(category?: string) {
   return CATEGORIES.find((c) => c.id === category)?.icon ?? "📍";
 }
 
-export function SatelliteMap({ pins, onPinClick, center = [10, 25], zoom = 1.6, className, interactive = true, variant = "dot" }: Props) {
+export function SatelliteMap({ pins, onPinClick, onMapClick, center = [10, 25], zoom = 1.6, className, interactive = true, variant = "dot", cursor = "default", ghostPin = null }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<MLMap | null>(null);
   const markersRef = useRef<Marker[]>([]);
+  const ghostRef = useRef<Marker | null>(null);
+  const clickHandlerRef = useRef<((e: maplibregl.MapMouseEvent) => void) | null>(null);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -76,11 +81,59 @@ export function SatelliteMap({ pins, onPinClick, center = [10, 25], zoom = 1.6, 
     return () => {
       markersRef.current.forEach((m) => m.remove());
       markersRef.current = [];
+      ghostRef.current?.remove();
+      ghostRef.current = null;
       map.remove();
       mapRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Cursor + map click binding
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    map.getCanvas().style.cursor = cursor === "crosshair" ? "crosshair" : "";
+    if (clickHandlerRef.current) {
+      map.off("click", clickHandlerRef.current);
+      clickHandlerRef.current = null;
+    }
+    if (onMapClick) {
+      const handler = (e: maplibregl.MapMouseEvent) => {
+        onMapClick({ lng: e.lngLat.lng, lat: e.lngLat.lat });
+      };
+      clickHandlerRef.current = handler;
+      map.on("click", handler);
+    }
+    return () => {
+      if (clickHandlerRef.current && map) {
+        map.off("click", clickHandlerRef.current);
+        clickHandlerRef.current = null;
+      }
+    };
+  }, [onMapClick, cursor]);
+
+  // Ghost pin
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    ghostRef.current?.remove();
+    ghostRef.current = null;
+    if (ghostPin) {
+      const el = document.createElement("div");
+      el.className = "relative flex items-center justify-center";
+      el.innerHTML = `
+        <span class="relative flex h-12 w-12 items-center justify-center rounded-full text-xl shadow-[0_10px_30px_rgba(0,0,0,0.45)] ring-2 ring-white/80 backdrop-blur-xl bg-primary/70">
+          <span class="absolute inset-0 rounded-full bg-gradient-to-b from-white/60 to-white/5"></span>
+          <span class="relative drop-shadow">📍</span>
+        </span>
+        <span class="absolute inset-0 -z-10 animate-ping rounded-full bg-white/40"></span>
+      `;
+      ghostRef.current = new maplibregl.Marker({ element: el, anchor: "bottom" })
+        .setLngLat([ghostPin.lng, ghostPin.lat])
+        .addTo(map);
+    }
+  }, [ghostPin]);
 
   useEffect(() => {
     const map = mapRef.current;
