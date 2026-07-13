@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, MapPin } from "lucide-react";
-import { SatelliteMap } from "@/components/satellite-map";
+import { GoogleMap } from "@/components/google-map";
 import { BottomNav } from "@/components/bottom-nav";
 import { useActivities, type Activity } from "@/lib/activities";
 import { CATEGORIES } from "@/lib/categories";
