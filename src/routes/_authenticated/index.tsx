@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, MapPin } from "lucide-react";
 import { GoogleMap } from "@/components/google-map";
+import { MapTypeToggle, type MapView } from "@/components/map-type-toggle";
 import { BottomNav } from "@/components/bottom-nav";
 import { useActivities, type Activity } from "@/lib/activities";
 import { CATEGORIES } from "@/lib/categories";
