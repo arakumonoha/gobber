@@ -36,7 +36,7 @@ function Discover() {
 
   return (
     <div className="relative h-[100dvh] w-full overflow-hidden bg-background">
-      <GoogleMap pins={pins} mapTypeId="hybrid" className="absolute inset-0" onPinClick={(id: string) => navigate({ to: "/activity/$id", params: { id } })} />
+      <GoogleMap pins={pins} mapTypeId="roadmap" className="absolute inset-0" onPinClick={(id: string) => navigate({ to: "/activity/$id", params: { id } })} />
 
       {/* Top gradient */}
       <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-40 bg-gradient-to-b from-background/70 to-transparent" />
