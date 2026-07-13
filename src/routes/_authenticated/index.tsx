@@ -23,6 +23,7 @@ function Discover() {
   const { data: activities = [], isLoading } = useActivities();
   const [category, setCategory] = useState<string | null>(null);
   const [query, setQuery] = useState("");
+  const [mapView, setMapView] = useState<MapView>("satellite");
   const navigate = useNavigate();
 
   const filtered = useMemo(() => {
