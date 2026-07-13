@@ -13,11 +13,14 @@ export interface MapPin {
 interface Props {
   pins: MapPin[];
   onPinClick?: (id: string) => void;
+  onMapClick?: (lngLat: { lng: number; lat: number }) => void;
   center?: [number, number];
   zoom?: number;
   className?: string;
   interactive?: boolean;
   variant?: "dot" | "glass";
+  cursor?: "default" | "crosshair";
+  ghostPin?: { lat: number; lng: number } | null;
 }
 
 const SATELLITE_STYLE: maplibregl.StyleSpecification = {
