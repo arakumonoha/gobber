@@ -1,5 +1,11 @@
-import { useEffect, useRef } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 import { CATEGORIES } from "@/lib/categories";
+
+export interface GoogleMapHandle {
+  panTo: (lat: number, lng: number, zoom?: number) => void;
+  resetHeading: () => void;
+  getHeading: () => number;
+}
 
 export interface MapPin {
   id: string;
@@ -13,6 +19,8 @@ interface Props {
   pins: MapPin[];
   onPinClick?: (id: string) => void;
   onMapClick?: (lngLat: { lng: number; lat: number }) => void;
+  onLongPress?: (lngLat: { lng: number; lat: number }) => void;
+  onHeadingChange?: (heading: number) => void;
   center?: { lat: number; lng: number };
   zoom?: number;
   className?: string;
@@ -100,22 +108,46 @@ function pinElement(category: string | undefined, ghost = false) {
   return el;
 }
 
-export function GoogleMap({
+export const GoogleMap = forwardRef<GoogleMapHandle, Props>(function GoogleMap({
   pins,
   onPinClick,
   onMapClick,
+  onLongPress,
+  onHeadingChange,
   center = { lat: 25, lng: 10 },
   zoom = 2,
   className,
   cursor = "default",
   ghostPin = null,
   mapTypeId = "hybrid",
-}: Props) {
+}, ref) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
   const ghostRef = useRef<any>(null);
   const clickListenerRef = useRef<any>(null);
+  const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const longPressListeners = useRef<any[]>([]);
+  const headingListenerRef = useRef<any>(null);
+
+  useImperativeHandle(ref, () => ({
+    panTo: (lat: number, lng: number, z?: number) => {
+      const map = mapRef.current;
+      const g = window.google;
+      if (!map || !g) return;
+      map.panTo(new g.maps.LatLng(lat, lng));
+      if (typeof z === "number") map.setZoom(z);
+    },
+    resetHeading: () => {
+      const map = mapRef.current;
+      if (!map) return;
+      map.setHeading(0);
+      map.setTilt(mapTypeId === "roadmap" ? 0 : 45);
+    },
+    getHeading: () => mapRef.current?.getHeading?.() ?? 0,
+  }), [mapTypeId]);
+
+
 
   // Init
   useEffect(() => {
@@ -287,5 +319,57 @@ export function GoogleMap({
     return () => cancelAnimationFrame(raf);
   }, [pins, onPinClick]);
 
+  // Long-press to trigger onLongPress (touch + mouse)
+  useEffect(() => {
+    const map = mapRef.current;
+    const g = window.google;
+    if (!map || !g) return;
+    longPressListeners.current.forEach((l) => l.remove());
+    longPressListeners.current = [];
+    if (!onLongPress) return;
+
+    let startLatLng: any = null;
+    const clearTimer = () => {
+      if (longPressTimer.current) {
+        clearTimeout(longPressTimer.current);
+        longPressTimer.current = null;
+      }
+    };
+    const down = map.addListener("mousedown", (e: any) => {
+      if (!e.latLng) return;
+      startLatLng = e.latLng;
+      clearTimer();
+      longPressTimer.current = setTimeout(() => {
+        onLongPress({ lat: startLatLng.lat(), lng: startLatLng.lng() });
+        // Haptic-ish feedback
+        if (typeof navigator !== "undefined" && "vibrate" in navigator) navigator.vibrate?.(12);
+      }, 480);
+    });
+    const up = map.addListener("mouseup", clearTimer);
+    const drag = map.addListener("dragstart", clearTimer);
+    longPressListeners.current = [down, up, drag];
+    return () => {
+      clearTimer();
+      longPressListeners.current.forEach((l) => l.remove());
+      longPressListeners.current = [];
+    };
+  }, [onLongPress]);
+
+  // Heading changes -> notify parent (for compass button)
+  useEffect(() => {
+    const map = mapRef.current;
+    const g = window.google;
+    if (!map || !g || !onHeadingChange) return;
+    headingListenerRef.current?.remove();
+    headingListenerRef.current = map.addListener("heading_changed", () => {
+      onHeadingChange(map.getHeading() ?? 0);
+    });
+    return () => {
+      headingListenerRef.current?.remove();
+      headingListenerRef.current = null;
+    };
+  }, [onHeadingChange]);
+
   return <div ref={containerRef} className={className ?? "h-full w-full"} />;
-}
+});
+
