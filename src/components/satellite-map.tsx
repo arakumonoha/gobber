@@ -102,10 +102,10 @@ export function SatelliteMap({ pins, onPinClick, onMapClick, center = [10, 25], 
     if (!containerRef.current) return;
     const map = new maplibregl.Map({
       container: containerRef.current,
-      style: SATELLITE_STYLE,
+      style: mapStyle === "classy" ? CLASSY_STYLE : SATELLITE_STYLE,
       center,
       zoom,
-      pitch: 30,
+      pitch: mapStyle === "classy" ? 0 : 30,
       bearing: 0,
       attributionControl: false,
       interactive,
