@@ -108,19 +108,44 @@ function pinElement(category: string | undefined, ghost = false) {
   return el;
 }
 
-export function GoogleMap({
+export const GoogleMap = forwardRef<GoogleMapHandle, Props>(function GoogleMap({
   pins,
   onPinClick,
   onMapClick,
+  onLongPress,
+  onHeadingChange,
   center = { lat: 25, lng: 10 },
   zoom = 2,
   className,
   cursor = "default",
   ghostPin = null,
   mapTypeId = "hybrid",
-}: Props) {
+}, ref) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<any>(null);
+  const markersRef = useRef<any[]>([]);
+  const ghostRef = useRef<any>(null);
+  const clickListenerRef = useRef<any>(null);
+  const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const longPressListeners = useRef<any[]>([]);
+  const headingListenerRef = useRef<any>(null);
+
+  useImperativeHandle(ref, () => ({
+    panTo: (lat: number, lng: number, z?: number) => {
+      const map = mapRef.current;
+      const g = window.google;
+      if (!map || !g) return;
+      map.panTo(new g.maps.LatLng(lat, lng));
+      if (typeof z === "number") map.setZoom(z);
+    },
+    resetHeading: () => {
+      const map = mapRef.current;
+      if (!map) return;
+      map.setHeading(0);
+      map.setTilt(mapTypeId === "roadmap" ? 0 : 45);
+    },
+    getHeading: () => mapRef.current?.getHeading?.() ?? 0,
+  }), [mapTypeId]);
   const markersRef = useRef<any[]>([]);
   const ghostRef = useRef<any>(null);
   const clickListenerRef = useRef<any>(null);
