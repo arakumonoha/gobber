@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, MapPin } from "lucide-react";
 import { GoogleMap } from "@/components/google-map";
+import { MapTypeToggle, type MapView } from "@/components/map-type-toggle";
 import { BottomNav } from "@/components/bottom-nav";
 import { useActivities, type Activity } from "@/lib/activities";
 import { CATEGORIES } from "@/lib/categories";
@@ -22,6 +23,7 @@ function Discover() {
   const { data: activities = [], isLoading } = useActivities();
   const [category, setCategory] = useState<string | null>(null);
   const [query, setQuery] = useState("");
+  const [mapView, setMapView] = useState<MapView>("satellite");
   const navigate = useNavigate();
 
   const filtered = useMemo(() => {
@@ -36,7 +38,7 @@ function Discover() {
 
   return (
     <div className="relative h-[100dvh] w-full overflow-hidden bg-background">
-      <GoogleMap pins={pins} mapTypeId="satellite" className="absolute inset-0" onPinClick={(id: string) => navigate({ to: "/activity/$id", params: { id } })} />
+      <GoogleMap pins={pins} mapTypeId={mapView} className="absolute inset-0" onPinClick={(id: string) => navigate({ to: "/activity/$id", params: { id } })} />
 
       {/* Top gradient */}
       <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-40 bg-gradient-to-b from-background/70 to-transparent" />
@@ -53,6 +55,7 @@ function Discover() {
             <p className="text-[11px] font-medium uppercase tracking-widest text-muted-foreground">Right now</p>
             <h1 className="text-2xl font-semibold tracking-tight text-ink">Discover</h1>
           </div>
+          <MapTypeToggle value={mapView} onChange={setMapView} />
         </div>
 
         <div className="mt-4 flex items-center gap-2 rounded-full glass px-4 py-2.5 shadow-glass">

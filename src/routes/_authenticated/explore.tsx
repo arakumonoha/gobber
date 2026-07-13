@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Globe2, MapPin, Users, X, Plus, Loader2, Check } from "lucide-react";
 import { format } from "date-fns";
 import { GoogleMap } from "@/components/google-map";
+import { MapTypeToggle, type MapView } from "@/components/map-type-toggle";
 import { BottomNav } from "@/components/bottom-nav";
 import { useActivities, type Activity } from "@/lib/activities";
 import { CATEGORIES } from "@/lib/categories";
@@ -32,6 +33,7 @@ function Explore() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [dropMode, setDropMode] = useState(false);
   const [drop, setDrop] = useState<DropCoords | null>(null);
+  const [mapView, setMapView] = useState<MapView>("satellite");
   const navigate = useNavigate();
 
   const filtered = useMemo(
@@ -71,7 +73,7 @@ function Explore() {
     <div className="relative h-[100dvh] w-full overflow-hidden bg-background">
       <GoogleMap
         pins={pins}
-        mapTypeId="satellite"
+        mapTypeId={mapView}
         center={{ lat: 25, lng: 10 }}
         zoom={2}
         className="absolute inset-0"
@@ -147,6 +149,16 @@ function Explore() {
             </button>
           ))}
         </div>
+      </motion.div>
+
+      {/* Map style toggle */}
+      <motion.div
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.25 }}
+        className="absolute right-4 top-40 z-20 sm:right-6"
+      >
+        <MapTypeToggle value={mapView} onChange={setMapView} />
       </motion.div>
 
       {/* Stat chip */}

@@ -162,6 +162,18 @@ export function GoogleMap({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // React to map type changes
+  useEffect(() => {
+    const map = mapRef.current;
+    const g = window.google;
+    if (!map || !g) return;
+    map.setMapTypeId(mapTypeId);
+    map.setOptions({
+      styles: mapTypeId === "roadmap" ? CLASSY_MAP_STYLES : undefined,
+      tilt: mapTypeId === "roadmap" ? 0 : 45,
+    });
+  }, [mapTypeId]);
+
   // Cursor + click handler
   useEffect(() => {
     const map = mapRef.current;
