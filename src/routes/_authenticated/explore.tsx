@@ -151,6 +151,16 @@ function Explore() {
         </div>
       </motion.div>
 
+      {/* Map style toggle */}
+      <motion.div
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.25 }}
+        className="absolute right-4 top-40 z-20 sm:right-6"
+      >
+        <MapTypeToggle value={mapView} onChange={setMapView} />
+      </motion.div>
+
       {/* Stat chip */}
       {!dropMode && (
         <motion.div
