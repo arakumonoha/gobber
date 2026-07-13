@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Globe2, MapPin, Users, X, Plus, Loader2, Check } from "lucide-react";
 import { format } from "date-fns";
-import { SatelliteMap } from "@/components/satellite-map";
+import { GoogleMap } from "@/components/google-map";
 import { BottomNav } from "@/components/bottom-nav";
 import { useActivities, type Activity } from "@/lib/activities";
 import { CATEGORIES } from "@/lib/categories";
@@ -69,15 +69,14 @@ function Explore() {
 
   return (
     <div className="relative h-[100dvh] w-full overflow-hidden bg-background">
-      <SatelliteMap
+      <GoogleMap
         pins={pins}
-        variant="glass"
-        mapStyle="classy"
-        center={[10, 25]}
-        zoom={1.8}
+        mapTypeId="hybrid"
+        center={{ lat: 25, lng: 10 }}
+        zoom={2}
         className="absolute inset-0"
         cursor={dropMode ? "crosshair" : "default"}
-        onPinClick={(id) => { if (!dropMode) setSelectedId(id); }}
+        onPinClick={(id: string) => { if (!dropMode) setSelectedId(id); }}
         onMapClick={dropMode ? handleMapClick : undefined}
         ghostPin={drop}
       />
