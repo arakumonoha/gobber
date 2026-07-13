@@ -72,6 +72,7 @@ function Explore() {
       <SatelliteMap
         pins={pins}
         variant="glass"
+        mapStyle="classy"
         center={[10, 25]}
         zoom={1.8}
         className="absolute inset-0"
