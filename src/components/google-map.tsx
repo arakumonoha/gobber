@@ -146,9 +146,8 @@ export const GoogleMap = forwardRef<GoogleMapHandle, Props>(function GoogleMap({
     },
     getHeading: () => mapRef.current?.getHeading?.() ?? 0,
   }), [mapTypeId]);
-  const markersRef = useRef<any[]>([]);
-  const ghostRef = useRef<any>(null);
-  const clickListenerRef = useRef<any>(null);
+
+
 
   // Init
   useEffect(() => {
