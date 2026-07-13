@@ -153,7 +153,7 @@ function Discover() {
 
       {/* Draggable bottom sheet with pull-to-refresh */}
       <DraggableSheet
-        snapPoints={[180, 420, Math.min(760, window.innerHeight - 80)]}
+        snapPoints={[180, 420, typeof window !== "undefined" ? Math.min(760, window.innerHeight - 80) : 760]}
         initialSnap={1}
         onRefresh={async () => {
           await qc.invalidateQueries({ queryKey: ["activities"] });
