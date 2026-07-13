@@ -1,5 +1,11 @@
-import { useEffect, useRef } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 import { CATEGORIES } from "@/lib/categories";
+
+export interface GoogleMapHandle {
+  panTo: (lat: number, lng: number, zoom?: number) => void;
+  resetHeading: () => void;
+  getHeading: () => number;
+}
 
 export interface MapPin {
   id: string;
@@ -13,6 +19,8 @@ interface Props {
   pins: MapPin[];
   onPinClick?: (id: string) => void;
   onMapClick?: (lngLat: { lng: number; lat: number }) => void;
+  onLongPress?: (lngLat: { lng: number; lat: number }) => void;
+  onHeadingChange?: (heading: number) => void;
   center?: { lat: number; lng: number };
   zoom?: number;
   className?: string;
