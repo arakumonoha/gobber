@@ -132,9 +132,12 @@ export function GoogleMap({
         zoomControl: true,
         gestureHandling: "greedy",
         styles: mapTypeId === "roadmap" ? CLASSY_MAP_STYLES : undefined,
-        backgroundColor: "#f3ead9",
+        backgroundColor: "#f5f1ea",
         minZoom: 2.5,
         maxZoom: 18,
+        isFractionalZoomEnabled: true,
+        clickableIcons: false,
+        keyboardShortcuts: false,
         restriction: {
           latLngBounds: { north: 85, south: -85, west: -180, east: 180 },
           strictBounds: true,
