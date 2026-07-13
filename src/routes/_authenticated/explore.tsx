@@ -44,10 +44,10 @@ function Explore() {
   const pins = filtered.map((a) => ({ id: a.id, lat: a.lat, lng: a.lng, label: a.title, category: a.category }));
   const selected = selectedId ? activities.find((a) => a.id === selectedId) ?? null : null;
 
-  async function handleMapClick(c: { lng: number; lat: number }) {
-    if (!dropMode) return;
+  async function handleDrop(c: { lng: number; lat: number }) {
     setDrop({ lat: c.lat, lng: c.lng });
     setSelectedId(null);
+    setDropMode(true);
     // Reverse geocode (best-effort)
     try {
       const r = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${c.lat}&lon=${c.lng}`);
@@ -62,6 +62,11 @@ function Explore() {
     } catch {
       setDrop({ lat: c.lat, lng: c.lng, city: "Somewhere", country: "" });
     }
+  }
+
+  async function handleMapClick(c: { lng: number; lat: number }) {
+    if (!dropMode) return;
+    await handleDrop(c);
   }
 
   function cancelDrop() {
@@ -80,6 +85,7 @@ function Explore() {
         cursor={dropMode ? "crosshair" : "default"}
         onPinClick={(id: string) => { if (!dropMode) setSelectedId(id); }}
         onMapClick={dropMode ? handleMapClick : undefined}
+        onLongPress={(c) => { if (!dropMode) handleDrop(c); }}
         ghostPin={drop}
       />
 
