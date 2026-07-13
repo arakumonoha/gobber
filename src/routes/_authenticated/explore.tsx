@@ -69,15 +69,14 @@ function Explore() {
 
   return (
     <div className="relative h-[100dvh] w-full overflow-hidden bg-background">
-      <SatelliteMap
+      <GoogleMap
         pins={pins}
-        variant="glass"
-        mapStyle="classy"
-        center={[10, 25]}
-        zoom={1.8}
+        mapTypeId="hybrid"
+        center={{ lat: 25, lng: 10 }}
+        zoom={2}
         className="absolute inset-0"
         cursor={dropMode ? "crosshair" : "default"}
-        onPinClick={(id) => { if (!dropMode) setSelectedId(id); }}
+        onPinClick={(id: string) => { if (!dropMode) setSelectedId(id); }}
         onMapClick={dropMode ? handleMapClick : undefined}
         ghostPin={drop}
       />
