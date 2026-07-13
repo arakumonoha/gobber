@@ -319,5 +319,57 @@ export const GoogleMap = forwardRef<GoogleMapHandle, Props>(function GoogleMap({
     return () => cancelAnimationFrame(raf);
   }, [pins, onPinClick]);
 
+  // Long-press to trigger onLongPress (touch + mouse)
+  useEffect(() => {
+    const map = mapRef.current;
+    const g = window.google;
+    if (!map || !g) return;
+    longPressListeners.current.forEach((l) => l.remove());
+    longPressListeners.current = [];
+    if (!onLongPress) return;
+
+    let startLatLng: any = null;
+    const clearTimer = () => {
+      if (longPressTimer.current) {
+        clearTimeout(longPressTimer.current);
+        longPressTimer.current = null;
+      }
+    };
+    const down = map.addListener("mousedown", (e: any) => {
+      if (!e.latLng) return;
+      startLatLng = e.latLng;
+      clearTimer();
+      longPressTimer.current = setTimeout(() => {
+        onLongPress({ lat: startLatLng.lat(), lng: startLatLng.lng() });
+        // Haptic-ish feedback
+        if (typeof navigator !== "undefined" && "vibrate" in navigator) navigator.vibrate?.(12);
+      }, 480);
+    });
+    const up = map.addListener("mouseup", clearTimer);
+    const drag = map.addListener("dragstart", clearTimer);
+    longPressListeners.current = [down, up, drag];
+    return () => {
+      clearTimer();
+      longPressListeners.current.forEach((l) => l.remove());
+      longPressListeners.current = [];
+    };
+  }, [onLongPress]);
+
+  // Heading changes -> notify parent (for compass button)
+  useEffect(() => {
+    const map = mapRef.current;
+    const g = window.google;
+    if (!map || !g || !onHeadingChange) return;
+    headingListenerRef.current?.remove();
+    headingListenerRef.current = map.addListener("heading_changed", () => {
+      onHeadingChange(map.getHeading() ?? 0);
+    });
+    return () => {
+      headingListenerRef.current?.remove();
+      headingListenerRef.current = null;
+    };
+  }, [onHeadingChange]);
+
   return <div ref={containerRef} className={className ?? "h-full w-full"} />;
-}
+});
+
