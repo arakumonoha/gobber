@@ -53,21 +53,32 @@ function iconFor(category?: string) {
   return CATEGORIES.find((c) => c.id === category)?.icon ?? "📍";
 }
 
-// Warm editorial styling for roadmap/hybrid — matches the Warm Sand palette.
+// Apple Maps-inspired styling — soft, minimal, editorial. Pairs with Warm Sand palette.
 const CLASSY_MAP_STYLES: any[] = [
-  { elementType: "geometry", stylers: [{ color: "#f3ead9" }] },
-  { elementType: "labels.text.fill", stylers: [{ color: "#5b4a36" }] },
-  { elementType: "labels.text.stroke", stylers: [{ color: "#f7efe0" }] },
-  { featureType: "administrative", elementType: "geometry.stroke", stylers: [{ color: "#c8b48a" }] },
-  { featureType: "landscape.natural", elementType: "geometry", stylers: [{ color: "#ecdfc4" }] },
+  { elementType: "geometry", stylers: [{ color: "#f5f1ea" }] },
+  { elementType: "labels.text.fill", stylers: [{ color: "#6b5a44" }] },
+  { elementType: "labels.text.stroke", stylers: [{ color: "#faf7f0" }, { weight: 3 }] },
+  { featureType: "administrative", elementType: "geometry.stroke", stylers: [{ color: "#d4c4a0" }, { weight: 0.6 }] },
+  { featureType: "administrative.country", elementType: "geometry.stroke", stylers: [{ color: "#b8a075" }, { weight: 0.8 }] },
+  { featureType: "administrative.locality", elementType: "labels.text.fill", stylers: [{ color: "#4a3d2c" }] },
+  { featureType: "landscape.natural", elementType: "geometry", stylers: [{ color: "#ede2c9" }] },
+  { featureType: "landscape.natural.terrain", elementType: "geometry", stylers: [{ color: "#e5d7b8" }] },
+  { featureType: "landscape.man_made", elementType: "geometry", stylers: [{ color: "#f0e8d4" }] },
   { featureType: "poi", stylers: [{ visibility: "off" }] },
+  { featureType: "poi.park", elementType: "geometry", stylers: [{ color: "#d4e3c0" }, { visibility: "on" }] },
+  { featureType: "poi.park", elementType: "labels", stylers: [{ visibility: "off" }] },
   { featureType: "road", elementType: "geometry", stylers: [{ color: "#ffffff" }] },
-  { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#e6d8b5" }] },
+  { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#ece2c8" }, { weight: 0.5 }] },
+  { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#fdf6e3" }] },
+  { featureType: "road.highway", elementType: "geometry.stroke", stylers: [{ color: "#d4b876" }, { weight: 0.6 }] },
   { featureType: "road", elementType: "labels.icon", stylers: [{ visibility: "off" }] },
+  { featureType: "road.arterial", elementType: "labels", stylers: [{ visibility: "simplified" }] },
   { featureType: "transit", stylers: [{ visibility: "off" }] },
-  { featureType: "water", elementType: "geometry", stylers: [{ color: "#a8c7d8" }] },
-  { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#4a6b7a" }] },
+  { featureType: "water", elementType: "geometry", stylers: [{ color: "#b8d4e0" }] },
+  { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#5a7a88" }] },
+  { featureType: "water", elementType: "labels.text.stroke", stylers: [{ color: "#e8f0f5" }, { weight: 2 }] },
 ];
+
 
 function pinElement(category: string | undefined, ghost = false) {
   const el = document.createElement("div");
