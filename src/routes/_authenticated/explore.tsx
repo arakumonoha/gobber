@@ -33,6 +33,7 @@ function Explore() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [dropMode, setDropMode] = useState(false);
   const [drop, setDrop] = useState<DropCoords | null>(null);
+  const [mapView, setMapView] = useState<MapView>("satellite");
   const navigate = useNavigate();
 
   const filtered = useMemo(
