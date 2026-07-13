@@ -2,12 +2,13 @@ import { Link, useLocation } from "@tanstack/react-router";
 import { Compass, PlusCircle, CalendarHeart, User } from "lucide-react";
 import { motion } from "framer-motion";
 
-const items = [
+type NavItem = { to: "/" | "/trips" | "/host" | "/profile"; icon: typeof Compass; label: string; featured?: boolean };
+const items: NavItem[] = [
   { to: "/", icon: Compass, label: "Discover" },
   { to: "/trips", icon: CalendarHeart, label: "Trips" },
   { to: "/host", icon: PlusCircle, label: "Host", featured: true },
   { to: "/profile", icon: User, label: "Profile" },
-] as const;
+];
 
 export function BottomNav() {
   const loc = useLocation();
