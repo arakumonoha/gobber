@@ -73,7 +73,7 @@ function Explore() {
     <div className="relative h-[100dvh] w-full overflow-hidden bg-background">
       <GoogleMap
         pins={pins}
-        mapTypeId="satellite"
+        mapTypeId={mapView}
         center={{ lat: 25, lng: 10 }}
         zoom={2}
         className="absolute inset-0"
