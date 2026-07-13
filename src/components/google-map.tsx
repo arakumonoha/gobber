@@ -122,6 +122,12 @@ export function GoogleMap({
         gestureHandling: "greedy",
         styles: mapTypeId === "roadmap" ? CLASSY_MAP_STYLES : undefined,
         backgroundColor: "#f3ead9",
+        minZoom: 2.5,
+        maxZoom: 18,
+        restriction: {
+          latLngBounds: { north: 85, south: -85, west: -180, east: 180 },
+          strictBounds: true,
+        },
       });
     }).catch((e) => console.error(e));
 
