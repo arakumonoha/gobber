@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import maplibregl, { Map as MLMap, Marker } from "maplibre-gl";
+import { CATEGORIES } from "@/lib/categories";
 
 export interface MapPin {
   id: string;
@@ -16,9 +17,9 @@ interface Props {
   zoom?: number;
   className?: string;
   interactive?: boolean;
+  variant?: "dot" | "glass";
 }
 
-// Fully open-source style: Esri World Imagery satellite + light labels
 const SATELLITE_STYLE: maplibregl.StyleSpecification = {
   version: 8,
   glyphs: "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
@@ -47,7 +48,11 @@ const SATELLITE_STYLE: maplibregl.StyleSpecification = {
   ],
 };
 
-export function SatelliteMap({ pins, onPinClick, center = [10, 25], zoom = 1.6, className, interactive = true }: Props) {
+function iconFor(category?: string) {
+  return CATEGORIES.find((c) => c.id === category)?.icon ?? "📍";
+}
+
+export function SatelliteMap({ pins, onPinClick, center = [10, 25], zoom = 1.6, className, interactive = true, variant = "dot" }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<MLMap | null>(null);
   const markersRef = useRef<Marker[]>([]);
@@ -83,13 +88,27 @@ export function SatelliteMap({ pins, onPinClick, center = [10, 25], zoom = 1.6, 
     markersRef.current.forEach((m) => m.remove());
     markersRef.current = pins.map((pin) => {
       const el = document.createElement("button");
-      el.className = "group relative flex h-9 w-9 items-center justify-center rounded-full bg-white/95 shadow-lg ring-2 ring-white/70 transition-transform hover:scale-125 backdrop-blur";
-      el.innerHTML = `<span class="h-2.5 w-2.5 rounded-full bg-[oklch(0.55_0.09_55)]"></span><span class="absolute inset-0 -z-10 animate-ping rounded-full bg-white/40"></span>`;
+      if (variant === "glass") {
+        el.className = "group relative flex items-center justify-center transition-transform hover:scale-110";
+        el.innerHTML = `
+          <span class="relative flex h-11 w-11 items-center justify-center rounded-full text-lg shadow-[0_8px_24px_rgba(0,0,0,0.35)] ring-1 ring-white/60 backdrop-blur-xl bg-white/25">
+            <span class="absolute inset-0 rounded-full bg-gradient-to-b from-white/60 to-white/5"></span>
+            <span class="relative drop-shadow">${iconFor(pin.category)}</span>
+          </span>
+          <span class="absolute -bottom-1 left-1/2 h-2 w-2 -translate-x-1/2 rotate-45 rounded-[2px] bg-white/40 backdrop-blur-xl ring-1 ring-white/60"></span>
+          <span class="absolute inset-0 -z-10 animate-ping rounded-full bg-white/25"></span>
+        `;
+      } else {
+        el.className = "group relative flex h-9 w-9 items-center justify-center rounded-full bg-white/95 shadow-lg ring-2 ring-white/70 transition-transform hover:scale-125 backdrop-blur";
+        el.innerHTML = `<span class="h-2.5 w-2.5 rounded-full bg-[oklch(0.55_0.09_55)]"></span><span class="absolute inset-0 -z-10 animate-ping rounded-full bg-white/40"></span>`;
+      }
       el.onclick = (e) => { e.stopPropagation(); onPinClick?.(pin.id); };
-      const marker = new maplibregl.Marker({ element: el }).setLngLat([pin.lng, pin.lat]).addTo(map);
+      const marker = new maplibregl.Marker({ element: el, anchor: variant === "glass" ? "bottom" : "center" })
+        .setLngLat([pin.lng, pin.lat])
+        .addTo(map);
       return marker;
     });
-  }, [pins, onPinClick]);
+  }, [pins, onPinClick, variant]);
 
   return <div ref={containerRef} className={className ?? "h-full w-full"} />;
 }
