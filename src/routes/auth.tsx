@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { toast } from "sonner";
-import { Loader2, ArrowRight, X } from "lucide-react";
+import { Loader2, ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
@@ -166,6 +166,7 @@ function InlineField({
 
 function AuthPage() {
   const navigate = useNavigate();
+  const [view, setView] = useState<"welcome" | "auth">("welcome");
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [step, setStep] = useState<"email" | "password">("email");
   const [email, setEmail] = useState("");
@@ -238,11 +239,80 @@ function AuthPage() {
         }}
       />
 
-      {/* iCloud-style centered card */}
+      <AnimatePresence mode="wait" initial={false}>
+      {view === "welcome" ? (
+        /* iCloud-style welcome screen — cloud mark, wordmark, sign in */
+        <motion.div
+          key="welcome"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.985, filter: "blur(6px)" }}
+          transition={{ duration: 0.7, ease: EASE }}
+          className="relative z-10 flex w-full max-w-[420px] flex-col items-center text-center"
+        >
+          <CloudMark />
+          <motion.h1
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 0.2, ease: EASE }}
+            className="mt-6 text-[44px] font-semibold tracking-[-0.035em] text-[#0f0d0b]"
+            style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif' }}
+          >
+            Gobber
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.9, delay: 0.35 }}
+            className="mt-2 max-w-[300px] text-[14.5px] leading-[1.45] tracking-[-0.005em] text-[#8a7a5f]"
+          >
+            Your account for meeting strangers,
+            <br />
+            traveling together, and hanging out in real life.
+          </motion.p>
+
+          <motion.button
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.5, ease: EASE }}
+            whileHover={{ y: -1 }}
+            whileTap={{ scale: 0.97 }}
+            onClick={() => setView("auth")}
+            className="mt-10 h-[46px] rounded-full bg-[#0f0d0b] px-9 text-[14.5px] font-medium tracking-[-0.01em] text-white transition hover:bg-[#1a1614]"
+            style={{ boxShadow: "0 12px 28px -14px rgba(60,42,20,0.45), 0 2px 4px rgba(0,0,0,0.06)" }}
+          >
+            Sign In
+          </motion.button>
+
+          <motion.button
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.9, delay: 0.7 }}
+            onClick={() => { setMode("signup"); setView("auth"); }}
+            className="mt-4 text-[13px] font-medium text-[#8a6b45] hover:underline"
+          >
+            Create Gobber Account
+          </motion.button>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 0.9 }}
+            className="mt-12 text-[11px] tracking-[-0.005em] text-[#a08a68]"
+          >
+            <span className="cursor-pointer hover:text-[#8a6b45]">Privacy</span>
+            {" · "}
+            <span className="cursor-pointer hover:text-[#8a6b45]">Terms</span>
+          </motion.p>
+        </motion.div>
+      ) : (
+      /* iCloud-style centered card */
       <motion.div
-        initial={{ opacity: 0, y: 18, scale: 0.985 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.9, ease: EASE }}
+        key="auth"
+        initial={{ opacity: 0, y: 18, scale: 0.985, filter: "blur(6px)" }}
+        animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+        exit={{ opacity: 0, scale: 0.985 }}
+        transition={{ duration: 0.65, ease: EASE }}
         className="relative z-10 w-full max-w-[420px] overflow-hidden rounded-[28px]"
         style={{
           background: "rgba(255,253,247,0.72)",
@@ -424,6 +494,8 @@ function AuthPage() {
           Manage your account · <span className="text-[#8a6b45] hover:underline cursor-pointer">Privacy</span> · <span className="text-[#8a6b45] hover:underline cursor-pointer">Terms</span>
         </div>
       </motion.div>
+      )}
+      </AnimatePresence>
     </div>
   );
 }
