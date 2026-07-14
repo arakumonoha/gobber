@@ -14,7 +14,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/profile")({
-  head: () => ({ meta: [{ title: "Profile — NomadTable" }] }),
+  head: () => ({ meta: [{ title: "Profile — Gobber" }] }),
   component: Profile,
 });
 

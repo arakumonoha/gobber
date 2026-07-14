@@ -18,7 +18,7 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/_authenticated/explore")({
   head: () => ({
     meta: [
-      { title: "Explore — NomadTable" },
+      { title: "Explore — Gobber" },
       { name: "description", content: "Surf the globe. Discover live gatherings pinned by nomads everywhere." },
     ],
   }),

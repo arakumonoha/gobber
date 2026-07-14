@@ -8,7 +8,7 @@ import { useActivities } from "@/lib/activities";
 import { BottomNav } from "@/components/bottom-nav";
 
 export const Route = createFileRoute("/_authenticated/trips")({
-  head: () => ({ meta: [{ title: "My Trips — NomadTable" }] }),
+  head: () => ({ meta: [{ title: "My Trips — Gobber" }] }),
   component: Trips,
 });
 
