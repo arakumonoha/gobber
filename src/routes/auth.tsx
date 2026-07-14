@@ -7,8 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Loader2, Mail, X, ChevronRight } from "lucide-react";
-import memojiGroup from "@/assets/memoji-group.png";
+import { Loader2, Mail, X } from "lucide-react";
+import { AtmosphericGlobe } from "@/components/auth/atmospheric-globe";
+import { AvatarCluster } from "@/components/auth/avatar-cluster";
+import { PremiumButton } from "@/components/auth/premium-button";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
@@ -44,62 +46,63 @@ function GoogleIcon({ className }: { className?: string }) {
   );
 }
 
-/** Soft glowing globe horizon at the bottom — matches the reference exactly. */
-function GlobeHorizon() {
+const EASE = [0.22, 1, 0.36, 1] as const;
+
+function Headline() {
   return (
-    <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[62vh] overflow-hidden">
-      {/* Globe curvature */}
-      <div
-        className="absolute left-1/2 -translate-x-1/2"
+    <div className="mx-auto max-w-[520px] text-center">
+      <motion.p
+        initial={{ opacity: 0, y: 6 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.9, delay: 0.05, ease: EASE }}
+        className="text-[10.5px] font-medium uppercase tracking-[0.32em] text-[#a08a68]"
+      >
+        Gobber
+      </motion.p>
+
+      <motion.h1
+        initial={{ opacity: 0, y: 14 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1.1, delay: 0.15, ease: EASE }}
+        className="mt-4 font-serif text-[#0f0d0b]"
         style={{
-          bottom: "-58vh",
-          width: "180vw",
-          height: "115vh",
-          borderRadius: "50%",
-          background:
-            "radial-gradient(ellipse at 50% 30%, #f7ecd4 0%, #efdfbe 30%, #e6d1a3 55%, #d9bd88 78%, #c9a76a 100%)",
-          boxShadow:
-            "inset 0 40px 80px rgba(255, 240, 210, 0.55), inset 0 -60px 120px rgba(120, 82, 40, 0.25)",
+          fontSize: "clamp(2.6rem, 8.4vw, 4.2rem)",
+          lineHeight: 0.98,
+          letterSpacing: "-0.034em",
+          fontWeight: 400,
+          fontFeatureSettings: '"kern" 1, "liga" 1',
         }}
-      />
-      {/* Faint continent silhouettes */}
-      <div
-        className="absolute inset-x-0 bottom-0 h-[62vh] opacity-[0.22] mix-blend-multiply"
-        style={{
-          backgroundImage:
-            "radial-gradient(ellipse 45% 12% at 30% 78%, #7a5a30 0%, transparent 60%), radial-gradient(ellipse 40% 10% at 68% 82%, #7a5a30 0%, transparent 60%), radial-gradient(ellipse 30% 8% at 50% 92%, #6b4d26 0%, transparent 60%)",
-        }}
-      />
-      {/* City lights sparkle */}
-      <svg className="absolute inset-0 h-full w-full opacity-70" aria-hidden>
-        {Array.from({ length: 60 }).map((_, i) => {
-          const x = (i * 37) % 100;
-          const y = 55 + ((i * 53) % 42);
-          const r = ((i * 7) % 20) / 20 < 0.5 ? 0.8 : 1.4;
-          return (
-            <circle
-              key={i}
-              cx={`${x}%`}
-              cy={`${y}%`}
-              r={r}
-              fill="#fff4d6"
-              style={{ filter: "drop-shadow(0 0 3px rgba(255, 220, 150, 0.9))" }}
-            />
-          );
-        })}
-      </svg>
-      {/* Horizon glow */}
-      <div
-        className="absolute inset-x-0"
-        style={{
-          bottom: "45vh",
-          height: "18vh",
-          background:
-            "linear-gradient(to bottom, transparent, rgba(255, 240, 210, 0.55), transparent)",
-          filter: "blur(20px)",
-        }}
-      />
+      >
+        <span className="block">
+          Travel with
+          <br />
+          <span className="italic">strangers.</span>
+        </span>
+        <span
+          className="mt-3 block italic"
+          style={{ color: "#8a6b45", fontWeight: 400 }}
+        >
+          Meet as friends.
+        </span>
+      </motion.h1>
     </div>
+  );
+}
+
+function Subtitle() {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.9, delay: 0.5 }}
+      className="mt-6 flex items-center justify-center gap-3"
+    >
+      <span className="h-px w-8 bg-[#d3bf9c]" />
+      <p className="text-[13px] tracking-[-0.005em] text-[#8a7a5f]">
+        Real-life gatherings, wherever you land.
+      </p>
+      <span className="h-px w-8 bg-[#d3bf9c]" />
+    </motion.div>
   );
 }
 
@@ -110,11 +113,11 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<null | "apple" | "google" | "email" | "form">(null);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    setLoading(true);
+    setLoading("form");
     try {
       if (mode === "signup") {
         const { error } = await supabase.auth.signUp({
@@ -135,149 +138,107 @@ function AuthPage() {
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Something went wrong");
     } finally {
-      setLoading(false);
+      setLoading(null);
     }
   }
 
   async function google() {
-    setLoading(true);
+    setLoading("google");
     const res = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
-    if (res.error) { toast.error(res.error.message ?? "Google sign-in failed"); setLoading(false); return; }
+    if (res.error) { toast.error(res.error.message ?? "Google sign-in failed"); setLoading(null); return; }
     if (res.redirected) return;
     navigate({ to: "/" });
   }
 
   async function apple() {
-    setLoading(true);
+    setLoading("apple");
     const res = await lovable.auth.signInWithOAuth("apple", { redirect_uri: window.location.origin });
-    if (res.error) { toast.error(res.error.message ?? "Apple sign-in failed"); setLoading(false); return; }
+    if (res.error) { toast.error(res.error.message ?? "Apple sign-in failed"); setLoading(null); return; }
     if (res.redirected) return;
     navigate({ to: "/" });
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden" style={{ background: "#f4ecd9" }}>
-      {/* Cream wash */}
+    <div
+      className="relative min-h-screen overflow-hidden"
+      style={{
+        background:
+          "radial-gradient(1400px 900px at 50% -10%, #fdf7e8 0%, transparent 55%)," +
+          "linear-gradient(180deg, #f6efdd 0%, #f0e6cd 100%)",
+      }}
+    >
+      {/* Barely-there grain — adds tactile paper feel */}
       <div
-        className="absolute inset-0"
+        className="pointer-events-none absolute inset-0 opacity-[0.18] mix-blend-multiply"
         style={{
-          background:
-            "radial-gradient(1200px 900px at 50% -5%, #fbf4e3 0%, transparent 55%), linear-gradient(180deg, #f4ecd9 0%, #eee0c2 100%)",
+          backgroundImage: "radial-gradient(rgba(139,111,74,0.05) 1px, transparent 1px)",
+          backgroundSize: "24px 24px",
         }}
       />
 
-      <GlobeHorizon />
+      <AtmosphericGlobe />
 
-      {/* Subtle grain */}
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.25] mix-blend-multiply"
-        style={{
-          backgroundImage: "radial-gradient(rgba(139,111,74,0.06) 1px, transparent 1px)",
-          backgroundSize: "22px 22px",
-        }}
-      />
+      <main className="relative mx-auto flex min-h-screen w-full max-w-[440px] flex-col px-6 pt-12 pb-10 sm:pt-16">
+        <Headline />
+        <Subtitle />
 
-      <div className="relative z-10 mx-auto flex min-h-screen max-w-md flex-col px-6 pt-14 pb-8">
-        {/* Headline */}
-        <motion.h1
-          initial={{ opacity: 0, y: 14 }}
+        {/* Avatar cluster — generous negative space around it */}
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-          className="text-center font-serif"
-          style={{
-            fontSize: "clamp(3rem, 12.5vw, 4.6rem)",
-            lineHeight: 0.95,
-            letterSpacing: "-0.035em",
-            fontWeight: 400,
-          }}
+          transition={{ duration: 1.1, delay: 0.35, ease: EASE }}
+          className="mt-10 flex flex-1 items-center justify-center sm:mt-14"
         >
-          <span className="italic" style={{ color: "#0f0d0b" }}>Travel with</span>
-          <br />
-          <span className="italic" style={{ color: "#0f0d0b" }}>strangers.</span>
-          <br />
-          <span className="italic" style={{ color: "#7a5a3c", display: "inline-block", marginTop: "0.14em" }}>
-            Meet as friends.
-          </span>
-        </motion.h1>
-
-        {/* Divider + subtitle */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.9, delay: 0.35 }}
-          className="mt-6 flex items-center justify-center gap-3"
-        >
-          <span className="h-px w-6 bg-[#c9b696]" />
-          <p className="text-[13.5px] text-[#8f7c5f] tracking-[-0.005em]">
-            Real-life gatherings, wherever you land.
-          </p>
-          <span className="h-px w-6 bg-[#c9b696]" />
-        </motion.div>
-
-        {/* Memoji bundle — exact match from reference */}
-        <motion.div
-          initial={{ opacity: 0, y: 20, scale: 0.95 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 1, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-6 flex flex-1 items-center justify-center"
-        >
-          <motion.img
-            src={memojiGroup}
-            alt="Group of friends"
-            draggable={false}
-            className="w-[78%] max-w-[360px] select-none"
-            style={{
-              filter: "drop-shadow(0 22px 40px rgba(90, 60, 25, 0.22)) drop-shadow(0 6px 14px rgba(90, 60, 25, 0.14))",
-            }}
-            animate={{ y: [0, -6, 0] }}
-            transition={{ duration: 6.5, repeat: Infinity, ease: [0.45, 0, 0.55, 1] }}
-          />
+          <AvatarCluster sizePx={320} />
         </motion.div>
 
         {/* CTAs */}
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
+          initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          className="relative z-10 mt-4 flex w-full flex-col items-center gap-2.5"
+          transition={{ duration: 0.9, delay: 0.75, ease: EASE }}
+          className="relative z-10 mt-6 flex w-full flex-col gap-2.5"
         >
-          <PressButton
+          <PremiumButton
+            variant="dark"
             onClick={apple}
-            disabled={loading}
-            className="bg-[#141210] text-white shadow-[0_18px_40px_-18px_rgba(20,18,16,0.7)] hover:bg-black"
+            disabled={!!loading}
+            loading={loading === "apple"}
+            icon={<AppleIcon className="h-[18px] w-[18px]" />}
           >
-            <AppleIcon className="mr-2 h-[19px] w-[19px]" />
             Continue with Apple
-          </PressButton>
-          <PressButton
+          </PremiumButton>
+          <PremiumButton
+            variant="light"
             onClick={google}
-            disabled={loading}
-            className="bg-white text-[#1a1614] shadow-[0_12px_30px_-16px_rgba(0,0,0,0.28)] hover:bg-white"
+            disabled={!!loading}
+            loading={loading === "google"}
+            icon={<GoogleIcon className="h-[18px] w-[18px]" />}
           >
-            <GoogleIcon className="mr-2 h-[19px] w-[19px]" />
             Continue with Google
-          </PressButton>
-          <PressButton
+          </PremiumButton>
+          <PremiumButton
+            variant="outline"
             onClick={() => setShowAuth(true)}
-            disabled={loading}
-            className="bg-white text-[#1a1614] shadow-[0_12px_30px_-16px_rgba(0,0,0,0.24)] hover:bg-white"
+            disabled={!!loading}
+            icon={<Mail className="h-[17px] w-[17px]" strokeWidth={2} />}
           >
-            <Mail className="mr-2 h-[18px] w-[18px]" />
             Continue with Email
-          </PressButton>
+          </PremiumButton>
 
-          <motion.button
-            whileHover={{ y: -1 }}
-            whileTap={{ scale: 0.97 }}
-            onClick={() => { setMode("signin"); setShowAuth(true); }}
-            className="mt-3 inline-flex items-center gap-1 text-[13px] text-[#9a8770] transition-colors"
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 1.1 }}
+            className="mt-3 text-center text-[11.5px] leading-relaxed tracking-[-0.005em] text-[#a08a68]"
           >
-            Already have an account?{" "}
-            <span className="font-semibold text-[#1a1614]">Sign in</span>
-            <ChevronRight className="h-3.5 w-3.5 text-[#1a1614]" />
-          </motion.button>
+            By continuing you agree to Gobber's{" "}
+            <span className="text-[#5a4a35] underline underline-offset-2 decoration-[#c9b696]">Terms</span>{" "}
+            &{" "}
+            <span className="text-[#5a4a35] underline underline-offset-2 decoration-[#c9b696]">Privacy</span>.
+          </motion.p>
         </motion.div>
-      </div>
+      </main>
 
       {/* Email sheet */}
       <AnimatePresence>
@@ -289,20 +250,25 @@ function AuthPage() {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
               onClick={() => setShowAuth(false)}
-              className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm"
+              className="fixed inset-0 z-40 bg-[#1a1108]/25 backdrop-blur-md"
             />
             <motion.div
               initial={{ y: "100%" }}
               animate={{ y: 0 }}
               exit={{ y: "100%" }}
-              transition={{ type: "spring", damping: 32, stiffness: 320 }}
-              className="fixed inset-x-0 bottom-0 z-50 mx-auto w-full max-w-md rounded-t-[28px] bg-white/95 p-6 pb-9 shadow-[0_-20px_60px_-20px_rgba(45,30,20,0.4)] backdrop-blur-2xl ring-1 ring-black/[0.05]"
+              transition={{ type: "spring", damping: 34, stiffness: 340 }}
+              className="fixed inset-x-0 bottom-0 z-50 mx-auto w-full max-w-[440px] rounded-t-[32px] p-6 pb-9 ring-1 ring-black/[0.05]"
+              style={{
+                background: "linear-gradient(180deg, rgba(255,253,247,0.98) 0%, rgba(251,244,227,0.98) 100%)",
+                backdropFilter: "saturate(180%) blur(28px)",
+                boxShadow: "0 -30px 80px -20px rgba(50,34,15,0.28)",
+              }}
             >
-              <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-black/20" />
+              <div className="mx-auto mb-5 h-1 w-10 rounded-full bg-[#1a1614]/15" />
               <div className="mb-5 flex items-start justify-between">
                 <div>
-                  <h2 className="font-serif italic text-3xl leading-none tracking-[-0.02em] text-[#1a1614]">
-                    {mode === "signin" ? "Welcome back" : "Create your account"}
+                  <h2 className="font-serif italic text-[28px] leading-none tracking-[-0.024em] text-[#0f0d0b]">
+                    {mode === "signin" ? "Welcome back." : "Create your account."}
                   </h2>
                   <p className="mt-2 text-[13px] text-[#9a8770]">
                     {mode === "signin" ? "Sign in to continue." : "Join Gobber — it takes a minute."}
@@ -310,14 +276,14 @@ function AuthPage() {
                 </div>
                 <button
                   onClick={() => setShowAuth(false)}
-                  className="rounded-full bg-black/5 p-1.5 text-[#9a8770] transition hover:text-[#1a1614]"
+                  className="rounded-full bg-black/[0.05] p-1.5 text-[#9a8770] transition hover:bg-black/[0.08] hover:text-[#1a1614]"
                   aria-label="Close"
                 >
                   <X className="h-4 w-4" />
                 </button>
               </div>
 
-              <div className="mb-4 flex rounded-full bg-black/[0.04] p-1 text-xs font-medium">
+              <div className="mb-4 flex rounded-full bg-black/[0.04] p-1 text-[12.5px] font-medium">
                 {(["signin", "signup"] as const).map((m) => (
                   <button
                     key={m}
@@ -332,20 +298,24 @@ function AuthPage() {
               <form onSubmit={submit} className="space-y-3">
                 {mode === "signup" && (
                   <div>
-                    <Label htmlFor="name" className="text-xs">Your name</Label>
-                    <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Amelia" className="mt-1 h-11 rounded-xl bg-white" />
+                    <Label htmlFor="name" className="text-[11px] uppercase tracking-[0.14em] text-[#9a8770]">Name</Label>
+                    <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Amelia" className="mt-1 h-12 rounded-2xl border-black/5 bg-white/80" />
                   </div>
                 )}
                 <div>
-                  <Label htmlFor="email" className="text-xs">Email</Label>
-                  <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@gobber.app" className="mt-1 h-11 rounded-xl bg-white" />
+                  <Label htmlFor="email" className="text-[11px] uppercase tracking-[0.14em] text-[#9a8770]">Email</Label>
+                  <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@gobber.app" className="mt-1 h-12 rounded-2xl border-black/5 bg-white/80" />
                 </div>
                 <div>
-                  <Label htmlFor="password" className="text-xs">Password</Label>
-                  <Input id="password" type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" className="mt-1 h-11 rounded-xl bg-white" />
+                  <Label htmlFor="password" className="text-[11px] uppercase tracking-[0.14em] text-[#9a8770]">Password</Label>
+                  <Input id="password" type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" className="mt-1 h-12 rounded-2xl border-black/5 bg-white/80" />
                 </div>
-                <Button type="submit" disabled={loading} className="h-11 w-full rounded-xl bg-[#141210] text-white font-medium transition hover:bg-black active:scale-[0.99]">
-                  {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : mode === "signin" ? "Sign in" : "Start exploring"}
+                <Button
+                  type="submit"
+                  disabled={loading === "form"}
+                  className="mt-2 h-12 w-full rounded-full bg-[#141210] text-[15px] font-medium tracking-[-0.01em] text-white transition hover:bg-black active:scale-[0.99]"
+                >
+                  {loading === "form" ? <Loader2 className="h-4 w-4 animate-spin" /> : mode === "signin" ? "Sign in" : "Start exploring"}
                 </Button>
               </form>
             </motion.div>
@@ -353,27 +323,5 @@ function AuthPage() {
         )}
       </AnimatePresence>
     </div>
-  );
-}
-
-function PressButton({
-  onClick, disabled, className, children,
-}: {
-  onClick?: () => void;
-  disabled?: boolean;
-  className?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <motion.button
-      onClick={onClick}
-      disabled={disabled}
-      whileHover={{ y: -1 }}
-      whileTap={{ scale: 0.975 }}
-      transition={{ type: "spring", stiffness: 400, damping: 26 }}
-      className={`inline-flex h-[54px] w-full items-center justify-center rounded-full text-[15.5px] font-medium tracking-[-0.01em] disabled:opacity-70 ${className ?? ""}`}
-    >
-      {disabled ? <Loader2 className="h-4 w-4 animate-spin" /> : children}
-    </motion.button>
   );
 }
