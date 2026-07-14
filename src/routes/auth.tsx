@@ -3,14 +3,8 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Loader2, Mail, X } from "lucide-react";
-import { AtmosphericGlobe } from "@/components/auth/atmospheric-globe";
-import { AvatarCluster } from "@/components/auth/avatar-cluster";
-import { PremiumButton } from "@/components/auth/premium-button";
+import { Loader2, ArrowRight, X } from "lucide-react";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
@@ -20,12 +14,77 @@ export const Route = createFileRoute("/auth")({
   },
   head: () => ({
     meta: [
-      { title: "Welcome — Gobber" },
-      { name: "description", content: "Real-life gatherings, wherever you land." },
+      { title: "Sign in — Gobber" },
+      { name: "description", content: "Sign in to Gobber." },
     ],
   }),
   component: AuthPage,
 });
+
+const EASE = [0.22, 1, 0.36, 1] as const;
+
+/** iCloud-style animated cloud mark — clean, minimal, breathing softly. */
+function CloudMark() {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10, scale: 0.94 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ duration: 1.1, ease: EASE }}
+      className="relative mx-auto"
+      style={{ width: 128, height: 128 }}
+      aria-hidden
+    >
+      {/* Soft warm halo behind the cloud */}
+      <motion.div
+        className="absolute inset-0 rounded-full"
+        style={{
+          background:
+            "radial-gradient(closest-side, rgba(255,232,190,0.55) 0%, rgba(255,232,190,0) 70%)",
+          filter: "blur(6px)",
+        }}
+        animate={{ scale: [1, 1.06, 1], opacity: [0.85, 1, 0.85] }}
+        transition={{ duration: 5.5, repeat: Infinity, ease: [0.45, 0, 0.55, 1] }}
+      />
+      <motion.svg
+        viewBox="0 0 128 128"
+        className="relative h-full w-full"
+        animate={{ y: [0, -3, 0, 2, 0] }}
+        transition={{ duration: 6.2, repeat: Infinity, ease: [0.45, 0, 0.55, 1] }}
+      >
+        <defs>
+          <linearGradient id="cloud-fill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#ffffff" />
+            <stop offset="100%" stopColor="#fbf3e2" />
+          </linearGradient>
+          <linearGradient id="cloud-stroke" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#a08a68" stopOpacity="0.55" />
+            <stop offset="100%" stopColor="#8a6b45" stopOpacity="0.7" />
+          </linearGradient>
+        </defs>
+        {/* Classic rounded cloud silhouette */}
+        <path
+          d="M40 88c-11 0-20-8.6-20-19.5S29 49 40 49c1.1 0 2.2.1 3.3.3C46 38.6 55.8 31 67 31c13.2 0 24 10.4 24 23.2 0 .8 0 1.6-.1 2.4 1.3-.3 2.7-.5 4.1-.5 9.9 0 18 7.8 18 17.4S105 91 95.1 91H40z"
+          fill="url(#cloud-fill)"
+          stroke="url(#cloud-stroke)"
+          strokeWidth="1.5"
+          style={{
+            filter:
+              "drop-shadow(0 12px 24px rgba(78,52,22,0.18)) drop-shadow(0 2px 4px rgba(78,52,22,0.08))",
+          }}
+        />
+        {/* Inner highlight */}
+        <path
+          d="M46 58c4-8 12-14 22-14"
+          fill="none"
+          stroke="#ffffff"
+          strokeOpacity="0.9"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+      </motion.svg>
+    </motion.div>
+  );
+}
 
 function AppleIcon({ className }: { className?: string }) {
   return (
@@ -46,77 +105,80 @@ function GoogleIcon({ className }: { className?: string }) {
   );
 }
 
-const EASE = [0.22, 1, 0.36, 1] as const;
-
-function Headline() {
+/** iCloud-style single-line input with inline chevron submit. */
+function InlineField({
+  type,
+  placeholder,
+  value,
+  onChange,
+  autoFocus,
+  onSubmit,
+  submitting,
+  showSubmit,
+  autoComplete,
+}: {
+  type: string;
+  placeholder: string;
+  value: string;
+  onChange: (v: string) => void;
+  autoFocus?: boolean;
+  onSubmit?: () => void;
+  submitting?: boolean;
+  showSubmit?: boolean;
+  autoComplete?: string;
+}) {
   return (
-    <div className="mx-auto max-w-[520px] text-center">
-      <motion.p
-        initial={{ opacity: 0, y: 6 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.9, delay: 0.05, ease: EASE }}
-        className="text-[10.5px] font-medium uppercase tracking-[0.32em] text-[#a08a68]"
-      >
-        Gobber
-      </motion.p>
-
-      <motion.h1
-        initial={{ opacity: 0, y: 14 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1.1, delay: 0.15, ease: EASE }}
-        className="mt-4 font-serif text-[#0f0d0b]"
-        style={{
-          fontSize: "clamp(2.6rem, 8.4vw, 4.2rem)",
-          lineHeight: 0.98,
-          letterSpacing: "-0.034em",
-          fontWeight: 400,
-          fontFeatureSettings: '"kern" 1, "liga" 1',
+    <div className="relative">
+      <input
+        type={type}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        autoFocus={autoFocus}
+        autoComplete={autoComplete}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && onSubmit) {
+            e.preventDefault();
+            onSubmit();
+          }
         }}
-      >
-        <span className="block">
-          Travel with
-          <br />
-          <span className="italic">strangers.</span>
-        </span>
-        <span
-          className="mt-3 block italic"
-          style={{ color: "#8a6b45", fontWeight: 400 }}
+        className="h-[46px] w-full rounded-[10px] border border-[#1a1614]/12 bg-white/85 px-4 pr-12 text-[15px] tracking-[-0.01em] text-[#0f0d0b] placeholder:text-[#a89676] outline-none transition focus:border-[#8a6b45]/50 focus:bg-white"
+      />
+      {showSubmit && (
+        <motion.button
+          type="button"
+          onClick={onSubmit}
+          disabled={submitting || !value}
+          whileTap={{ scale: 0.92 }}
+          className="absolute right-1.5 top-1/2 flex h-[36px] w-[36px] -translate-y-1/2 items-center justify-center rounded-full bg-[#0f0d0b] text-white transition disabled:opacity-30"
+          aria-label="Continue"
         >
-          Meet as friends.
-        </span>
-      </motion.h1>
+          {submitting ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <ArrowRight className="h-4 w-4" strokeWidth={2.4} />
+          )}
+        </motion.button>
+      )}
     </div>
-  );
-}
-
-function Subtitle() {
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.9, delay: 0.5 }}
-      className="mt-6 flex items-center justify-center gap-3"
-    >
-      <span className="h-px w-8 bg-[#d3bf9c]" />
-      <p className="text-[13px] tracking-[-0.005em] text-[#8a7a5f]">
-        Real-life gatherings, wherever you land.
-      </p>
-      <span className="h-px w-8 bg-[#d3bf9c]" />
-    </motion.div>
   );
 }
 
 function AuthPage() {
   const navigate = useNavigate();
-  const [showAuth, setShowAuth] = useState(false);
   const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [step, setStep] = useState<"email" | "password">("email");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
-  const [loading, setLoading] = useState<null | "apple" | "google" | "email" | "form">(null);
+  const [loading, setLoading] = useState<null | "apple" | "google" | "form">(null);
 
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
+  async function handleEmailContinue() {
+    if (!email) return;
+    setStep("password");
+  }
+
+  async function submit() {
     setLoading("form");
     try {
       if (mode === "signup") {
@@ -160,168 +222,240 @@ function AuthPage() {
 
   return (
     <div
-      className="relative min-h-screen overflow-hidden"
+      className="relative flex min-h-screen items-center justify-center overflow-hidden px-5 py-10"
       style={{
         background:
-          "radial-gradient(1400px 900px at 50% -10%, #fdf7e8 0%, transparent 55%)," +
+          "radial-gradient(1200px 800px at 50% -10%, #fdf7e8 0%, transparent 55%)," +
           "linear-gradient(180deg, #f6efdd 0%, #f0e6cd 100%)",
       }}
     >
-      {/* Barely-there grain — adds tactile paper feel */}
+      {/* subtle grain */}
       <div
-        className="pointer-events-none absolute inset-0 opacity-[0.18] mix-blend-multiply"
+        className="pointer-events-none absolute inset-0 opacity-[0.14] mix-blend-multiply"
         style={{
           backgroundImage: "radial-gradient(rgba(139,111,74,0.05) 1px, transparent 1px)",
           backgroundSize: "24px 24px",
         }}
       />
 
-      <AtmosphericGlobe />
+      {/* iCloud-style centered card */}
+      <motion.div
+        initial={{ opacity: 0, y: 18, scale: 0.985 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.9, ease: EASE }}
+        className="relative z-10 w-full max-w-[420px] overflow-hidden rounded-[28px]"
+        style={{
+          background: "rgba(255,253,247,0.72)",
+          backdropFilter: "saturate(180%) blur(30px)",
+          WebkitBackdropFilter: "saturate(180%) blur(30px)",
+          border: "1px solid rgba(255,255,255,0.7)",
+          boxShadow:
+            "0 1px 0 rgba(255,255,255,0.9) inset, 0 30px 70px -25px rgba(60,42,20,0.28), 0 8px 24px -14px rgba(60,42,20,0.14)",
+        }}
+      >
+        <div className="px-8 pt-9 pb-8 text-center">
+          <CloudMark />
 
-      <main className="relative mx-auto flex min-h-screen w-full max-w-[440px] flex-col px-6 pt-12 pb-10 sm:pt-16">
-        <Headline />
-        <Subtitle />
-
-        {/* Avatar cluster — generous negative space around it */}
-        <motion.div
-          initial={{ opacity: 0, y: 18 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.1, delay: 0.35, ease: EASE }}
-          className="mt-10 flex flex-1 items-center justify-center sm:mt-14"
-        >
-          <AvatarCluster sizePx={380} />
-        </motion.div>
-
-        {/* CTAs */}
-        <motion.div
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.75, ease: EASE }}
-          className="relative z-10 mt-6 flex w-full flex-col gap-2.5"
-        >
-          <PremiumButton
-            variant="dark"
-            onClick={apple}
-            disabled={!!loading}
-            loading={loading === "apple"}
-            icon={<AppleIcon className="h-[18px] w-[18px]" />}
+          <motion.h1
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.15, ease: EASE }}
+            className="mt-5 text-[26px] font-semibold tracking-[-0.028em] text-[#0f0d0b]"
+            style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif' }}
           >
-            Continue with Apple
-          </PremiumButton>
-          <PremiumButton
-            variant="light"
-            onClick={google}
-            disabled={!!loading}
-            loading={loading === "google"}
-            icon={<GoogleIcon className="h-[18px] w-[18px]" />}
-          >
-            Continue with Google
-          </PremiumButton>
-          <PremiumButton
-            variant="outline"
-            onClick={() => setShowAuth(true)}
-            disabled={!!loading}
-            icon={<Mail className="h-[17px] w-[17px]" strokeWidth={2} />}
-          >
-            Continue with Email
-          </PremiumButton>
+            Sign In to Gobber
+          </motion.h1>
 
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 1.1 }}
-            className="mt-3 text-center text-[11.5px] leading-relaxed tracking-[-0.005em] text-[#a08a68]"
+            transition={{ duration: 0.7, delay: 0.28 }}
+            className="mt-1.5 text-[13.5px] tracking-[-0.005em] text-[#8a7a5f]"
           >
-            By continuing you agree to Gobber's{" "}
-            <span className="text-[#5a4a35] underline underline-offset-2 decoration-[#c9b696]">Terms</span>{" "}
-            &{" "}
-            <span className="text-[#5a4a35] underline underline-offset-2 decoration-[#c9b696]">Privacy</span>.
+            {mode === "signin"
+              ? "Use your account to continue."
+              : "Create an account to get started."}
           </motion.p>
-        </motion.div>
-      </main>
 
-      {/* Email sheet */}
-      <AnimatePresence>
-        {showAuth && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              onClick={() => setShowAuth(false)}
-              className="fixed inset-0 z-40 bg-[#1a1108]/25 backdrop-blur-md"
-            />
-            <motion.div
-              initial={{ y: "100%" }}
-              animate={{ y: 0 }}
-              exit={{ y: "100%" }}
-              transition={{ type: "spring", damping: 34, stiffness: 340 }}
-              className="fixed inset-x-0 bottom-0 z-50 mx-auto w-full max-w-[440px] rounded-t-[32px] p-6 pb-9 ring-1 ring-black/[0.05]"
-              style={{
-                background: "linear-gradient(180deg, rgba(255,253,247,0.98) 0%, rgba(251,244,227,0.98) 100%)",
-                backdropFilter: "saturate(180%) blur(28px)",
-                boxShadow: "0 -30px 80px -20px rgba(50,34,15,0.28)",
-              }}
-            >
-              <div className="mx-auto mb-5 h-1 w-10 rounded-full bg-[#1a1614]/15" />
-              <div className="mb-5 flex items-start justify-between">
-                <div>
-                  <h2 className="font-serif italic text-[28px] leading-none tracking-[-0.024em] text-[#0f0d0b]">
-                    {mode === "signin" ? "Welcome back." : "Create your account."}
-                  </h2>
-                  <p className="mt-2 text-[13px] text-[#9a8770]">
-                    {mode === "signin" ? "Sign in to continue." : "Join Gobber — it takes a minute."}
-                  </p>
-                </div>
-                <button
-                  onClick={() => setShowAuth(false)}
-                  className="rounded-full bg-black/[0.05] p-1.5 text-[#9a8770] transition hover:bg-black/[0.08] hover:text-[#1a1614]"
-                  aria-label="Close"
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.4, ease: EASE }}
+            className="mt-7 space-y-2.5 text-left"
+          >
+            <AnimatePresence mode="wait" initial={false}>
+              {step === "email" ? (
+                <motion.div
+                  key="email"
+                  initial={{ opacity: 0, x: -12 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -12 }}
+                  transition={{ duration: 0.35, ease: EASE }}
+                  className="space-y-2.5"
                 >
-                  <X className="h-4 w-4" />
-                </button>
-              </div>
-
-              <div className="mb-4 flex rounded-full bg-black/[0.04] p-1 text-[12.5px] font-medium">
-                {(["signin", "signup"] as const).map((m) => (
-                  <button
-                    key={m}
-                    onClick={() => setMode(m)}
-                    className={`flex-1 rounded-full px-3 py-2 transition ${mode === m ? "bg-white text-[#1a1614] shadow-sm" : "text-[#9a8770]"}`}
-                  >
-                    {m === "signin" ? "Sign in" : "Create account"}
-                  </button>
-                ))}
-              </div>
-
-              <form onSubmit={submit} className="space-y-3">
-                {mode === "signup" && (
-                  <div>
-                    <Label htmlFor="name" className="text-[11px] uppercase tracking-[0.14em] text-[#9a8770]">Name</Label>
-                    <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Amelia" className="mt-1 h-12 rounded-2xl border-black/5 bg-white/80" />
+                  {mode === "signup" && (
+                    <InlineField
+                      type="text"
+                      placeholder="Name"
+                      value={name}
+                      onChange={setName}
+                      autoComplete="name"
+                    />
+                  )}
+                  <InlineField
+                    type="email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={setEmail}
+                    autoFocus
+                    autoComplete="email"
+                    showSubmit
+                    onSubmit={handleEmailContinue}
+                  />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="password"
+                  initial={{ opacity: 0, x: 12 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 12 }}
+                  transition={{ duration: 0.35, ease: EASE }}
+                  className="space-y-2"
+                >
+                  <div className="flex items-center justify-between px-1 text-[12.5px] text-[#8a7a5f]">
+                    <span className="truncate">{email}</span>
+                    <button
+                      onClick={() => setStep("email")}
+                      className="text-[#8a6b45] hover:underline"
+                    >
+                      Change
+                    </button>
                   </div>
-                )}
-                <div>
-                  <Label htmlFor="email" className="text-[11px] uppercase tracking-[0.14em] text-[#9a8770]">Email</Label>
-                  <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@gobber.app" className="mt-1 h-12 rounded-2xl border-black/5 bg-white/80" />
-                </div>
-                <div>
-                  <Label htmlFor="password" className="text-[11px] uppercase tracking-[0.14em] text-[#9a8770]">Password</Label>
-                  <Input id="password" type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" className="mt-1 h-12 rounded-2xl border-black/5 bg-white/80" />
-                </div>
-                <Button
-                  type="submit"
-                  disabled={loading === "form"}
-                  className="mt-2 h-12 w-full rounded-full bg-[#141210] text-[15px] font-medium tracking-[-0.01em] text-white transition hover:bg-black active:scale-[0.99]"
+                  <InlineField
+                    type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={setPassword}
+                    autoFocus
+                    autoComplete={mode === "signin" ? "current-password" : "new-password"}
+                    showSubmit
+                    submitting={loading === "form"}
+                    onSubmit={submit}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <div className="flex items-center justify-between px-1 pt-1.5 text-[12.5px]">
+              <label className="flex items-center gap-2 text-[#8a7a5f]">
+                <input
+                  type="checkbox"
+                  defaultChecked
+                  className="h-3.5 w-3.5 rounded-[3px] border border-[#1a1614]/25 accent-[#0f0d0b]"
+                />
+                Keep me signed in
+              </label>
+              <button className="text-[#8a6b45] hover:underline">Forgot?</button>
+            </div>
+          </motion.div>
+
+          {/* Divider */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.7, delay: 0.55 }}
+            className="mt-7 flex items-center gap-3"
+          >
+            <span className="h-px flex-1 bg-[#1a1614]/10" />
+            <span className="text-[10.5px] font-medium uppercase tracking-[0.22em] text-[#a08a68]">
+              or
+            </span>
+            <span className="h-px flex-1 bg-[#1a1614]/10" />
+          </motion.div>
+
+          {/* Social — quiet iCloud-style icon row */}
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.65, ease: EASE }}
+            className="mt-5 flex items-center justify-center gap-3"
+          >
+            <SocialButton onClick={apple} loading={loading === "apple"} disabled={!!loading} label="Continue with Apple">
+              <AppleIcon className="h-[19px] w-[19px] text-[#0f0d0b]" />
+            </SocialButton>
+            <SocialButton onClick={google} loading={loading === "google"} disabled={!!loading} label="Continue with Google">
+              <GoogleIcon className="h-[19px] w-[19px]" />
+            </SocialButton>
+          </motion.div>
+
+          {/* Create account switch */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.7, delay: 0.8 }}
+            className="mt-7 text-[13px] text-[#8a7a5f]"
+          >
+            {mode === "signin" ? (
+              <>
+                Don't have an account?{" "}
+                <button
+                  onClick={() => { setMode("signup"); setStep("email"); }}
+                  className="font-medium text-[#8a6b45] hover:underline"
                 >
-                  {loading === "form" ? <Loader2 className="h-4 w-4 animate-spin" /> : mode === "signin" ? "Sign in" : "Start exploring"}
-                </Button>
-              </form>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+                  Create yours now
+                </button>
+              </>
+            ) : (
+              <>
+                Already have an account?{" "}
+                <button
+                  onClick={() => { setMode("signin"); setStep("email"); }}
+                  className="font-medium text-[#8a6b45] hover:underline"
+                >
+                  Sign in
+                </button>
+              </>
+            )}
+          </motion.div>
+        </div>
+
+        {/* Footer strip */}
+        <div className="border-t border-[#1a1614]/8 bg-white/40 px-8 py-3 text-center text-[11px] tracking-[-0.005em] text-[#a08a68]">
+          Manage your account · <span className="text-[#8a6b45] hover:underline cursor-pointer">Privacy</span> · <span className="text-[#8a6b45] hover:underline cursor-pointer">Terms</span>
+        </div>
+      </motion.div>
     </div>
+  );
+}
+
+function SocialButton({
+  children,
+  onClick,
+  loading,
+  disabled,
+  label,
+}: {
+  children: React.ReactNode;
+  onClick: () => void;
+  loading?: boolean;
+  disabled?: boolean;
+  label: string;
+}) {
+  return (
+    <motion.button
+      onClick={onClick}
+      disabled={disabled}
+      whileHover={{ y: -1 }}
+      whileTap={{ scale: 0.96 }}
+      transition={{ type: "spring", stiffness: 420, damping: 26 }}
+      aria-label={label}
+      className="flex h-[46px] w-[64px] items-center justify-center rounded-[12px] border border-[#1a1614]/10 bg-white/80 transition hover:bg-white disabled:opacity-60"
+      style={{
+        boxShadow:
+          "0 1px 0 rgba(255,255,255,0.9) inset, 0 6px 16px -12px rgba(60,42,20,0.2)",
+      }}
+    >
+      {loading ? <Loader2 className="h-4 w-4 animate-spin text-[#0f0d0b]" /> : children}
+    </motion.button>
   );
 }
