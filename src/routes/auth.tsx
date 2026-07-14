@@ -17,81 +17,63 @@ export const Route = createFileRoute("/auth")({
   },
   head: () => ({
     meta: [
-      { title: "Welcome — NomadTable" },
+      { title: "Welcome — Gobber" },
       { name: "description", content: "Real-life gatherings, wherever you land." },
     ],
   }),
   component: AuthPage,
 });
 
-// Memoji-style avatars — playful circular gradients with a face emoji.
-// The "you" avatar is highlighted with a warm clay ring.
-const AVATARS: {
-  emoji: string;
-  from: string;
-  to: string;
-  x: string;
-  y: string;
-  size: number;
-  delay: number;
-  duration: number;
-  isYou?: boolean;
-}[] = [
-  { emoji: "🧑🏻‍🦱", from: "#f9d29d", to: "#e8a87c", x: "12%",  y: "10%", size: 68, delay: 0.0, duration: 3.4 },
-  { emoji: "👩🏽‍🦰", from: "#f6b0a5", to: "#c9756a", x: "78%",  y: "6%",  size: 74, delay: 0.4, duration: 3.8 },
-  { emoji: "🧑🏾",   from: "#c8a678", to: "#8b6f5e", x: "88%",  y: "38%", size: 60, delay: 0.9, duration: 3.2 },
-  { emoji: "👨🏼‍🦳", from: "#e6d4b8", to: "#b89b7a", x: "6%",   y: "44%", size: 64, delay: 0.6, duration: 3.6 },
-  { emoji: "😎",     from: "#f5c9a1", to: "#c78a5b", x: "22%",  y: "72%", size: 82, delay: 0.2, duration: 4.0, isYou: true },
-  { emoji: "👩🏻",   from: "#f8dcc3", to: "#d9a172", x: "70%",  y: "70%", size: 66, delay: 0.7, duration: 3.5 },
-  { emoji: "🧔🏽",   from: "#d9b892", to: "#8f6b4a", x: "48%",  y: "84%", size: 58, delay: 1.0, duration: 3.3 },
-  { emoji: "🧑🏼‍🦰", from: "#f4c7a1", to: "#d0895a", x: "44%",  y: "4%",  size: 56, delay: 0.5, duration: 3.7 },
+// Cluster of memoji-style faces arranged in a rough sphere at the center.
+// Positions are polar-ish around (0,0); size scales with proximity to center.
+type Face = { emoji: string; x: number; y: number; size: number; delay: number; dur: number };
+const FACES: Face[] = [
+  { emoji: "😄",  x:   0, y:   0, size: 108, delay: 0.0, dur: 3.6 },
+  { emoji: "😎",  x: -95, y: -30, size:  86, delay: 0.15, dur: 3.9 },
+  { emoji: "🥰",  x:  92, y: -38, size:  88, delay: 0.25, dur: 3.4 },
+  { emoji: "🤩",  x: -60, y:  75, size:  78, delay: 0.35, dur: 3.7 },
+  { emoji: "😊",  x:  70, y:  72, size:  80, delay: 0.45, dur: 3.5 },
+  { emoji: "🤗",  x:   5, y: -95, size:  72, delay: 0.55, dur: 4.0 },
+  { emoji: "😇",  x: -140, y:  40, size:  62, delay: 0.65, dur: 3.8 },
+  { emoji: "🥳",  x: 140, y:  30, size:  66, delay: 0.75, dur: 3.6 },
+  { emoji: "😌",  x:  -20, y: 120, size:  60, delay: 0.85, dur: 4.1 },
 ];
 
-function MemojiCloud() {
+function MemojiSphere() {
   return (
-    <div className="pointer-events-none absolute inset-0">
-      {AVATARS.map((a, i) => (
-        <motion.div
-          key={i}
-          className="absolute"
-          style={{ left: a.x, top: a.y, width: a.size, height: a.size }}
-          initial={{ opacity: 0, scale: 0.6, y: 20 }}
-          animate={{
-            opacity: 1,
-            scale: 1,
-            y: [0, -10, 0],
-          }}
-          transition={{
-            opacity: { duration: 0.8, delay: a.delay, ease: [0.22, 1, 0.36, 1] },
-            scale:   { duration: 0.9, delay: a.delay, ease: [0.34, 1.56, 0.64, 1] },
-            y: {
-              duration: a.duration,
-              delay: a.delay + 0.9,
-              repeat: Infinity,
-              ease: [0.45, 0, 0.55, 1],
-            },
-          }}
-        >
-          <div
-            className="relative flex h-full w-full items-center justify-center rounded-full"
+    <div className="relative mx-auto h-[280px] w-[320px]">
+      <div className="absolute inset-0 flex items-center justify-center">
+        {FACES.map((f, i) => (
+          <motion.div
+            key={i}
+            className="absolute select-none"
             style={{
-              background: `radial-gradient(circle at 30% 25%, ${a.from}, ${a.to})`,
-              boxShadow: a.isYou
-                ? "0 18px 40px -12px rgba(139,115,85,0.55), inset 0 1px 0 rgba(255,255,255,0.5), 0 0 0 3px rgba(255,255,255,0.9), 0 0 0 5px #c78a5b"
-                : "0 12px 30px -10px rgba(60,45,30,0.45), inset 0 1px 0 rgba(255,255,255,0.45), 0 0 0 2.5px rgba(255,255,255,0.9)",
-              fontSize: a.size * 0.58,
+              transform: `translate(${f.x}px, ${f.y}px)`,
+              fontSize: f.size,
               lineHeight: 1,
+              filter: "drop-shadow(0 8px 14px rgba(60,45,30,0.18))",
+            }}
+            initial={{ opacity: 0, scale: 0.4 }}
+            animate={{
+              opacity: 1,
+              scale: 1,
+              y: [0, -8, 0],
+            }}
+            transition={{
+              opacity: { duration: 0.7, delay: f.delay, ease: [0.22, 1, 0.36, 1] },
+              scale:   { duration: 0.8, delay: f.delay, ease: [0.34, 1.56, 0.64, 1] },
+              y: {
+                duration: f.dur,
+                delay: f.delay + 0.8,
+                repeat: Infinity,
+                ease: [0.45, 0, 0.55, 1],
+              },
             }}
           >
-            <span style={{ filter: "drop-shadow(0 1px 1px rgba(0,0,0,0.15))" }}>{a.emoji}</span>
-            {a.isYou && (
-              <span className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 rounded-full bg-ink px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.14em] text-background shadow-md">
-                you
-              </span>
-            )}
-          </div>
-        </motion.div>
-      ))}
+            {f.emoji}
+          </motion.div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -118,7 +100,7 @@ function AuthPage() {
           },
         });
         if (error) throw error;
-        toast.success("Welcome to NomadTable ✈️");
+        toast.success("Welcome to Gobber");
         navigate({ to: "/" });
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -142,7 +124,7 @@ function AuthPage() {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-background">
-      {/* Warm sand ambient wash — iCloud-style clean canvas */}
+      {/* Ambient warm wash */}
       <div
         className="absolute inset-0"
         style={{
@@ -150,54 +132,43 @@ function AuthPage() {
             "radial-gradient(1200px 700px at 50% -10%, #fbf5ea 0%, transparent 60%), radial-gradient(900px 600px at 80% 100%, #f3e3cc 0%, transparent 55%), radial-gradient(700px 500px at 10% 90%, #f6e6d0 0%, transparent 55%)",
         }}
       />
-      <div className="absolute inset-0 opacity-[0.35] mix-blend-multiply"
-        style={{ backgroundImage: "radial-gradient(rgba(139,115,85,0.08) 1px, transparent 1px)", backgroundSize: "24px 24px" }} />
 
-      {/* Landing */}
-      <div className="relative mx-auto flex min-h-screen max-w-md flex-col px-6 py-14">
-        <motion.div
+      <div className="relative mx-auto flex min-h-screen max-w-md flex-col items-center px-6 py-16">
+        {/* Tagline */}
+        <motion.h1
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-4 text-center"
+          className="text-center font-display text-[2.75rem] font-semibold leading-[1.02] tracking-[-0.045em] text-ink sm:text-[3.25rem]"
         >
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-white/60 px-3 py-1 text-[10.5px] font-medium uppercase tracking-[0.2em] text-muted-foreground backdrop-blur-md ring-1 ring-black/[0.04]">
-            <span className="h-1.5 w-1.5 rounded-full bg-clay" />
-            NomadTable
-          </div>
-          <h1 className="font-display text-[2.9rem] font-semibold leading-[1.02] tracking-[-0.04em] text-ink sm:text-[3.4rem]">
-            Travel with strangers.
-            <br />
-            <span className="font-normal italic tracking-[-0.045em] text-clay">Meet as friends.</span>
-          </h1>
-          <p className="mx-auto mt-4 max-w-[18rem] text-[15px] leading-snug tracking-tight text-muted-foreground">
-            Real-life gatherings, wherever you land.
-          </p>
-        </motion.div>
+          Travel with strangers.
+          <br />
+          <span className="font-normal italic tracking-[-0.05em] text-clay">Meet as friends.</span>
+        </motion.h1>
 
-        {/* Memoji constellation */}
-        <div className="relative mx-auto my-6 h-[360px] w-full max-w-[380px]">
-          <MemojiCloud />
+        {/* Memoji sphere */}
+        <div className="mt-16 flex-1 flex items-center justify-center">
+          <MemojiSphere />
         </div>
 
-        {/* Let's start CTA */}
+        {/* CTA */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-auto flex flex-col items-center gap-3"
+          className="mt-16 flex w-full flex-col items-center gap-3"
         >
           <Button
             onClick={() => setShowAuth(true)}
-            className="h-12 w-full max-w-xs rounded-full bg-ink text-background font-medium tracking-tight shadow-[0_10px_30px_-10px_rgba(45,30,20,0.55)] hover:bg-ink/90"
+            className="h-12 w-full max-w-xs rounded-full bg-ink text-background text-[15px] font-medium tracking-tight shadow-[0_12px_32px_-12px_rgba(45,30,20,0.55)] hover:bg-ink/90"
           >
             Let's start
           </Button>
           <button
             onClick={() => { setMode("signin"); setShowAuth(true); }}
-            className="text-[13px] font-medium text-clay hover:underline"
+            className="text-[13px] font-medium text-muted-foreground hover:text-ink"
           >
-            Already have an account? Sign in
+            Already have an account?
           </button>
         </motion.div>
       </div>
@@ -228,7 +199,7 @@ function AuthPage() {
                     {mode === "signin" ? "Welcome back" : "Create your account"}
                   </h2>
                   <p className="mt-1 text-[13px] text-muted-foreground">
-                    {mode === "signin" ? "Sign in to continue exploring." : "Join the table — it takes a minute."}
+                    {mode === "signin" ? "Sign in to continue." : "Join Gobber — it takes a minute."}
                   </p>
                 </div>
                 <button
@@ -261,7 +232,7 @@ function AuthPage() {
                 )}
                 <div>
                   <Label htmlFor="email" className="text-xs">Email</Label>
-                  <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@nomad.club" className="mt-1 h-11 rounded-xl bg-card" />
+                  <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@gobber.app" className="mt-1 h-11 rounded-xl bg-card" />
                 </div>
                 <div>
                   <Label htmlFor="password" className="text-xs">Password</Label>
