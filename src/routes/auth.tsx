@@ -8,13 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Loader2, Mail, X, ChevronRight } from "lucide-react";
-import { GoogleMap } from "@/components/google-map";
-import memoji1 from "@/assets/memoji-1.png";
-import memoji2 from "@/assets/memoji-2.png";
-import memoji3 from "@/assets/memoji-3.png";
-import memoji4 from "@/assets/memoji-4.png";
-import memoji5 from "@/assets/memoji-5.png";
-import memoji6 from "@/assets/memoji-6.png";
+import memojiGroup from "@/assets/memoji-group.png";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
@@ -50,66 +44,61 @@ function GoogleIcon({ className }: { className?: string }) {
   );
 }
 
-// Individual memoji with independent breathing motion.
-type Memoji = {
-  src: string;
-  // percentage layout inside the cluster viewbox
-  x: number; y: number; size: number; z: number;
-  // motion params
-  delay: number; duration: number; amp: number; tilt: number;
-};
-
-const MEMOJIS: Memoji[] = [
-  { src: memoji2, x: 8,  y: 18, size: 88,  z: 2, delay: 0.05, duration: 5.4, amp: 6, tilt: -3 },
-  { src: memoji3, x: 26, y: 6,  size: 104, z: 3, delay: 0.18, duration: 6.2, amp: 8, tilt: 2 },
-  { src: memoji1, x: 44, y: 0,  size: 128, z: 5, delay: 0.30, duration: 5.8, amp: 9, tilt: -2 },
-  { src: memoji5, x: 62, y: 8,  size: 108, z: 4, delay: 0.42, duration: 6.4, amp: 7, tilt: 3 },
-  { src: memoji6, x: 78, y: 20, size: 94,  z: 2, delay: 0.55, duration: 5.6, amp: 6, tilt: -2 },
-  { src: memoji4, x: 36, y: 42, size: 96,  z: 1, delay: 0.68, duration: 6.0, amp: 5, tilt: 2 },
-];
-
-function MemojiCluster() {
+/** Soft glowing globe horizon at the bottom — matches the reference exactly. */
+function GlobeHorizon() {
   return (
-    <div className="relative mx-auto w-full max-w-[420px]" style={{ aspectRatio: "1.55 / 1" }}>
-      {MEMOJIS.map((m, i) => (
-        <motion.div
-          key={i}
-          initial={{ opacity: 0, y: 24, scale: 0.85 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{
-            opacity: { duration: 0.6, delay: m.delay, ease: [0.22, 1, 0.36, 1] },
-            y:       { duration: 0.9, delay: m.delay, ease: [0.34, 1.4, 0.64, 1] },
-            scale:   { duration: 0.9, delay: m.delay, ease: [0.34, 1.56, 0.64, 1] },
-          }}
-          className="absolute"
-          style={{
-            left: `${m.x}%`,
-            top: `${m.y}%`,
-            width: `${m.size}px`,
-            height: `${m.size}px`,
-            zIndex: m.z,
-          }}
-        >
-          <motion.img
-            src={m.src}
-            alt=""
-            draggable={false}
-            width={256}
-            height={256}
-            className="h-full w-full select-none"
-            style={{
-              filter: `drop-shadow(0 ${8 + m.z * 2}px ${14 + m.z * 3}px rgba(70, 45, 20, ${0.14 + m.z * 0.02}))`,
-            }}
-            animate={{ y: [0, -m.amp, 0], rotate: [0, m.tilt, 0] }}
-            transition={{
-              duration: m.duration,
-              delay: m.delay + 0.9,
-              repeat: Infinity,
-              ease: [0.45, 0, 0.55, 1],
-            }}
-          />
-        </motion.div>
-      ))}
+    <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[62vh] overflow-hidden">
+      {/* Globe curvature */}
+      <div
+        className="absolute left-1/2 -translate-x-1/2"
+        style={{
+          bottom: "-58vh",
+          width: "180vw",
+          height: "115vh",
+          borderRadius: "50%",
+          background:
+            "radial-gradient(ellipse at 50% 30%, #f7ecd4 0%, #efdfbe 30%, #e6d1a3 55%, #d9bd88 78%, #c9a76a 100%)",
+          boxShadow:
+            "inset 0 40px 80px rgba(255, 240, 210, 0.55), inset 0 -60px 120px rgba(120, 82, 40, 0.25)",
+        }}
+      />
+      {/* Faint continent silhouettes */}
+      <div
+        className="absolute inset-x-0 bottom-0 h-[62vh] opacity-[0.22] mix-blend-multiply"
+        style={{
+          backgroundImage:
+            "radial-gradient(ellipse 45% 12% at 30% 78%, #7a5a30 0%, transparent 60%), radial-gradient(ellipse 40% 10% at 68% 82%, #7a5a30 0%, transparent 60%), radial-gradient(ellipse 30% 8% at 50% 92%, #6b4d26 0%, transparent 60%)",
+        }}
+      />
+      {/* City lights sparkle */}
+      <svg className="absolute inset-0 h-full w-full opacity-70" aria-hidden>
+        {Array.from({ length: 60 }).map((_, i) => {
+          const x = (i * 37) % 100;
+          const y = 55 + ((i * 53) % 42);
+          const r = ((i * 7) % 20) / 20 < 0.5 ? 0.8 : 1.4;
+          return (
+            <circle
+              key={i}
+              cx={`${x}%`}
+              cy={`${y}%`}
+              r={r}
+              fill="#fff4d6"
+              style={{ filter: "drop-shadow(0 0 3px rgba(255, 220, 150, 0.9))" }}
+            />
+          );
+        })}
+      </svg>
+      {/* Horizon glow */}
+      <div
+        className="absolute inset-x-0"
+        style={{
+          bottom: "45vh",
+          height: "18vh",
+          background:
+            "linear-gradient(to bottom, transparent, rgba(255, 240, 210, 0.55), transparent)",
+          filter: "blur(20px)",
+        }}
+      />
     </div>
   );
 }
@@ -167,109 +156,95 @@ function AuthPage() {
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#f5eddc]">
-      {/* Warm cream wash */}
+    <div className="relative min-h-screen overflow-hidden" style={{ background: "#f4ecd9" }}>
+      {/* Cream wash */}
       <div
         className="absolute inset-0"
         style={{
           background:
-            "radial-gradient(1200px 800px at 50% -10%, #fbf4e5 0%, transparent 55%), linear-gradient(180deg, #f5eddc 0%, #efe3ca 100%)",
+            "radial-gradient(1200px 900px at 50% -5%, #fbf4e3 0%, transparent 55%), linear-gradient(180deg, #f4ecd9 0%, #eee0c2 100%)",
         }}
       />
 
-      {/* Bottom quarter map — dissolves into cream */}
-      <div
-        className="pointer-events-none absolute inset-x-0 bottom-0 z-0"
-        style={{
-          height: "26vh",
-          WebkitMaskImage:
-            "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.35) 22%, rgba(0,0,0,0.75) 55%, #000 85%)",
-          maskImage:
-            "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.35) 22%, rgba(0,0,0,0.75) 55%, #000 85%)",
-        }}
-      >
-        <motion.div
-          initial={{ opacity: 0, scale: 1.06 }}
-          animate={{ opacity: 0.85, scale: 1 }}
-          transition={{ duration: 1.6, ease: [0.22, 1, 0.36, 1] }}
-          className="h-full w-full"
-        >
-          <GoogleMap
-            pins={[]}
-            className="h-full w-full"
-            mapTypeId="satellite"
-            center={{ lat: 28, lng: 12 }}
-            zoom={2.6}
-          />
-        </motion.div>
-        {/* Warm tint over the map to blend with cream */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(180deg, rgba(245,237,220,0.55) 0%, rgba(245,237,220,0.15) 40%, rgba(239,227,202,0.35) 100%)",
-            mixBlendMode: "multiply",
-          }}
-        />
-      </div>
+      <GlobeHorizon />
 
       {/* Subtle grain */}
       <div
-        className="pointer-events-none absolute inset-0 opacity-[0.28] mix-blend-multiply"
+        className="pointer-events-none absolute inset-0 opacity-[0.25] mix-blend-multiply"
         style={{
-          backgroundImage: "radial-gradient(rgba(139,111,74,0.05) 1px, transparent 1px)",
+          backgroundImage: "radial-gradient(rgba(139,111,74,0.06) 1px, transparent 1px)",
           backgroundSize: "22px 22px",
         }}
       />
 
-      <div className="relative z-10 mx-auto flex min-h-screen max-w-md flex-col px-6 pt-16 pb-10">
-        {/* Headline — large, confident, Apple-style */}
+      <div className="relative z-10 mx-auto flex min-h-screen max-w-md flex-col px-6 pt-14 pb-8">
+        {/* Headline */}
         <motion.h1
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-          className="text-center font-serif text-[#1a1614]"
+          className="text-center font-serif"
           style={{
-            fontSize: "clamp(3.4rem, 13vw, 5rem)",
-            lineHeight: 0.94,
+            fontSize: "clamp(3rem, 12.5vw, 4.6rem)",
+            lineHeight: 0.95,
             letterSpacing: "-0.035em",
             fontWeight: 400,
           }}
         >
-          <span className="italic">Travel with</span>
+          <span className="italic" style={{ color: "#0f0d0b" }}>Travel with</span>
           <br />
-          <span className="italic">strangers.</span>
+          <span className="italic" style={{ color: "#0f0d0b" }}>strangers.</span>
           <br />
-          <span className="italic" style={{ color: "#8a6a48", display: "inline-block", marginTop: "0.12em" }}>
+          <span className="italic" style={{ color: "#7a5a3c", display: "inline-block", marginTop: "0.14em" }}>
             Meet as friends.
           </span>
         </motion.h1>
 
-        <motion.p
+        {/* Divider + subtitle */}
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.9, delay: 0.4 }}
-          className="mt-5 text-center text-[14px] text-[#9a8770] tracking-[-0.005em]"
+          transition={{ duration: 0.9, delay: 0.35 }}
+          className="mt-6 flex items-center justify-center gap-3"
         >
-          Real-life gatherings, wherever you land.
-        </motion.p>
+          <span className="h-px w-6 bg-[#c9b696]" />
+          <p className="text-[13.5px] text-[#8f7c5f] tracking-[-0.005em]">
+            Real-life gatherings, wherever you land.
+          </p>
+          <span className="h-px w-6 bg-[#c9b696]" />
+        </motion.div>
 
-        {/* Memoji cluster — individual, independently animated */}
-        <div className="mt-8 flex-1 flex items-center justify-center">
-          <MemojiCluster />
-        </div>
+        {/* Memoji bundle — exact match from reference */}
+        <motion.div
+          initial={{ opacity: 0, y: 20, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 1, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-6 flex flex-1 items-center justify-center"
+        >
+          <motion.img
+            src={memojiGroup}
+            alt="Group of friends"
+            draggable={false}
+            className="w-[78%] max-w-[360px] select-none"
+            style={{
+              filter: "drop-shadow(0 22px 40px rgba(90, 60, 25, 0.22)) drop-shadow(0 6px 14px rgba(90, 60, 25, 0.14))",
+            }}
+            animate={{ y: [0, -6, 0] }}
+            transition={{ duration: 6.5, repeat: Infinity, ease: [0.45, 0, 0.55, 1] }}
+          />
+        </motion.div>
 
         {/* CTAs */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          className="relative z-10 mt-6 flex w-full flex-col items-center gap-2.5"
+          className="relative z-10 mt-4 flex w-full flex-col items-center gap-2.5"
         >
           <PressButton
             onClick={apple}
             disabled={loading}
-            className="bg-[#141210] text-white shadow-[0_16px_38px_-18px_rgba(20,18,16,0.7)] hover:bg-black"
+            className="bg-[#141210] text-white shadow-[0_18px_40px_-18px_rgba(20,18,16,0.7)] hover:bg-black"
           >
             <AppleIcon className="mr-2 h-[19px] w-[19px]" />
             Continue with Apple
@@ -277,7 +252,7 @@ function AuthPage() {
           <PressButton
             onClick={google}
             disabled={loading}
-            className="bg-white text-[#1a1614] shadow-[0_10px_28px_-16px_rgba(0,0,0,0.28)] hover:bg-white"
+            className="bg-white text-[#1a1614] shadow-[0_12px_30px_-16px_rgba(0,0,0,0.28)] hover:bg-white"
           >
             <GoogleIcon className="mr-2 h-[19px] w-[19px]" />
             Continue with Google
@@ -285,7 +260,7 @@ function AuthPage() {
           <PressButton
             onClick={() => setShowAuth(true)}
             disabled={loading}
-            className="bg-white/70 text-[#1a1614] backdrop-blur-xl shadow-[0_10px_28px_-16px_rgba(0,0,0,0.22)] hover:bg-white/80 ring-1 ring-black/[0.04]"
+            className="bg-white text-[#1a1614] shadow-[0_12px_30px_-16px_rgba(0,0,0,0.24)] hover:bg-white"
           >
             <Mail className="mr-2 h-[18px] w-[18px]" />
             Continue with Email
