@@ -89,48 +89,53 @@ function Discover() {
       />
 
       {/* Top gradient */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-40 bg-gradient-to-b from-background/70 to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-48 bg-gradient-to-b from-[#f5eddc]/85 via-[#f5eddc]/40 to-transparent" />
 
       {/* Header */}
       <motion.div
-        initial={{ y: -20, opacity: 0 }}
+        initial={{ y: -12, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        className="relative z-30 px-4 pt-safe-4 pt-6 sm:px-6"
+        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+        className="relative z-30 px-5 pt-8 sm:px-7"
       >
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex items-end justify-between gap-3">
           <div>
-            <p className="text-[11px] font-medium uppercase tracking-widest text-muted-foreground">Right now</p>
-            <h1 className="text-2xl font-semibold tracking-tight text-ink">Discover</h1>
+            <p className="text-[10.5px] font-medium uppercase tracking-[0.22em] text-[#9a8770]">Right now</p>
+            <h1 className="mt-1 font-serif italic text-[42px] leading-[0.95] tracking-[-0.028em] text-[#0f0d0b]">
+              Discover.
+            </h1>
           </div>
           <MapTypeToggle value={mapView} onChange={setMapView} />
         </div>
 
-        <div className="mt-4 flex items-center gap-2 rounded-full glass px-4 py-2.5 shadow-glass">
-          <Search className="h-4 w-4 text-muted-foreground" />
+        <div
+          className="mt-5 flex items-center gap-2.5 rounded-full px-4 py-3 ring-1 ring-black/[0.04]"
+          style={{
+            background: "color-mix(in oklab, white 72%, transparent)",
+            backdropFilter: "saturate(180%) blur(24px)",
+            WebkitBackdropFilter: "saturate(180%) blur(24px)",
+            boxShadow: "0 1px 2px rgba(60,42,20,0.04), 0 10px 30px -18px rgba(60,42,20,0.15)",
+          }}
+        >
+          <Search className="h-4 w-4 text-[#9a8770]" strokeWidth={2} />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Where to? Lisbon, Tokyo, Bali..."
-            className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+            placeholder="Where to? Lisbon, Tokyo, Bali…"
+            className="w-full bg-transparent text-[14px] outline-none placeholder:text-[#b3a48a] text-[#1a1614]"
           />
         </div>
 
-        <div className="mt-3 flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          <button
-            onClick={() => setCategory(null)}
-            className={`shrink-0 rounded-full px-4 py-1.5 text-xs font-medium transition ${!category ? "bg-primary text-primary-foreground" : "glass text-foreground"}`}
-          >
-            All
-          </button>
+        <div className="mt-4 flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <CategoryChip active={!category} onClick={() => setCategory(null)}>All</CategoryChip>
           {CATEGORIES.map((c) => (
-            <button
+            <CategoryChip
               key={c.id}
+              active={category === c.id}
               onClick={() => setCategory(c.id === category ? null : c.id)}
-              className={`shrink-0 rounded-full px-4 py-1.5 text-xs font-medium transition ${category === c.id ? "bg-primary text-primary-foreground" : "glass text-foreground"}`}
             >
               <span className="mr-1">{c.icon}</span>{c.label}
-            </button>
+            </CategoryChip>
           ))}
         </div>
       </motion.div>
