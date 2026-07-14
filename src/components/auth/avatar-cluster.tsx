@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useMemo } from "react";
+import { useMemo, type ReactNode } from "react";
 import owl from "@/assets/avatars/owl.png";
 import cap from "@/assets/avatars/cap.png";
 import hijab from "@/assets/avatars/hijab.png";
@@ -11,74 +11,98 @@ import dog from "@/assets/avatars/dog.png";
 import glasses from "@/assets/avatars/glasses.png";
 import mustache from "@/assets/avatars/mustache.png";
 
-type AvatarSpec = {
+// Ordered around the ring for pleasing visual rhythm — alternating
+// human faces and creatures, warm/cool tones spaced evenly.
+const RING = [
+  mustache,
+  owl,
+  hijab,
+  shark,
+  glasses,
+  dog,
+  poop,
+  unicorn,
+  blue,
+  cap,
+];
+
+type OrbitSpec = {
   src: string;
-  /** relative position from cluster center, in cluster-width units */
-  x: number;
-  y: number;
-  /** size in cluster-width units (1 = full width) */
-  size: number;
-  /** stacking — center forward, edges recede */
-  z: number;
-  rotate: number;
-  /** breathing rhythm per avatar so they never feel synced */
+  /** angle in degrees, 0 = top, clockwise */
+  angle: number;
+  /** slight radius variance to feel organic without breaking symmetry */
+  radiusScale: number;
+  /** small size variance — subtle only */
+  sizeScale: number;
   breathDuration: number;
   breathDelay: number;
   floatAmp: number;
 };
 
-// Composition inspired by a close group photo — asymmetric, ~15–20% overlap,
-// center avatars slightly forward, surrounding avatars angled inward.
-const AVATARS: AvatarSpec[] = [
-  // back row — smaller, receding
-  { src: owl,      x: -0.40, y: -0.20, size: 0.30, z: 2, rotate: -8, breathDuration: 5.6, breathDelay: 0.0, floatAmp: 3 },
-  { src: cap,      x: -0.20, y: -0.28, size: 0.32, z: 3, rotate: -3, breathDuration: 6.4, breathDelay: 0.6, floatAmp: 4 },
-  { src: hijab,    x:  0.06, y: -0.30, size: 0.34, z: 4, rotate:  1, breathDuration: 7.0, breathDelay: 0.3, floatAmp: 4 },
-  { src: shark,    x:  0.32, y: -0.24, size: 0.32, z: 2, rotate:  6, breathDuration: 5.8, breathDelay: 1.0, floatAmp: 3 },
-  { src: glasses,  x:  0.44, y: -0.06, size: 0.30, z: 2, rotate: 10, breathDuration: 6.2, breathDelay: 0.5, floatAmp: 3 },
-  // front row — larger, forward
-  { src: blue,     x: -0.34, y:  0.08, size: 0.34, z: 5, rotate: -4, breathDuration: 6.6, breathDelay: 0.9, floatAmp: 4 },
-  { src: mustache, x: -0.10, y:  0.06, size: 0.38, z: 6, rotate: -1, breathDuration: 7.2, breathDelay: 0.2, floatAmp: 5 },
-  { src: unicorn,  x:  0.14, y:  0.02, size: 0.42, z: 7, rotate:  2, breathDuration: 7.6, breathDelay: 0.4, floatAmp: 5 }, // center-forward
-  { src: dog,      x:  0.36, y:  0.12, size: 0.34, z: 5, rotate:  6, breathDuration: 6.4, breathDelay: 1.2, floatAmp: 4 },
-  { src: poop,     x:  0.04, y:  0.26, size: 0.28, z: 4, rotate: -2, breathDuration: 5.9, breathDelay: 0.7, floatAmp: 3 },
-];
+function buildOrbits(): OrbitSpec[] {
+  const n = RING.length;
+  return RING.map((src, i) => {
+    // Even angular distribution, offset so no avatar sits dead-top
+    const angle = (360 / n) * i - 90 + 18;
+    // Alternate radius by ±3% — Apple-style near-symmetric variance
+    const radiusScale = i % 2 === 0 ? 1.0 : 0.97;
+    const sizeScale = i % 2 === 0 ? 1.0 : 0.94;
+    return {
+      src,
+      angle,
+      radiusScale,
+      sizeScale,
+      breathDuration: 5.6 + (i % 4) * 0.4,
+      breathDelay: (i * 0.17) % 1.4,
+      floatAmp: 2.5 + (i % 3),
+    };
+  });
+}
 
-/** Individual avatar — breathes, floats, tilts on its own rhythm. */
-function Avatar({ spec, clusterPx }: { spec: AvatarSpec; clusterPx: number }) {
-  const size = spec.size * clusterPx;
-  const left = clusterPx / 2 + spec.x * clusterPx - size / 2;
-  const top = clusterPx / 2 + spec.y * clusterPx - size / 2;
+function Orbiter({
+  spec,
+  clusterPx,
+  radiusPx,
+  avatarPx,
+}: {
+  spec: OrbitSpec;
+  clusterPx: number;
+  radiusPx: number;
+  avatarPx: number;
+}) {
+  const size = avatarPx * spec.sizeScale;
+  const r = radiusPx * spec.radiusScale;
+  const rad = (spec.angle * Math.PI) / 180;
+  const cx = clusterPx / 2 + Math.cos(rad) * r;
+  const cy = clusterPx / 2 + Math.sin(rad) * r;
 
-  // Softer shadow for edge avatars, richer for the center one
-  const shadowIntensity = 0.14 + (spec.z / 8) * 0.14;
+  // Tilt each avatar slightly toward the center for a group-photo feel
+  const inwardTilt = -Math.cos(rad + Math.PI / 2) * 6;
 
   return (
     <motion.div
       className="absolute"
       style={{
-        left,
-        top,
+        left: cx - size / 2,
+        top: cy - size / 2,
         width: size,
         height: size,
-        zIndex: spec.z,
         transformOrigin: "50% 60%",
       }}
-      initial={{ opacity: 0, y: 12, scale: 0.88 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
+      initial={{ opacity: 0, scale: 0.7 }}
+      animate={{ opacity: 1, scale: 1 }}
       transition={{
-        duration: 0.9,
-        delay: 0.35 + spec.breathDelay * 0.08,
+        duration: 0.8,
+        delay: 0.25 + spec.breathDelay * 0.1,
         ease: [0.22, 1, 0.36, 1],
       }}
     >
-      {/* Independent breathing + floating loop */}
       <motion.div
         className="h-full w-full"
         animate={{
           y: [0, -spec.floatAmp, 0, spec.floatAmp * 0.4, 0],
-          rotate: [spec.rotate, spec.rotate + 1.2, spec.rotate - 0.6, spec.rotate],
-          scale: [1, 1.012, 1, 0.996, 1],
+          rotate: [inwardTilt, inwardTilt + 1.2, inwardTilt - 0.6, inwardTilt],
+          scale: [1, 1.015, 1, 0.995, 1],
         }}
         transition={{
           duration: spec.breathDuration,
@@ -87,15 +111,16 @@ function Avatar({ spec, clusterPx }: { spec: AvatarSpec; clusterPx: number }) {
           ease: [0.45, 0, 0.55, 1],
         }}
       >
-        {/* Ambient contact shadow — grounds the avatar into the scene */}
+        {/* contact shadow */}
         <div
           className="absolute left-1/2 -translate-x-1/2 rounded-[50%]"
           style={{
-            bottom: -size * 0.06,
-            width: size * 0.72,
-            height: size * 0.12,
-            background: `radial-gradient(ellipse at center, rgba(78, 52, 22, ${shadowIntensity}) 0%, transparent 70%)`,
-            filter: "blur(6px)",
+            bottom: -size * 0.05,
+            width: size * 0.7,
+            height: size * 0.11,
+            background:
+              "radial-gradient(ellipse at center, rgba(78, 52, 22, 0.22) 0%, transparent 70%)",
+            filter: "blur(5px)",
           }}
         />
         <img
@@ -104,7 +129,8 @@ function Avatar({ spec, clusterPx }: { spec: AvatarSpec; clusterPx: number }) {
           draggable={false}
           className="relative h-full w-full select-none object-contain"
           style={{
-            filter: `drop-shadow(0 ${6 + spec.z}px ${12 + spec.z * 2}px rgba(78, 52, 22, ${0.14 + spec.z * 0.02}))`,
+            filter:
+              "drop-shadow(0 8px 16px rgba(78, 52, 22, 0.18)) drop-shadow(0 2px 4px rgba(78, 52, 22, 0.12))",
           }}
         />
       </motion.div>
@@ -113,29 +139,73 @@ function Avatar({ spec, clusterPx }: { spec: AvatarSpec; clusterPx: number }) {
 }
 
 /**
- * Cluster of independently-animated avatars arranged like a close group photo.
- * Every avatar is its own component with its own animation rhythm.
+ * Symmetric ring of independently-animated avatars orbiting a center slot.
+ * Pass `centerSlot` (e.g. a logo) to render at the middle.
  */
-export function AvatarCluster({ sizePx = 340 }: { sizePx?: number }) {
-  const avatars = useMemo(() => AVATARS, []);
+export function AvatarCluster({
+  sizePx = 360,
+  centerSlot,
+}: {
+  sizePx?: number;
+  centerSlot?: ReactNode;
+}) {
+  const orbits = useMemo(buildOrbits, []);
+  // Ring geometry — avatars sit on a circle at ~38% of cluster width
+  const radiusPx = sizePx * 0.36;
+  const avatarPx = sizePx * 0.22;
+  const centerPx = sizePx * 0.28;
+
   return (
     <div
       className="relative mx-auto"
-      style={{ width: sizePx, height: sizePx * 0.88 }}
-      aria-hidden
+      style={{ width: sizePx, height: sizePx }}
     >
-      {/* Ambient scene light behind the group — integrates them into the background */}
+      {/* Ambient scene light behind the group */}
       <div
         className="absolute inset-0 -z-10"
+        aria-hidden
         style={{
           background:
-            "radial-gradient(60% 55% at 50% 55%, rgba(255, 236, 200, 0.55) 0%, transparent 70%)",
-          filter: "blur(6px)",
+            "radial-gradient(58% 58% at 50% 50%, rgba(255, 236, 200, 0.55) 0%, transparent 72%)",
+          filter: "blur(8px)",
         }}
       />
-      {avatars.map((spec, i) => (
-        <Avatar key={i} spec={spec} clusterPx={sizePx} />
+
+      {orbits.map((spec, i) => (
+        <Orbiter
+          key={i}
+          spec={spec}
+          clusterPx={sizePx}
+          radiusPx={radiusPx}
+          avatarPx={avatarPx}
+        />
       ))}
+
+      {/* Center slot — logo goes here */}
+      <motion.div
+        className="absolute left-1/2 top-1/2 flex items-center justify-center"
+        style={{
+          width: centerPx,
+          height: centerPx,
+          marginLeft: -centerPx / 2,
+          marginTop: -centerPx / 2,
+        }}
+        initial={{ opacity: 0, scale: 0.85 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.9, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+      >
+        {centerSlot ?? (
+          <div
+            className="h-full w-full rounded-full"
+            style={{
+              background:
+                "radial-gradient(circle at 35% 30%, #ffffff 0%, #f4ece0 55%, #e7dcc9 100%)",
+              boxShadow:
+                "0 10px 30px -8px rgba(78, 52, 22, 0.28), inset 0 1px 0 rgba(255,255,255,0.9)",
+            }}
+          />
+        )}
+      </motion.div>
     </div>
   );
 }
