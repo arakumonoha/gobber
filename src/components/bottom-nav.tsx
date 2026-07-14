@@ -1,12 +1,12 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Compass, PlusCircle, CalendarHeart, User, Globe2 } from "lucide-react";
+import { Compass, Plus, CalendarHeart, User, Globe2 } from "lucide-react";
 import { motion } from "framer-motion";
 
 type NavItem = { to: "/" | "/explore" | "/trips" | "/host" | "/profile"; icon: typeof Compass; label: string; featured?: boolean };
 const items: NavItem[] = [
   { to: "/", icon: Compass, label: "Discover" },
   { to: "/explore", icon: Globe2, label: "Explore" },
-  { to: "/host", icon: PlusCircle, label: "Host", featured: true },
+  { to: "/host", icon: Plus, label: "Host", featured: true },
   { to: "/trips", icon: CalendarHeart, label: "Trips" },
   { to: "/profile", icon: User, label: "Profile" },
 ];
@@ -15,29 +15,79 @@ export function BottomNav() {
   const loc = useLocation();
   return (
     <motion.nav
-      initial={{ y: 80, opacity: 0 }}
+      initial={{ y: 40, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ delay: 0.2, type: "spring", stiffness: 220, damping: 24 }}
-      className="fixed inset-x-0 bottom-0 z-40 px-4 pb-4 pt-2 sm:px-6"
+      transition={{ delay: 0.15, type: "spring", stiffness: 260, damping: 28 }}
+      className="fixed inset-x-0 bottom-0 z-40 px-4 pb-5 pt-2 sm:px-6"
     >
-      <div className="mx-auto flex max-w-md items-center justify-around rounded-full glass px-2 py-2 shadow-float">
+      <div
+        className="mx-auto flex max-w-[420px] items-center justify-between rounded-full px-2.5 py-2 ring-1 ring-black/[0.04]"
+        style={{
+          background: "color-mix(in oklab, white 78%, transparent)",
+          backdropFilter: "saturate(180%) blur(28px)",
+          WebkitBackdropFilter: "saturate(180%) blur(28px)",
+          boxShadow:
+            "0 1px 2px rgba(50,34,15,0.05), 0 20px 60px -24px rgba(50,34,15,0.22)",
+        }}
+      >
         {items.map((item) => {
-          const active = loc.pathname === item.to || (item.to === "/" && loc.pathname === "/");
+          const active = loc.pathname === item.to;
           const Icon = item.icon;
+          if (item.featured) {
+            return (
+              <Link
+                key={item.to}
+                to={item.to}
+                aria-label={item.label}
+                className="group relative -my-2 flex h-12 w-12 items-center justify-center rounded-full text-white transition"
+                style={{
+                  background: "linear-gradient(180deg, #1c1815 0%, #0a0908 100%)",
+                  boxShadow:
+                    "0 10px 28px -12px rgba(20,18,16,0.65), inset 0 1px 0 rgba(255,255,255,0.12)",
+                }}
+              >
+                <motion.span
+                  whileTap={{ scale: 0.9 }}
+                  whileHover={{ scale: 1.04 }}
+                  transition={{ type: "spring", stiffness: 380, damping: 22 }}
+                  className="flex h-full w-full items-center justify-center"
+                >
+                  <Icon className="h-[19px] w-[19px]" strokeWidth={2.2} />
+                </motion.span>
+              </Link>
+            );
+          }
           return (
             <Link
               key={item.to}
               to={item.to}
-              className={`relative flex flex-col items-center gap-0.5 rounded-full px-4 py-2 text-[10px] font-medium transition ${
-                item.featured
-                  ? "bg-primary text-primary-foreground -my-1 shadow-lg"
-                  : active
-                  ? "text-clay"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
+              className="relative flex flex-1 flex-col items-center gap-0.5 py-1.5"
             >
-              <Icon className={item.featured ? "h-5 w-5" : "h-[18px] w-[18px]"} strokeWidth={active || item.featured ? 2.4 : 1.8} />
-              <span>{item.label}</span>
+              <motion.div
+                whileTap={{ scale: 0.92 }}
+                className="flex flex-col items-center"
+              >
+                <Icon
+                  className={`h-[19px] w-[19px] transition-colors ${
+                    active ? "text-[#1a1614]" : "text-[#9a8770]"
+                  }`}
+                  strokeWidth={active ? 2.2 : 1.7}
+                />
+                <span
+                  className={`mt-0.5 text-[9.5px] tracking-[0.02em] transition-colors ${
+                    active ? "font-semibold text-[#1a1614]" : "font-medium text-[#9a8770]"
+                  }`}
+                >
+                  {item.label}
+                </span>
+              </motion.div>
+              {active && (
+                <motion.span
+                  layoutId="nav-dot"
+                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                  className="absolute -top-0.5 h-1 w-1 rounded-full bg-[#1a1614]"
+                />
+              )}
             </Link>
           );
         })}

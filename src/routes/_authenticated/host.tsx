@@ -13,7 +13,7 @@ import { BottomNav } from "@/components/bottom-nav";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/host")({
-  head: () => ({ meta: [{ title: "Host a gathering — NomadTable" }] }),
+  head: () => ({ meta: [{ title: "Host a gathering — Gobber" }] }),
   component: HostPage,
 });
 
