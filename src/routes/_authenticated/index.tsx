@@ -232,6 +232,22 @@ function Discover() {
   );
 }
 
+function CategoryChip({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+  return (
+    <motion.button
+      whileTap={{ scale: 0.94 }}
+      onClick={onClick}
+      className={`shrink-0 rounded-full px-4 py-1.5 text-[12px] font-medium tracking-[-0.005em] transition ring-1 ${
+        active
+          ? "bg-[#1a1614] text-white ring-transparent shadow-[0_8px_20px_-10px_rgba(20,18,16,0.5)]"
+          : "bg-white/70 text-[#5a4a35] ring-black/[0.04] backdrop-blur-xl"
+      }`}
+    >
+      {children}
+    </motion.button>
+  );
+}
+
 function ActivityCard({
   a,
   onClick,
@@ -246,27 +262,28 @@ function ActivityCard({
   return (
     <motion.button
       data-id={a.id}
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 10 }}
-      transition={{ delay, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-      whileTap={{ scale: 0.97 }}
+      exit={{ opacity: 0, y: 8 }}
+      transition={{ delay, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      whileHover={{ y: -3 }}
+      whileTap={{ scale: 0.98 }}
       onClick={onClick}
-      className={`group w-64 shrink-0 snap-center overflow-hidden rounded-2xl bg-card text-left shadow-glass transition ${
-        active ? "ring-2 ring-primary/70 -translate-y-0.5" : ""
+      className={`group w-[260px] shrink-0 snap-center overflow-hidden rounded-[22px] bg-white text-left ring-1 ring-black/[0.04] transition-shadow ${
+        active ? "shadow-[0_20px_50px_-24px_rgba(50,34,15,0.32)]" : "shadow-[0_10px_28px_-18px_rgba(50,34,15,0.18)]"
       }`}
     >
       <div
-        className="h-32 w-full bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+        className="h-36 w-full bg-cover bg-center transition-transform duration-[900ms] group-hover:scale-[1.04]"
         style={{ backgroundImage: `url(${a.cover_url ?? "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=1200&q=80"})` }}
       />
-      <div className="p-3">
-        <p className="text-[10px] font-medium uppercase tracking-widest text-clay">{a.category}</p>
-        <h3 className="mt-0.5 line-clamp-1 text-sm font-semibold text-ink">{a.title}</h3>
-        <div className="mt-1.5 flex items-center gap-1 text-[11px] text-muted-foreground">
-          <MapPin className="h-3 w-3" />
+      <div className="p-4">
+        <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-[#8b7355]">{a.category}</p>
+        <h3 className="mt-1 line-clamp-1 font-serif italic text-[19px] leading-tight tracking-[-0.02em] text-[#0f0d0b]">{a.title}</h3>
+        <div className="mt-2 flex items-center gap-1.5 text-[11.5px] text-[#9a8770]">
+          <MapPin className="h-3 w-3" strokeWidth={2} />
           <span className="line-clamp-1">{a.city}, {a.country}</span>
-          <span className="mx-1">·</span>
+          <span className="mx-0.5">·</span>
           <span>{format(new Date(a.starts_at), "MMM d")}</span>
         </div>
       </div>
