@@ -81,16 +81,20 @@ function AuthPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="mb-8 text-center"
+          className="mb-10 text-center"
         >
-          <div className="mb-3 inline-flex items-center gap-2 rounded-full glass px-3 py-1 text-xs font-medium text-muted-foreground">
+          <div className="mb-5 inline-flex items-center gap-2 rounded-full glass px-3 py-1 text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
             <span className="h-1.5 w-1.5 rounded-full bg-clay" />
             NomadTable
           </div>
-          <h1 className="text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
-            Travel with strangers.<br /><span className="italic text-clay">Meet as friends.</span>
+          <h1 className="font-display text-[2.6rem] font-semibold leading-[1.02] tracking-[-0.035em] text-ink sm:text-[3.4rem]">
+            Travel with strangers.
+            <br />
+            <span className="font-normal italic tracking-[-0.04em] text-clay">Meet as friends.</span>
           </h1>
-          <p className="mt-3 text-sm text-muted-foreground">Real-life gatherings, wherever you land.</p>
+          <p className="mx-auto mt-4 max-w-xs text-[15px] font-normal leading-snug tracking-tight text-muted-foreground">
+            Real-life gatherings, wherever you land.
+          </p>
         </motion.div>
 
         <motion.div
