@@ -8,15 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Loader2, Mail, X, ChevronRight } from "lucide-react";
-
-import memoji1 from "@/assets/memoji-1.png";
-import memoji2 from "@/assets/memoji-2.png";
-import memoji3 from "@/assets/memoji-3.png";
-import memoji4 from "@/assets/memoji-4.png";
-import memoji5 from "@/assets/memoji-5.png";
-import memoji6 from "@/assets/memoji-6.png";
-import memoji7 from "@/assets/memoji-7.png";
-import memoji8 from "@/assets/memoji-8.png";
+import memojiBundle from "@/assets/memoji-bundle.png";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
@@ -49,61 +41,6 @@ function GoogleIcon({ className }: { className?: string }) {
       <path fill="#FBBC05" d="M5.84 14.1c-.22-.66-.35-1.36-.35-2.1s.13-1.44.35-2.1V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
       <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84C6.71 7.31 9.14 5.38 12 5.38z"/>
     </svg>
-  );
-}
-
-// Cluster positions — mimicking the reference bundle
-// x/y are percentages of the container; size is width in px at base scale.
-const MEMOJIS = [
-  // Back row
-  { src: memoji2, x: 20, y: 6,  size: 118, z: 2, delay: 0.15 }, // beanie girl left-back
-  { src: memoji3, x: 42, y: 0,  size: 128, z: 2, delay: 0.35 }, // blonde center-back
-  { src: memoji4, x: 66, y: 4,  size: 128, z: 2, delay: 0.55 }, // afro right-back
-  // Front row
-  { src: memoji1, x: 6,  y: 34, size: 118, z: 3, delay: 0.75 }, // asian tongue front-left
-  { src: memoji5, x: 26, y: 42, size: 120, z: 4, delay: 0.20 }, // beret girl
-  { src: memoji6, x: 46, y: 40, size: 122, z: 5, delay: 0.45 }, // green beanie tongue center
-  { src: memoji7, x: 64, y: 42, size: 118, z: 4, delay: 0.30 }, // heart girl
-  { src: memoji8, x: 80, y: 36, size: 118, z: 3, delay: 0.60 }, // glasses asian right
-];
-
-function MemojiCluster() {
-  return (
-    <div className="relative mx-auto w-full max-w-[420px] aspect-[420/280]">
-      {MEMOJIS.map((m, i) => (
-        <motion.img
-          key={i}
-          src={m.src}
-          alt=""
-          initial={{ opacity: 0, scale: 0.6, y: 20 }}
-          animate={{
-            opacity: 1,
-            scale: 1,
-            y: [0, -8, 0],
-          }}
-          transition={{
-            opacity: { duration: 0.5, delay: 0.1 + i * 0.05 },
-            scale: { duration: 0.7, delay: 0.1 + i * 0.05, ease: [0.34, 1.56, 0.64, 1] },
-            y: {
-              duration: 3.2 + (i % 3) * 0.4,
-              delay: 1 + m.delay,
-              repeat: Infinity,
-              ease: [0.45, 0, 0.55, 1],
-            },
-          }}
-          draggable={false}
-          className="absolute select-none"
-          style={{
-            left: `${m.x}%`,
-            top: `${m.y}%`,
-            width: `${m.size}px`,
-            height: `${m.size}px`,
-            zIndex: m.z,
-            filter: "drop-shadow(0 10px 20px rgba(80, 55, 30, 0.18))",
-          }}
-        />
-      ))}
-    </div>
   );
 }
 
@@ -160,76 +97,105 @@ function AuthPage() {
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#f5ecdc]">
+    <div className="relative min-h-screen overflow-hidden bg-[#f4ecdd]">
       {/* Warm cream wash */}
       <div
         className="absolute inset-0"
         style={{
           background:
-            "radial-gradient(1200px 800px at 50% -10%, #fbf4e5 0%, transparent 55%), radial-gradient(900px 700px at 50% 100%, #e8d6b4 0%, transparent 60%)",
+            "radial-gradient(1200px 900px at 50% -15%, #fbf4e6 0%, transparent 55%), radial-gradient(1100px 800px at 50% 105%, #ead4a8 0%, transparent 62%)",
         }}
       />
 
-      {/* Blended globe — bottom horizon */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[55%] overflow-hidden">
+      {/* Prominent globe horizon at bottom, with city lights */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[60%] overflow-hidden">
         <svg
           className="absolute left-1/2 -translate-x-1/2"
-          style={{ bottom: "-45%", opacity: 0.5 }}
-          width="1400" height="1400" viewBox="0 0 1400 1400" fill="none" aria-hidden
+          style={{ bottom: "-58%" }}
+          width="1600" height="1600" viewBox="0 0 1600 1600" fill="none" aria-hidden
         >
           <defs>
-            <radialGradient id="globeGlow" cx="50%" cy="35%" r="60%">
-              <stop offset="0%" stopColor="#fff6e4" stopOpacity="0.9" />
-              <stop offset="45%" stopColor="#e8d0a4" stopOpacity="0.6" />
-              <stop offset="100%" stopColor="#c9a870" stopOpacity="0" />
+            <radialGradient id="globeBody" cx="50%" cy="30%" r="65%">
+              <stop offset="0%" stopColor="#fff2d6" stopOpacity="1" />
+              <stop offset="40%" stopColor="#f2d9a8" stopOpacity="0.85" />
+              <stop offset="75%" stopColor="#c99a5c" stopOpacity="0.55" />
+              <stop offset="100%" stopColor="#8a6535" stopOpacity="0" />
             </radialGradient>
-            <radialGradient id="globeStroke" cx="50%" cy="30%" r="70%">
-              <stop offset="0%" stopColor="#a68556" stopOpacity="0.5" />
-              <stop offset="100%" stopColor="#a68556" stopOpacity="0" />
+            <radialGradient id="globeRim" cx="50%" cy="25%" r="70%">
+              <stop offset="60%" stopColor="#8a6535" stopOpacity="0" />
+              <stop offset="88%" stopColor="#8a6535" stopOpacity="0.35" />
+              <stop offset="100%" stopColor="#5a3f1c" stopOpacity="0.7" />
+            </radialGradient>
+            <radialGradient id="topFade" cx="50%" cy="0%" r="55%">
+              <stop offset="0%" stopColor="#f4ecdd" stopOpacity="1" />
+              <stop offset="100%" stopColor="#f4ecdd" stopOpacity="0" />
             </radialGradient>
           </defs>
-          <circle cx="700" cy="700" r="620" fill="url(#globeGlow)" />
-          <g stroke="url(#globeStroke)" strokeWidth="1.2" fill="none">
-            <circle cx="700" cy="700" r="620" />
-            <ellipse cx="700" cy="700" rx="620" ry="200" />
-            <ellipse cx="700" cy="700" rx="620" ry="380" />
-            <ellipse cx="700" cy="700" rx="380" ry="620" />
-            <ellipse cx="700" cy="700" rx="200" ry="620" />
+
+          {/* Globe body */}
+          <circle cx="800" cy="800" r="720" fill="url(#globeBody)" />
+          <circle cx="800" cy="800" r="720" fill="url(#globeRim)" />
+
+          {/* Coastline / continent hints (very subtle organic shapes) */}
+          <g opacity="0.28" fill="#a37540">
+            <path d="M320 1050 Q 420 1010, 520 1055 T 720 1070 Q 800 1075, 880 1050 T 1080 1080 Q 1180 1095, 1280 1060 L 1300 1120 Q 1160 1160, 1000 1140 T 700 1150 Q 520 1145, 360 1120 Z" />
+            <path d="M240 1240 Q 380 1210, 540 1245 T 820 1260 Q 1000 1265, 1180 1240 T 1360 1250 L 1370 1310 Q 1160 1350, 940 1330 T 560 1330 Q 380 1320, 220 1300 Z" />
+            <path d="M420 900 Q 500 880, 580 905 T 720 915 L 730 940 Q 620 950, 500 940 T 400 930 Z" />
+            <path d="M900 880 Q 1000 860, 1100 895 T 1240 910 L 1250 940 Q 1120 955, 980 940 T 880 920 Z" />
           </g>
-          {/* Sparkles */}
-          {[
-            [280, 780], [1120, 820], [420, 980], [980, 1000], [640, 900], [820, 860], [340, 900], [1060, 940],
-          ].map(([cx, cy], i) => (
-            <g key={i} transform={`translate(${cx} ${cy})`} opacity="0.7">
-              <circle r="1.5" fill="#fff5d6" />
-              <circle r="4" fill="#fff5d6" opacity="0.25" />
-            </g>
-          ))}
+
+          {/* City lights */}
+          <g fill="#fff1c8">
+            {[
+              [380,1080,1.6],[430,1105,1.2],[510,1090,1.8],[560,1120,1.3],
+              [640,1075,1.5],[700,1105,2],[770,1090,1.4],[840,1115,1.7],
+              [920,1080,1.6],[985,1110,2.2],[1050,1085,1.5],[1120,1115,1.4],
+              [1190,1090,1.7],[1260,1120,1.3],
+              [300,1245,1.5],[380,1265,1.8],[470,1250,1.4],[560,1275,2],
+              [650,1255,1.6],[740,1280,1.5],[830,1260,1.9],[920,1285,1.5],
+              [1010,1265,1.7],[1100,1290,1.4],[1200,1270,1.8],[1290,1290,1.3],
+              [1380,1265,1.5],
+              [460,910,1.2],[540,925,1.4],[620,915,1.1],[700,930,1.3],
+              [960,905,1.3],[1040,920,1.5],[1120,912,1.2],[1200,930,1.4],
+            ].map(([cx, cy, r], i) => (
+              <g key={i}>
+                <circle cx={cx} cy={cy} r={r as number} opacity="0.95" />
+                <circle cx={cx} cy={cy} r={(r as number) * 3.5} opacity="0.18" />
+              </g>
+            ))}
+          </g>
+
+          {/* Top fade to blend into cream */}
+          <rect x="0" y="0" width="1600" height="600" fill="url(#topFade)" />
         </svg>
       </div>
 
       {/* Subtle grain */}
-      <div className="pointer-events-none absolute inset-0 opacity-[0.35] mix-blend-multiply"
+      <div className="pointer-events-none absolute inset-0 opacity-[0.3] mix-blend-multiply"
         style={{ backgroundImage: "radial-gradient(rgba(139,111,74,0.05) 1px, transparent 1px)", backgroundSize: "22px 22px" }} />
 
-      <div className="relative mx-auto flex min-h-screen max-w-md flex-col items-center px-6 pt-16 pb-8">
-        {/* Headline */}
+      <div className="relative mx-auto flex min-h-screen max-w-md flex-col items-center px-6 pt-14 pb-8">
+        {/* Headline — bold serif, matching reference exactly */}
         <motion.h1
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-          className="text-center font-serif font-normal text-[#1a1a1a]"
+          className="text-center font-serif text-[#1a1614]"
           style={{
-            fontSize: "clamp(3rem, 11vw, 4.25rem)",
-            lineHeight: 0.98,
-            letterSpacing: "-0.025em",
+            fontSize: "clamp(3.2rem, 12vw, 4.6rem)",
+            lineHeight: 0.95,
+            letterSpacing: "-0.03em",
+            fontWeight: 400,
           }}
         >
-          <span className="italic font-normal">Travel with</span>
+          <span className="italic">Travel with</span>
           <br />
-          <span className="italic font-normal">strangers.</span>
+          <span className="italic">strangers.</span>
           <br />
-          <span className="italic font-normal" style={{ color: "#6b533a" }}>
+          <span
+            className="italic"
+            style={{ color: "#7a5c40", display: "inline-block", marginTop: "0.15em" }}
+          >
             Meet as friends.
           </span>
         </motion.h1>
@@ -238,61 +204,73 @@ function AuthPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.35 }}
-          className="mt-5 text-center text-[14px] text-[#8a7a63]"
+          className="mt-5 text-center text-[13.5px] text-[#9a8770]"
           style={{ letterSpacing: "-0.005em" }}
         >
           Real-life gatherings, wherever you land.
         </motion.p>
 
-        {/* Memoji cluster */}
+        {/* Memoji bundle — the group photo */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="mt-6 w-full"
+          initial={{ opacity: 0, scale: 0.92, y: 14 }}
+          animate={{ opacity: 1, scale: 1, y: [0, -6, 0] }}
+          transition={{
+            opacity: { duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] },
+            scale:   { duration: 0.9, delay: 0.3, ease: [0.34, 1.56, 0.64, 1] },
+            y: { duration: 5.5, delay: 1.2, repeat: Infinity, ease: [0.45, 0, 0.55, 1] },
+          }}
+          className="relative mt-6 w-full max-w-[360px]"
         >
-          <MemojiCluster />
+          <img
+            src={memojiBundle}
+            alt=""
+            width={1200}
+            height={1024}
+            className="h-auto w-full select-none"
+            draggable={false}
+            style={{ filter: "drop-shadow(0 20px 30px rgba(80, 55, 30, 0.18))" }}
+          />
         </motion.div>
 
-        {/* CTAs */}
+        {/* CTAs — three-button stack */}
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
+          initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.75, delay: 0.55, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-2 flex w-full flex-col items-center gap-2.5"
+          className="mt-6 flex w-full flex-col items-center gap-2.5"
         >
           <Button
             onClick={apple}
             disabled={loading}
-            className="h-[54px] w-full rounded-full bg-[#1a1a1a] text-white text-[15px] font-medium tracking-tight shadow-[0_12px_30px_-14px_rgba(26,26,26,0.55)] hover:bg-black"
+            className="h-[54px] w-full rounded-full bg-[#141210] text-white text-[15.5px] font-medium tracking-[-0.01em] shadow-[0_14px_34px_-16px_rgba(20,18,16,0.6)] hover:bg-black"
           >
-            <AppleIcon className="mr-2 h-[18px] w-[18px]" />
+            <AppleIcon className="mr-2 h-[19px] w-[19px]" />
             Continue with Apple
           </Button>
           <Button
             onClick={google}
             disabled={loading}
             variant="outline"
-            className="h-[54px] w-full rounded-full border-black/[0.06] bg-white text-[15px] font-medium tracking-tight text-[#1a1a1a] shadow-[0_8px_24px_-14px_rgba(0,0,0,0.25)] hover:bg-white"
+            className="h-[54px] w-full rounded-full border-0 bg-white text-[15.5px] font-medium tracking-[-0.01em] text-[#1a1614] shadow-[0_10px_28px_-16px_rgba(0,0,0,0.28)] hover:bg-white"
           >
-            <GoogleIcon className="mr-2 h-[18px] w-[18px]" />
+            <GoogleIcon className="mr-2 h-[19px] w-[19px]" />
             Continue with Google
           </Button>
           <Button
             onClick={() => setShowAuth(true)}
             variant="outline"
-            className="h-[54px] w-full rounded-full border-black/[0.06] bg-white text-[15px] font-medium tracking-tight text-[#1a1a1a] shadow-[0_8px_24px_-14px_rgba(0,0,0,0.25)] hover:bg-white"
+            className="h-[54px] w-full rounded-full border-0 bg-white text-[15.5px] font-medium tracking-[-0.01em] text-[#1a1614] shadow-[0_10px_28px_-16px_rgba(0,0,0,0.28)] hover:bg-white"
           >
             <Mail className="mr-2 h-[18px] w-[18px]" />
             Continue with Email
           </Button>
           <button
             onClick={() => { setMode("signin"); setShowAuth(true); }}
-            className="mt-2 inline-flex items-center gap-1 text-[13px] text-[#8a7a63]"
+            className="mt-3 inline-flex items-center gap-1 text-[13px] text-[#9a8770]"
           >
             Already have an account?{" "}
-            <span className="font-semibold text-[#1a1a1a]">Sign in</span>
-            <ChevronRight className="h-3.5 w-3.5 text-[#1a1a1a]" />
+            <span className="font-semibold text-[#1a1614]">Sign in</span>
+            <ChevronRight className="h-3.5 w-3.5 text-[#1a1614]" />
           </button>
         </motion.div>
       </div>
@@ -307,40 +285,40 @@ function AuthPage() {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
               onClick={() => setShowAuth(false)}
-              className="fixed inset-0 z-40 bg-ink/30 backdrop-blur-sm"
+              className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm"
             />
             <motion.div
               initial={{ y: "100%" }}
               animate={{ y: 0 }}
               exit={{ y: "100%" }}
               transition={{ type: "spring", damping: 32, stiffness: 320 }}
-              className="fixed inset-x-0 bottom-0 z-50 mx-auto w-full max-w-md rounded-t-[28px] bg-background/95 p-6 pb-9 shadow-[0_-20px_60px_-20px_rgba(45,30,20,0.4)] backdrop-blur-2xl ring-1 ring-black/[0.05]"
+              className="fixed inset-x-0 bottom-0 z-50 mx-auto w-full max-w-md rounded-t-[28px] bg-white/95 p-6 pb-9 shadow-[0_-20px_60px_-20px_rgba(45,30,20,0.4)] backdrop-blur-2xl ring-1 ring-black/[0.05]"
             >
-              <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-muted-foreground/30" />
+              <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-black/20" />
               <div className="mb-5 flex items-start justify-between">
                 <div>
-                  <h2 className="font-serif text-3xl leading-none tracking-[-0.02em] text-ink">
+                  <h2 className="font-serif italic text-3xl leading-none tracking-[-0.02em] text-[#1a1614]">
                     {mode === "signin" ? "Welcome back" : "Create your account"}
                   </h2>
-                  <p className="mt-2 text-[13px] text-muted-foreground">
+                  <p className="mt-2 text-[13px] text-[#9a8770]">
                     {mode === "signin" ? "Sign in to continue." : "Join Gobber — it takes a minute."}
                   </p>
                 </div>
                 <button
                   onClick={() => setShowAuth(false)}
-                  className="rounded-full bg-secondary p-1.5 text-muted-foreground hover:text-ink"
+                  className="rounded-full bg-black/5 p-1.5 text-[#9a8770] hover:text-[#1a1614]"
                   aria-label="Close"
                 >
                   <X className="h-4 w-4" />
                 </button>
               </div>
 
-              <div className="mb-4 flex rounded-full bg-secondary p-1 text-xs font-medium">
+              <div className="mb-4 flex rounded-full bg-black/[0.04] p-1 text-xs font-medium">
                 {(["signin", "signup"] as const).map((m) => (
                   <button
                     key={m}
                     onClick={() => setMode(m)}
-                    className={`flex-1 rounded-full px-3 py-2 transition ${mode === m ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"}`}
+                    className={`flex-1 rounded-full px-3 py-2 transition ${mode === m ? "bg-white text-[#1a1614] shadow-sm" : "text-[#9a8770]"}`}
                   >
                     {m === "signin" ? "Sign in" : "Create account"}
                   </button>
@@ -351,18 +329,18 @@ function AuthPage() {
                 {mode === "signup" && (
                   <div>
                     <Label htmlFor="name" className="text-xs">Your name</Label>
-                    <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Amelia" className="mt-1 h-11 rounded-xl bg-card" />
+                    <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Amelia" className="mt-1 h-11 rounded-xl bg-white" />
                   </div>
                 )}
                 <div>
                   <Label htmlFor="email" className="text-xs">Email</Label>
-                  <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@gobber.app" className="mt-1 h-11 rounded-xl bg-card" />
+                  <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@gobber.app" className="mt-1 h-11 rounded-xl bg-white" />
                 </div>
                 <div>
                   <Label htmlFor="password" className="text-xs">Password</Label>
-                  <Input id="password" type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" className="mt-1 h-11 rounded-xl bg-card" />
+                  <Input id="password" type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" className="mt-1 h-11 rounded-xl bg-white" />
                 </div>
-                <Button type="submit" disabled={loading} className="h-11 w-full rounded-xl bg-ink text-background font-medium hover:bg-ink/90">
+                <Button type="submit" disabled={loading} className="h-11 w-full rounded-xl bg-[#141210] text-white font-medium hover:bg-black">
                   {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : mode === "signin" ? "Sign in" : "Start exploring"}
                 </Button>
               </form>
