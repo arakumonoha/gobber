@@ -189,7 +189,7 @@ function AuthPage() {
           transition={{ duration: 1.1, delay: 0.35, ease: EASE }}
           className="mt-10 flex flex-1 items-center justify-center sm:mt-14"
         >
-          <AvatarCluster sizePx={320} />
+          <AvatarCluster sizePx={380} />
         </motion.div>
 
         {/* CTAs */}
