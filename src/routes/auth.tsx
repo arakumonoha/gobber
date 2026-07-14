@@ -494,6 +494,8 @@ function AuthPage() {
           Manage your account · <span className="text-[#8a6b45] hover:underline cursor-pointer">Privacy</span> · <span className="text-[#8a6b45] hover:underline cursor-pointer">Terms</span>
         </div>
       </motion.div>
+      )}
+      </AnimatePresence>
     </div>
   );
 }
