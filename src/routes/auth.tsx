@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Loader2, X } from "lucide-react";
+import { Loader2, Mail, X } from "lucide-react";
+import memojiBundle from "@/assets/memoji-bundle.png";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
@@ -24,57 +25,11 @@ export const Route = createFileRoute("/auth")({
   component: AuthPage,
 });
 
-// Cluster of memoji-style faces arranged in a rough sphere at the center.
-// Positions are polar-ish around (0,0); size scales with proximity to center.
-type Face = { emoji: string; x: number; y: number; size: number; delay: number; dur: number };
-const FACES: Face[] = [
-  { emoji: "😄",  x:   0, y:   0, size: 108, delay: 0.0, dur: 3.6 },
-  { emoji: "😎",  x: -95, y: -30, size:  86, delay: 0.15, dur: 3.9 },
-  { emoji: "🥰",  x:  92, y: -38, size:  88, delay: 0.25, dur: 3.4 },
-  { emoji: "🤩",  x: -60, y:  75, size:  78, delay: 0.35, dur: 3.7 },
-  { emoji: "😊",  x:  70, y:  72, size:  80, delay: 0.45, dur: 3.5 },
-  { emoji: "🤗",  x:   5, y: -95, size:  72, delay: 0.55, dur: 4.0 },
-  { emoji: "😇",  x: -140, y:  40, size:  62, delay: 0.65, dur: 3.8 },
-  { emoji: "🥳",  x: 140, y:  30, size:  66, delay: 0.75, dur: 3.6 },
-  { emoji: "😌",  x:  -20, y: 120, size:  60, delay: 0.85, dur: 4.1 },
-];
-
-function MemojiSphere() {
+function AppleIcon({ className }: { className?: string }) {
   return (
-    <div className="relative mx-auto h-[280px] w-[320px]">
-      <div className="absolute inset-0 flex items-center justify-center">
-        {FACES.map((f, i) => (
-          <motion.div
-            key={i}
-            className="absolute select-none"
-            style={{
-              transform: `translate(${f.x}px, ${f.y}px)`,
-              fontSize: f.size,
-              lineHeight: 1,
-              filter: "drop-shadow(0 8px 14px rgba(60,45,30,0.18))",
-            }}
-            initial={{ opacity: 0, scale: 0.4 }}
-            animate={{
-              opacity: 1,
-              scale: 1,
-              y: [0, -8, 0],
-            }}
-            transition={{
-              opacity: { duration: 0.7, delay: f.delay, ease: [0.22, 1, 0.36, 1] },
-              scale:   { duration: 0.8, delay: f.delay, ease: [0.34, 1.56, 0.64, 1] },
-              y: {
-                duration: f.dur,
-                delay: f.delay + 0.8,
-                repeat: Infinity,
-                ease: [0.45, 0, 0.55, 1],
-              },
-            }}
-          >
-            {f.emoji}
-          </motion.div>
-        ))}
-      </div>
-    </div>
+    <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden>
+      <path d="M16.365 1.43c0 1.14-.44 2.23-1.17 3.03-.79.87-2.07 1.54-3.13 1.46-.13-1.11.42-2.28 1.13-3.02.79-.83 2.15-1.45 3.17-1.47zM20.5 17.02c-.55 1.26-.82 1.83-1.54 2.95-1 1.55-2.41 3.48-4.16 3.5-1.56.01-1.96-1.01-4.07-1-2.11.01-2.55 1.02-4.11 1.01-1.75-.02-3.09-1.76-4.09-3.3-2.8-4.31-3.09-9.37-1.36-12.06 1.22-1.91 3.15-3.03 4.97-3.03 1.84 0 3 1 4.52 1s2.45-1 4.58-1c1.62 0 3.33.88 4.55 2.4-3.99 2.19-3.34 7.9.71 9.53z" />
+    </svg>
   );
 }
 
@@ -122,58 +77,139 @@ function AuthPage() {
     navigate({ to: "/" });
   }
 
+  async function apple() {
+    setLoading(true);
+    const res = await lovable.auth.signInWithOAuth("apple", { redirect_uri: window.location.origin });
+    if (res.error) { toast.error(res.error.message ?? "Apple sign-in failed"); setLoading(false); return; }
+    if (res.redirected) return;
+    navigate({ to: "/" });
+  }
+
   return (
-    <div className="relative min-h-screen overflow-hidden bg-background">
-      {/* Ambient warm wash */}
+    <div className="relative min-h-screen overflow-hidden bg-[#f6ede0]">
+      {/* Warm cream wash */}
       <div
         className="absolute inset-0"
         style={{
           background:
-            "radial-gradient(1200px 700px at 50% -10%, #fbf5ea 0%, transparent 60%), radial-gradient(900px 600px at 80% 100%, #f3e3cc 0%, transparent 55%), radial-gradient(700px 500px at 10% 90%, #f6e6d0 0%, transparent 55%)",
+            "radial-gradient(1100px 700px at 50% -5%, #fbf3e4 0%, transparent 60%), radial-gradient(900px 600px at 90% 100%, #efe0c8 0%, transparent 55%), radial-gradient(700px 500px at 5% 85%, #f4e6cf 0%, transparent 55%)",
         }}
       />
+      {/* Faint blended globe — barely there, like a whisper of a meridian */}
+      <svg
+        className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.09]"
+        width="820" height="820" viewBox="0 0 820 820" fill="none" aria-hidden
+      >
+        <defs>
+          <radialGradient id="globeFade" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#8b6f4a" stopOpacity="0.9" />
+            <stop offset="70%" stopColor="#8b6f4a" stopOpacity="0.3" />
+            <stop offset="100%" stopColor="#8b6f4a" stopOpacity="0" />
+          </radialGradient>
+        </defs>
+        <g stroke="url(#globeFade)" strokeWidth="1" fill="none">
+          <circle cx="410" cy="410" r="360" />
+          <ellipse cx="410" cy="410" rx="360" ry="120" />
+          <ellipse cx="410" cy="410" rx="360" ry="230" />
+          <ellipse cx="410" cy="410" rx="230" ry="360" />
+          <ellipse cx="410" cy="410" rx="120" ry="360" />
+          <ellipse cx="410" cy="410" rx="320" ry="360" />
+          <ellipse cx="410" cy="410" rx="360" ry="320" />
+        </g>
+      </svg>
+      {/* Subtle grain */}
+      <div className="pointer-events-none absolute inset-0 opacity-[0.35] mix-blend-multiply"
+        style={{ backgroundImage: "radial-gradient(rgba(139,111,74,0.06) 1px, transparent 1px)", backgroundSize: "22px 22px" }} />
 
-      <div className="relative mx-auto flex min-h-screen max-w-md flex-col items-center px-6 py-16">
-        {/* Tagline */}
-        <motion.h1
-          initial={{ opacity: 0, y: 12 }}
+      <div className="relative mx-auto flex min-h-screen max-w-md flex-col items-center px-6 pt-10 pb-8">
+        {/* Brand chip */}
+        <motion.div
+          initial={{ opacity: 0, y: -6 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          className="text-center font-display text-[2.75rem] font-semibold leading-[1.02] tracking-[-0.045em] text-ink sm:text-[3.25rem]"
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="inline-flex items-center gap-2 rounded-full border border-black/[0.06] bg-white/70 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.22em] text-ink/80 backdrop-blur-md shadow-[0_1px_2px_rgba(0,0,0,0.03)]"
         >
-          Travel with strangers.
+          <span className="h-1.5 w-1.5 rounded-full bg-clay" />
+          Gobber
+        </motion.div>
+
+        {/* Headline */}
+        <motion.h1
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.75, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-6 text-center font-serif text-[3.4rem] font-normal leading-[0.98] tracking-[-0.02em] text-ink sm:text-[4rem]"
+        >
+          Travel with
           <br />
-          <span className="font-normal italic tracking-[-0.05em] text-clay">Meet as friends.</span>
+          strangers.
+          <br />
+          <span className="italic text-[#5a4632]">Meet as friends.</span>
         </motion.h1>
 
-        {/* Memoji sphere */}
-        <div className="mt-16 flex-1 flex items-center justify-center">
-          <MemojiSphere />
-        </div>
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.7, delay: 0.25 }}
+          className="mt-4 text-center text-[14px] font-medium tracking-tight text-muted-foreground"
+        >
+          Real-life gatherings, wherever you land.
+        </motion.p>
 
-        {/* CTA */}
+        {/* Memoji bundle */}
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
+          initial={{ opacity: 0, scale: 0.9, y: 12 }}
+          animate={{ opacity: 1, scale: 1, y: [0, -6, 0] }}
+          transition={{
+            opacity: { duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] },
+            scale:   { duration: 0.9, delay: 0.3, ease: [0.34, 1.56, 0.64, 1] },
+            y: { duration: 5, delay: 1.2, repeat: Infinity, ease: [0.45, 0, 0.55, 1] },
+          }}
+          className="relative mt-4 w-full max-w-[340px]"
+        >
+          <img
+            src={memojiBundle}
+            alt="A friendly bundle of travelers"
+            width={1200}
+            height={1008}
+            className="h-auto w-full select-none"
+            draggable={false}
+          />
+        </motion.div>
+
+        {/* CTAs */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-16 flex w-full flex-col items-center gap-3"
+          transition={{ duration: 0.7, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-6 flex w-full flex-col items-center gap-2.5"
         >
           <Button
-            onClick={() => setShowAuth(true)}
-            className="h-12 w-full max-w-xs rounded-full bg-ink text-background text-[15px] font-medium tracking-tight shadow-[0_12px_32px_-12px_rgba(45,30,20,0.55)] hover:bg-ink/90"
+            onClick={apple}
+            disabled={loading}
+            className="h-[52px] w-full rounded-full bg-ink text-background text-[15px] font-medium tracking-tight shadow-[0_10px_28px_-12px_rgba(45,30,20,0.5)] hover:bg-ink/90"
           >
-            Let's start
+            <AppleIcon className="mr-2 h-[18px] w-[18px]" />
+            Continue with Apple
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => setShowAuth(true)}
+            className="h-[52px] w-full rounded-full border-black/[0.08] bg-white/70 text-[15px] font-medium tracking-tight text-ink backdrop-blur-md hover:bg-white"
+          >
+            <Mail className="mr-2 h-[18px] w-[18px]" />
+            Continue with Email
           </Button>
           <button
             onClick={() => { setMode("signin"); setShowAuth(true); }}
-            className="text-[13px] font-medium text-muted-foreground hover:text-ink"
+            className="mt-2 text-[13px] text-muted-foreground"
           >
-            Already have an account?
+            Already have an account? <span className="font-semibold text-ink">Sign in</span>
           </button>
         </motion.div>
       </div>
 
-      {/* Sign-in sheet */}
+      {/* Email sign-in sheet */}
       <AnimatePresence>
         {showAuth && (
           <>
@@ -195,10 +231,10 @@ function AuthPage() {
               <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-muted-foreground/30" />
               <div className="mb-5 flex items-start justify-between">
                 <div>
-                  <h2 className="font-display text-2xl font-semibold tracking-[-0.03em] text-ink">
+                  <h2 className="font-serif text-3xl leading-none tracking-[-0.02em] text-ink">
                     {mode === "signin" ? "Welcome back" : "Create your account"}
                   </h2>
-                  <p className="mt-1 text-[13px] text-muted-foreground">
+                  <p className="mt-2 text-[13px] text-muted-foreground">
                     {mode === "signin" ? "Sign in to continue." : "Join Gobber — it takes a minute."}
                   </p>
                 </div>
