@@ -14,8 +14,8 @@ import { useQueryClient } from "@tanstack/react-query";
 export const Route = createFileRoute("/_authenticated/")({
   head: () => ({
     meta: [
-      { title: "Discover — NomadTable" },
-      { name: "description", content: "Discover intimate gatherings happening around the world right now." },
+      { title: "Discover — Gobber" },
+      { name: "description", content: "Intimate gatherings happening around the world, right now." },
     ],
   }),
   component: Discover,
