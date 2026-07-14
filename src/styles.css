@@ -50,36 +50,37 @@
   --color-clay: var(--clay);
   --color-ink: var(--ink);
 
-  --shadow-glass: 0 8px 32px -8px oklch(0.35 0.05 60 / 0.18), 0 2px 8px -2px oklch(0.35 0.05 60 / 0.08);
-  --shadow-float: 0 20px 60px -20px oklch(0.25 0.04 60 / 0.35);
+  --shadow-soft: 0 1px 2px rgba(60, 42, 20, 0.04), 0 6px 20px -12px rgba(60, 42, 20, 0.10);
+  --shadow-lift: 0 2px 6px rgba(60, 42, 20, 0.05), 0 20px 50px -24px rgba(60, 42, 20, 0.18);
+  --shadow-float: 0 30px 70px -30px rgba(50, 34, 15, 0.28), 0 6px 16px -8px rgba(50, 34, 15, 0.10);
   --gradient-warm: linear-gradient(135deg, oklch(0.68 0.08 70), oklch(0.55 0.09 55));
 }
 
 :root {
-  --radius: 1rem;
-  /* Warm Sand palette */
-  --background: oklch(0.98 0.008 85);     /* #faf8f5 */
-  --foreground: oklch(0.28 0.02 60);      /* deep ink */
-  --card: oklch(1 0 0);
+  --radius: 1.25rem;
+  /* Warm cream — matches auth screen */
+  --background: oklch(0.965 0.014 85);     /* #f5eddc-ish */
+  --foreground: oklch(0.22 0.02 55);       /* #0f0d0b ink */
+  --card: oklch(0.995 0.006 85);
   --card-foreground: var(--foreground);
-  --popover: oklch(1 0 0);
+  --popover: oklch(0.995 0.006 85);
   --popover-foreground: var(--foreground);
-  --primary: oklch(0.5 0.045 55);         /* #8b7355 clay */
-  --primary-foreground: oklch(0.98 0.008 85);
-  --secondary: oklch(0.94 0.015 80);      /* #f0ebe3 surface */
+  --primary: oklch(0.32 0.035 55);         /* near-black ink for buttons */
+  --primary-foreground: oklch(0.98 0.01 85);
+  --secondary: oklch(0.935 0.018 82);      /* warm surface */
   --secondary-foreground: var(--foreground);
-  --muted: oklch(0.94 0.015 80);
-  --muted-foreground: oklch(0.5 0.02 60);
-  --accent: oklch(0.78 0.055 75);         /* #c9b99a warm */
-  --accent-foreground: oklch(0.28 0.02 60);
+  --muted: oklch(0.94 0.018 82);
+  --muted-foreground: oklch(0.55 0.025 60);
+  --accent: oklch(0.55 0.055 55);          /* warm clay accent */
+  --accent-foreground: oklch(0.98 0.01 85);
   --destructive: oklch(0.58 0.19 25);
   --destructive-foreground: oklch(0.98 0 0);
-  --border: oklch(0.9 0.012 80);
-  --input: oklch(0.9 0.012 80);
-  --ring: oklch(0.5 0.045 55);
-  --sand: oklch(0.94 0.015 80);
-  --clay: oklch(0.5 0.045 55);
-  --ink: oklch(0.28 0.02 60);
+  --border: oklch(0.9 0.014 80 / 0.6);
+  --input: oklch(0.9 0.014 80);
+  --ring: oklch(0.55 0.055 55);
+  --sand: oklch(0.94 0.018 82);
+  --clay: oklch(0.5 0.055 55);
+  --ink: oklch(0.18 0.02 55);
 }
 
 .dark {
@@ -109,14 +110,42 @@
 
 @layer base {
   * { border-color: var(--color-border); }
-  html, body { background-color: var(--color-background); color: var(--color-foreground); font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
-  h1, h2, h3, h4, h5 { font-family: var(--font-display); letter-spacing: -0.02em; }
+  html, body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "ss01", "cv11";
+  }
+  h1, h2, h3, h4, h5 { font-family: var(--font-display); letter-spacing: -0.022em; }
+  ::selection { background: color-mix(in oklab, var(--accent) 40%, transparent); }
+}
+
+/* Editorial serif — for hero words and accents */
+@utility serif-hero {
+  font-family: var(--font-serif);
+  font-style: italic;
+  letter-spacing: -0.03em;
+  line-height: 0.98;
+  font-weight: 400;
+}
+
+/* Soft card surface — nearly merges with background */
+@utility surface {
+  background: color-mix(in oklab, var(--card) 96%, transparent);
+  box-shadow: var(--shadow-soft);
+}
+
+@utility surface-lift {
+  background: var(--card);
+  box-shadow: var(--shadow-lift);
 }
 
 @utility glass {
-  background: color-mix(in oklab, var(--card) 72%, transparent);
-  backdrop-filter: saturate(180%) blur(20px);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  background: color-mix(in oklab, var(--card) 68%, transparent);
+  backdrop-filter: saturate(180%) blur(24px);
+  -webkit-backdrop-filter: saturate(180%) blur(24px);
 }
 
 @utility glass-dark {
@@ -125,6 +154,15 @@
   -webkit-backdrop-filter: saturate(180%) blur(24px);
 }
 
+/* Warm page background — atmospheric globe wash at the bottom */
+@utility page-wash {
+  background:
+    radial-gradient(90% 55% at 50% 108%, rgba(255, 234, 200, 0.55) 0%, transparent 55%),
+    radial-gradient(1200px 900px at 50% -10%, #fbf4e3 0%, transparent 55%),
+    linear-gradient(180deg, #f5eddc 0%, #efe3c9 100%);
+}
+
 /* Maplibre polish */
 .maplibregl-ctrl-attrib { font-size: 10px !important; opacity: 0.55; }
 .maplibregl-ctrl-bottom-right { display: none !important; }
+
