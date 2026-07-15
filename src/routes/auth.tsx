@@ -249,66 +249,101 @@ function AuthPage() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.985, filter: "blur(6px)" }}
           transition={{ duration: 0.7, ease: EASE }}
-          className="relative z-10 flex w-full max-w-[420px] flex-col items-center text-center"
+          className="relative z-10 flex w-full max-w-[560px] flex-col items-center text-center"
         >
-          <motion.div
-            initial={{ opacity: 0, y: -6 }}
+          <motion.h1
+            initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: EASE }}
-            className="mb-2"
+            transition={{ duration: 0.9, delay: 0.05, ease: EASE }}
+            className="text-[76px] leading-[0.95] tracking-[-0.03em] text-[#0f0d0b]"
+            style={{ fontFamily: '"Instrument Serif", Georgia, serif', fontWeight: 400, fontStyle: "italic" }}
           >
-            <span className="text-[11px] font-medium uppercase tracking-[0.28em] text-[#a08a68]">
-              Gobber
-            </span>
+            Travel with<br />strangers.
+          </motion.h1>
+
+          <motion.h2
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 0.18, ease: EASE }}
+            className="mt-3 text-[64px] leading-[0.95] tracking-[-0.028em] text-[#8a6b45]"
+            style={{ fontFamily: '"Instrument Serif", Georgia, serif', fontWeight: 400, fontStyle: "italic" }}
+          >
+            Meet as friends.
+          </motion.h2>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.9, delay: 0.35 }}
+            className="mt-6 flex items-center gap-3"
+          >
+            <span className="h-px w-6 bg-[#a08a68]/40" />
+            <p className="text-[13.5px] tracking-[-0.005em] text-[#8a7a5f]">
+              Real-life gatherings, wherever you land.
+            </p>
+            <span className="h-px w-6 bg-[#a08a68]/40" />
           </motion.div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 10 }}
+          <div className="mt-6 w-full">
+            <MemojiOrbit />
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.1, ease: EASE }}
-            className="text-[52px] leading-[1.05] font-semibold tracking-[-0.04em] text-[#0f0d0b]"
-            style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif' }}
+            transition={{ duration: 0.8, delay: 0.5, ease: EASE }}
+            className="mt-2 flex w-full max-w-[360px] flex-col gap-2.5"
           >
-            Visit <span className="italic font-normal text-[#8a6b45]" style={{ fontFamily: '"Instrument Serif", Georgia, serif' }}>n</span> Vibe
-          </motion.h1>
+            <motion.button
+              whileHover={{ y: -1 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => setView("auth")}
+              className="flex h-[54px] items-center justify-center gap-2 rounded-full bg-[#0f0d0b] text-[15.5px] font-medium tracking-[-0.01em] text-white transition hover:bg-[#1a1614]"
+              style={{ boxShadow: "0 14px 32px -14px rgba(60,42,20,0.5), 0 2px 4px rgba(0,0,0,0.08)" }}
+            >
+              <AppleIcon className="h-[19px] w-[19px] text-white" />
+              Continue with Apple
+            </motion.button>
+            <motion.button
+              whileHover={{ y: -1 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => setView("auth")}
+              className="flex h-[54px] items-center justify-center gap-2.5 rounded-full bg-white text-[15.5px] font-medium tracking-[-0.01em] text-[#0f0d0b] transition hover:bg-white/90"
+              style={{ boxShadow: "0 8px 22px -14px rgba(60,42,20,0.35), 0 1px 2px rgba(0,0,0,0.05)", border: "1px solid rgba(26,22,20,0.06)" }}
+            >
+              <GoogleIcon className="h-[19px] w-[19px]" />
+              Continue with Google
+            </motion.button>
+            <motion.button
+              whileHover={{ y: -1 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => { setMode("signup"); setView("auth"); }}
+              className="flex h-[54px] items-center justify-center gap-2.5 rounded-full bg-white text-[15.5px] font-medium tracking-[-0.01em] text-[#0f0d0b] transition hover:bg-white/90"
+              style={{ boxShadow: "0 8px 22px -14px rgba(60,42,20,0.35), 0 1px 2px rgba(0,0,0,0.05)", border: "1px solid rgba(26,22,20,0.06)" }}
+            >
+              <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <rect x="3" y="5" width="18" height="14" rx="2" />
+                <path d="m3 7 9 6 9-6" />
+              </svg>
+              Continue with Email
+            </motion.button>
+          </motion.div>
 
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.9, delay: 0.25 }}
-            className="mt-3 max-w-[300px] text-[14px] leading-[1.5] tracking-[-0.005em] text-[#8a7a5f]"
+            transition={{ duration: 0.9, delay: 0.75 }}
+            className="mt-5 text-[13px] text-[#8a7a5f]"
           >
-            Meet strangers. Travel together.
-            <br />
-            Hang out in real life.
+            Already have an account?{" "}
+            <button
+              onClick={() => setView("auth")}
+              className="font-semibold text-[#0f0d0b] hover:underline"
+            >
+              Sign in ›
+            </button>
           </motion.p>
 
-          <div className="mt-8 mb-6">
-            <MemojiOrbit />
-          </div>
-
-          <motion.button
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.5, ease: EASE }}
-            whileHover={{ y: -1 }}
-            whileTap={{ scale: 0.97 }}
-            onClick={() => setView("auth")}
-            className="h-[48px] w-[240px] rounded-full bg-[#0f0d0b] text-[14.5px] font-medium tracking-[-0.01em] text-white transition hover:bg-[#1a1614]"
-            style={{ boxShadow: "0 12px 28px -14px rgba(60,42,20,0.45), 0 2px 4px rgba(0,0,0,0.06)" }}
-          >
-            Sign In
-          </motion.button>
-
-          <motion.button
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.9, delay: 0.7 }}
-            onClick={() => { setMode("signup"); setView("auth"); }}
-            className="mt-4 text-[13px] font-medium text-[#8a6b45] hover:underline"
-          >
-            Create Gobber Account
-          </motion.button>
 
 
           <motion.p
