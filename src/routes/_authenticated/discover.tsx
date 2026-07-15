@@ -11,7 +11,7 @@ import { CATEGORIES } from "@/lib/categories";
 import { format } from "date-fns";
 import { useQueryClient } from "@tanstack/react-query";
 
-export const Route = createFileRoute("/_authenticated/")({
+export const Route = createFileRoute("/_authenticated/discover")({
   head: () => ({
     meta: [
       { title: "Discover — Gobber" },
