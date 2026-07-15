@@ -7,81 +7,101 @@ import m5 from "@/assets/people-v2/m5.png.asset.json";
 import m6 from "@/assets/people-v2/m6.png.asset.json";
 import m7 from "@/assets/people-v2/m7.png.asset.json";
 import m8 from "@/assets/people-v2/m8.png.asset.json";
-import m9 from "@/assets/people-v2/m9.png.asset.json";
-import m10 from "@/assets/people-v2/m10.png.asset.json";
-import m11 from "@/assets/people-v2/m11.png.asset.json";
-import m12 from "@/assets/people-v2/m12.png.asset.json";
 
 /**
- * Clean symmetric 3x4 grid of Apple memojis — no overlap.
- * Each face floats and breathes independently on its own rhythm.
+ * Tight symmetric memoji bundle — Apple keynote style group photo.
+ * Back row: 3 faces. Front row: 4 faces overlapping. One anchor face front-center.
+ * Composition is mirrored across the vertical axis for visual balance.
+ * Each face breathes independently.
  */
 
 const EASE = [0.45, 0, 0.55, 1] as const;
-const ROWS = [
-  [m1, m2, m3, m4],
-  [m5, m6, m7, m8],
-  [m9, m10, m11, m12],
+
+// Coordinates in a 460x340 stage. Sizes chosen so composition reads as one mass.
+// Mirror-symmetric around x=230.
+type M = { src: string; x: number; y: number; size: number; z: number; rot: number; delay: number };
+const BUNDLE: M[] = [
+  // Back row (higher, smaller)
+  { src: m2, x: 150, y: 60,  size: 128, z: 1, rot: -6, delay: 0.0 },
+  { src: m3, x: 230, y: 44,  size: 138, z: 2, rot: 0,  delay: 0.6 },
+  { src: m4, x: 310, y: 60,  size: 128, z: 1, rot: 6,  delay: 1.1 },
+  // Front row (larger, lower, overlapping back)
+  { src: m5, x: 96,  y: 170, size: 132, z: 3, rot: -10, delay: 0.4 },
+  { src: m6, x: 186, y: 200, size: 148, z: 5, rot: -3,  delay: 0.8 },
+  { src: m7, x: 274, y: 200, size: 148, z: 5, rot: 3,   delay: 0.2 },
+  { src: m8, x: 364, y: 170, size: 132, z: 3, rot: 10,  delay: 1.0 },
+  // Small anchor tucked at front-center bottom
+  { src: m1, x: 230, y: 258, size: 116, z: 6, rot: 0,   delay: 0.5 },
 ];
 
 export function MemojiOrbit() {
   return (
     <div
-      className="relative mx-auto grid w-full max-w-[420px] grid-cols-4 gap-x-4 gap-y-3 px-2"
+      className="relative mx-auto"
+      style={{ width: "min(460px, 100%)", aspectRatio: "460 / 340" }}
       aria-hidden
     >
-      {ROWS.flat().map((asset, i) => {
-        const row = Math.floor(i / 4);
-        const col = i % 4;
-        // Staggered entrance across the grid
-        const entryDelay = 0.15 + (row * 0.08 + col * 0.05);
-        // Independent breathing rhythm per face
-        const dur = 5.4 + ((i * 0.37) % 2.6);
-        const floatDelay = (i * 0.31) % 2.4;
-        const bob = 3 + ((i % 3) * 0.6);
+      {/* Warm ground shadow beneath the group */}
+      <div
+        className="absolute left-1/2 -translate-x-1/2"
+        style={{
+          bottom: "6%",
+          width: "72%",
+          height: "10%",
+          background:
+            "radial-gradient(ellipse at center, rgba(90,60,25,0.28) 0%, rgba(90,60,25,0) 70%)",
+          filter: "blur(10px)",
+        }}
+      />
 
-        return (
+      {BUNDLE.map((m, i) => (
+        <motion.div
+          key={i}
+          className="absolute"
+          style={{
+            left: `${(m.x / 460) * 100}%`,
+            top: `${(m.y / 340) * 100}%`,
+            width: `${(m.size / 460) * 100}%`,
+            aspectRatio: "1 / 1",
+            transform: "translate(-50%, -50%)",
+            zIndex: m.z,
+          }}
+          initial={{ opacity: 0, y: 16, scale: 0.9 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{
+            duration: 0.75,
+            delay: 0.1 + i * 0.07,
+            ease: [0.22, 1, 0.36, 1],
+          }}
+        >
           <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 14, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{
-              duration: 0.7,
-              delay: entryDelay,
-              ease: [0.22, 1, 0.36, 1],
+            className="h-full w-full"
+            style={{ rotate: m.rot }}
+            animate={{
+              y: [0, -3.5, 0, 2, 0],
+              rotate: [m.rot, m.rot + 1.2, m.rot, m.rot - 1.2, m.rot],
             }}
-            className="relative aspect-square"
+            transition={{
+              duration: 6 + (i % 3) * 0.6,
+              repeat: Infinity,
+              ease: EASE,
+              delay: m.delay,
+            }}
           >
-            {/* soft ground shadow */}
-            <div
-              className="absolute inset-x-3 bottom-1 h-2 rounded-full"
-              style={{
-                background:
-                  "radial-gradient(ellipse at center, rgba(90,60,25,0.28) 0%, rgba(90,60,25,0) 70%)",
-                filter: "blur(4px)",
-              }}
-            />
-            <motion.img
-              src={asset.url}
+            <img
+              src={m.src.url}
               alt=""
               draggable={false}
-              className="relative h-full w-full select-none"
+              className="h-full w-full select-none"
               style={{
                 objectFit: "contain",
                 filter:
-                  "drop-shadow(0 6px 12px rgba(60,42,20,0.18)) drop-shadow(0 1px 2px rgba(60,42,20,0.10))",
-              }}
-              animate={{ y: [0, -bob, 0, bob * 0.5, 0] }}
-              transition={{
-                duration: dur,
-                repeat: Infinity,
-                ease: EASE,
-                delay: floatDelay,
+                  "drop-shadow(0 10px 18px rgba(60,42,20,0.22)) drop-shadow(0 2px 4px rgba(60,42,20,0.14))",
               }}
             />
           </motion.div>
-        );
-      })}
+        </motion.div>
+      ))}
     </div>
   );
 }
