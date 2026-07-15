@@ -33,7 +33,7 @@ export const Route = createFileRoute("/")({
       {
         property: "og:description",
         content:
-          "Discover intimate dinners, hikes and adventures happening around you. Real-life gatherings for curious travelers and locals.",
+          "Gobber turns cities into gathering places. Discover intimate dinners, spontaneous hikes and small adventures hosted by people nearby — and become the reason someone remembers a city.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
