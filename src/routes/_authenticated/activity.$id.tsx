@@ -47,7 +47,7 @@ function ActivityDetail() {
   if (!activity) return (
     <div className="flex h-[100dvh] flex-col items-center justify-center px-6">
       <p className="text-lg font-medium">Activity not found</p>
-      <Link to="/" className="mt-4 text-sm text-clay underline">Back to Discover</Link>
+      <Link to="/discover" className="mt-4 text-sm text-clay underline">Back to Discover</Link>
     </div>
   );
 
@@ -61,7 +61,7 @@ function ActivityDetail() {
           style={{ backgroundImage: `url(${activity.cover_url ?? "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=1600&q=80"})` }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-background/40" />
-        <button onClick={() => navigate({ to: "/" })} className="absolute left-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full glass shadow-glass">
+        <button onClick={() => navigate({ to: "/discover" })} className="absolute left-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full glass shadow-glass">
           <ArrowLeft className="h-5 w-5" />
         </button>
       </div>

@@ -10,7 +10,7 @@ export const Route = createFileRoute("/auth")({
   ssr: false,
   beforeLoad: async () => {
     const { data } = await supabase.auth.getUser();
-    if (data.user) throw redirect({ to: "/" });
+    if (data.user) throw redirect({ to: "/discover" });
   },
   head: () => ({
     meta: [
@@ -192,11 +192,11 @@ function AuthPage() {
         });
         if (error) throw error;
         toast.success("Welcome to Gobber");
-        navigate({ to: "/" });
+        navigate({ to: "/discover" });
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        navigate({ to: "/" });
+        navigate({ to: "/discover" });
       }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Something went wrong");
@@ -210,7 +210,7 @@ function AuthPage() {
     const res = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
     if (res.error) { toast.error(res.error.message ?? "Google sign-in failed"); setLoading(null); return; }
     if (res.redirected) return;
-    navigate({ to: "/" });
+    navigate({ to: "/discover" });
   }
 
   async function apple() {
@@ -218,7 +218,7 @@ function AuthPage() {
     const res = await lovable.auth.signInWithOAuth("apple", { redirect_uri: window.location.origin });
     if (res.error) { toast.error(res.error.message ?? "Apple sign-in failed"); setLoading(null); return; }
     if (res.redirected) return;
-    navigate({ to: "/" });
+    navigate({ to: "/discover" });
   }
 
   return (
