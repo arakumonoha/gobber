@@ -311,17 +311,17 @@ function AuthPage() {
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.05, ease: EASE }}
-            className="text-[76px] leading-[0.95] tracking-[-0.03em] text-[#0f0d0b]"
+            className="text-[64px] sm:text-[72px] leading-[1.02] tracking-[-0.035em] text-[#0f0d0b]"
             style={{ fontFamily: '"Instrument Serif", Georgia, serif', fontWeight: 400, fontStyle: "italic" }}
           >
-            Travel with<br />strangers.
+            Travel with strangers.
           </motion.h1>
 
           <motion.h2
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.18, ease: EASE }}
-            className="mt-3 text-[64px] leading-[0.95] tracking-[-0.028em] text-[#8a6b45]"
+            className="mt-1 text-[54px] sm:text-[60px] leading-[1.05] tracking-[-0.03em] text-[#8a6b45]"
             style={{ fontFamily: '"Instrument Serif", Georgia, serif', fontWeight: 400, fontStyle: "italic" }}
           >
             Meet as friends.
@@ -331,16 +331,16 @@ function AuthPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.9, delay: 0.35 }}
-            className="mt-6 flex items-center gap-3"
+            className="mt-5 flex items-center gap-3"
           >
             <span className="h-px w-6 bg-[#a08a68]/40" />
-            <p className="text-[13.5px] tracking-[-0.005em] text-[#8a7a5f]">
+            <p className="text-[13px] tracking-[0.01em] text-[#8a7a5f]">
               Real-life gatherings, wherever you land.
             </p>
             <span className="h-px w-6 bg-[#a08a68]/40" />
           </motion.div>
 
-          <div className="mt-3 w-full">
+          <div className="mt-6 w-full">
             <MemojiOrbit />
           </div>
 
@@ -348,8 +348,9 @@ function AuthPage() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.5, ease: EASE }}
-            className="mt-4 flex w-full max-w-[380px] flex-col gap-2.5"
+            className="mt-14 flex w-full max-w-[360px] flex-col gap-2"
           >
+
 
             <motion.button
               whileHover={{ y: -1 }}
