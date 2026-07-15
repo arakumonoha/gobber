@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { toast } from "sonner";
 import { Loader2, ArrowRight } from "lucide-react";
+import { MemojiOrbit } from "@/components/auth/memoji-orbit";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
@@ -250,26 +251,41 @@ function AuthPage() {
           transition={{ duration: 0.7, ease: EASE }}
           className="relative z-10 flex w-full max-w-[420px] flex-col items-center text-center"
         >
-          <CloudMark />
+          <motion.div
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: EASE }}
+            className="mb-2"
+          >
+            <span className="text-[11px] font-medium uppercase tracking-[0.28em] text-[#a08a68]">
+              Gobber
+            </span>
+          </motion.div>
+
           <motion.h1
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.2, ease: EASE }}
-            className="mt-6 text-[44px] font-semibold tracking-[-0.035em] text-[#0f0d0b]"
+            transition={{ duration: 0.9, delay: 0.1, ease: EASE }}
+            className="text-[52px] leading-[1.05] font-semibold tracking-[-0.04em] text-[#0f0d0b]"
             style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif' }}
           >
-            Gobber
+            Visit <span className="italic font-normal text-[#8a6b45]" style={{ fontFamily: '"Instrument Serif", Georgia, serif' }}>n</span> Vibe
           </motion.h1>
+
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.9, delay: 0.35 }}
-            className="mt-2 max-w-[300px] text-[14.5px] leading-[1.45] tracking-[-0.005em] text-[#8a7a5f]"
+            transition={{ duration: 0.9, delay: 0.25 }}
+            className="mt-3 max-w-[300px] text-[14px] leading-[1.5] tracking-[-0.005em] text-[#8a7a5f]"
           >
-            Your account for meeting strangers,
+            Meet strangers. Travel together.
             <br />
-            traveling together, and hanging out in real life.
+            Hang out in real life.
           </motion.p>
+
+          <div className="mt-8 mb-6">
+            <MemojiOrbit />
+          </div>
 
           <motion.button
             initial={{ opacity: 0, y: 12 }}
@@ -278,7 +294,7 @@ function AuthPage() {
             whileHover={{ y: -1 }}
             whileTap={{ scale: 0.97 }}
             onClick={() => setView("auth")}
-            className="mt-10 h-[46px] rounded-full bg-[#0f0d0b] px-9 text-[14.5px] font-medium tracking-[-0.01em] text-white transition hover:bg-[#1a1614]"
+            className="h-[48px] w-[240px] rounded-full bg-[#0f0d0b] text-[14.5px] font-medium tracking-[-0.01em] text-white transition hover:bg-[#1a1614]"
             style={{ boxShadow: "0 12px 28px -14px rgba(60,42,20,0.45), 0 2px 4px rgba(0,0,0,0.06)" }}
           >
             Sign In
@@ -293,6 +309,7 @@ function AuthPage() {
           >
             Create Gobber Account
           </motion.button>
+
 
           <motion.p
             initial={{ opacity: 0 }}
