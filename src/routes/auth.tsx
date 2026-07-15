@@ -348,7 +348,7 @@ function AuthPage() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.5, ease: EASE }}
-            className="-mt-2 flex w-full max-w-[380px] flex-col gap-2.5"
+            className="mt-4 flex w-full max-w-[380px] flex-col gap-2.5"
           >
 
             <motion.button
