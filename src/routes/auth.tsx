@@ -348,7 +348,7 @@ function AuthPage() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.5, ease: EASE }}
-            className="mt-8 flex w-full max-w-[360px] flex-col gap-2"
+            className="mt-14 flex w-full max-w-[360px] flex-col gap-2"
           >
 
 
