@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { toast } from "sonner";
 import { Loader2, ArrowRight } from "lucide-react";
+import { MemojiOrbit } from "@/components/auth/memoji-orbit";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
