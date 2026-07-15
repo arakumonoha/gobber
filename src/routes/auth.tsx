@@ -240,6 +240,63 @@ function AuthPage() {
         }}
       />
 
+      {/* Warm glowing globe horizon at bottom — subtle Apple-style earth curvature */}
+      {view === "welcome" && (
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[46vh] overflow-hidden">
+          {/* Curved horizon disc */}
+          <div
+            className="absolute left-1/2 -translate-x-1/2"
+            style={{
+              bottom: "-60vh",
+              width: "180vw",
+              height: "100vh",
+              borderRadius: "50%",
+              background:
+                "radial-gradient(ellipse at 50% 30%, rgba(255,230,180,0.55) 0%, rgba(232,196,140,0.32) 28%, rgba(196,158,110,0.18) 48%, rgba(140,100,60,0.08) 62%, transparent 72%)",
+              boxShadow:
+                "inset 0 60px 120px rgba(255,240,200,0.35), inset 0 -40px 80px rgba(120,80,40,0.18)",
+              filter: "blur(0.4px)",
+            }}
+          />
+          {/* Rim light along the horizon */}
+          <div
+            className="absolute left-1/2 -translate-x-1/2"
+            style={{
+              bottom: "38vh",
+              width: "160vw",
+              height: "3px",
+              background:
+                "radial-gradient(ellipse at center, rgba(255,236,196,0.9) 0%, rgba(255,220,160,0.35) 40%, transparent 70%)",
+              filter: "blur(2px)",
+            }}
+          />
+          {/* Tiny city lights scattered */}
+          <svg
+            className="absolute inset-0 h-full w-full opacity-70"
+            viewBox="0 0 1000 500"
+            preserveAspectRatio="xMidYMax slice"
+            aria-hidden
+          >
+            {[
+              [120, 380, 1.4], [180, 410, 1], [260, 395, 1.2], [340, 425, 1.6],
+              [420, 405, 1], [500, 435, 1.4], [580, 410, 1.2], [660, 425, 1.8],
+              [740, 400, 1], [820, 420, 1.3], [880, 395, 1.2], [220, 445, 1],
+              [400, 460, 1.4], [560, 465, 1.1], [700, 455, 1.5], [860, 450, 1.2],
+            ].map(([x, y, r], i) => (
+              <circle
+                key={i}
+                cx={x}
+                cy={y}
+                r={r}
+                fill="#ffd98a"
+                style={{ filter: "drop-shadow(0 0 4px rgba(255,200,120,0.8))" }}
+              />
+            ))}
+          </svg>
+        </div>
+      )}
+
+
       <AnimatePresence mode="wait" initial={false}>
       {view === "welcome" ? (
         /* iCloud-style welcome screen — cloud mark, wordmark, sign in */
