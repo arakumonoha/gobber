@@ -67,7 +67,7 @@ function HostPage() {
   return (
     <div className="min-h-[100dvh] bg-background pb-32">
       <div className="mx-auto max-w-md px-5 pt-8">
-        <button onClick={() => navigate({ to: "/" })} className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-secondary">
+        <button onClick={() => navigate({ to: "/discover" })} className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-secondary">
           <ArrowLeft className="h-5 w-5" />
         </button>
         <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }}>
