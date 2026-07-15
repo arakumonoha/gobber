@@ -19,7 +19,7 @@ const EASE = [0.45, 0, 0.55, 1] as const;
 
 // Coordinates in a 460x340 stage. Sizes chosen so composition reads as one mass.
 // Mirror-symmetric around x=230.
-type M = { src: string; x: number; y: number; size: number; z: number; rot: number; delay: number };
+type M = { src: { url: string }; x: number; y: number; size: number; z: number; rot: number; delay: number };
 const BUNDLE: M[] = [
   // Back row (higher, smaller)
   { src: m2, x: 150, y: 60,  size: 128, z: 1, rot: -6, delay: 0.0 },
