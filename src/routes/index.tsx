@@ -18,7 +18,7 @@ import {
   Check,
 } from "lucide-react";
 
-import memojiGroup from "@/assets/memoji-group.png";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
