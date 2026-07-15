@@ -40,7 +40,7 @@ export function MemojiOrbit() {
   return (
     <div
       className="relative mx-auto"
-      style={{ width: "min(460px, 100%)", aspectRatio: "460 / 340" }}
+      style={{ width: "min(440px, 100%)", aspectRatio: "460 / 360" }}
       aria-hidden
     >
       {/* Warm ground shadow beneath the group */}
