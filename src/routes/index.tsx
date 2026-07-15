@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { motion, useScroll, useTransform, type Variants } from "framer-motion";
+import { motion, useScroll, useTransform, useMotionValue, useSpring, type Variants } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import {
   ArrowRight,
+  ArrowUpRight,
   MapPin,
   Sparkles,
   Users,
@@ -12,7 +13,11 @@ import {
   Mountain,
   Utensils,
   Star,
+  Wifi,
+  Zap,
+  Check,
 } from "lucide-react";
+
 import memojiGroup from "@/assets/memoji-group.png";
 
 export const Route = createFileRoute("/")({
