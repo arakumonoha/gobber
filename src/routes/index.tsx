@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { motion, useScroll, useTransform, type Variants } from "framer-motion";
+import { motion, useScroll, useTransform, useMotionValue, useSpring, type Variants } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import {
   ArrowRight,
+  ArrowUpRight,
   MapPin,
   Sparkles,
   Users,
@@ -12,8 +13,12 @@ import {
   Mountain,
   Utensils,
   Star,
+  Wifi,
+  Zap,
+  Check,
 } from "lucide-react";
-import memojiGroup from "@/assets/memoji-group.png";
+
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -120,171 +125,351 @@ function Nav() {
   );
 }
 
-/* ───────────────────── ATMOSPHERIC BG ───────────────────── */
+/* ─────────── AMBIENT BACKGROUND (orbs + grid + noise) ─────────── */
 
-function AtmosphericGlobe() {
+function HeroBackdrop() {
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
-      {/* soft warm wash */}
+      {/* base warm gradient */}
       <div
         className="absolute inset-0"
         style={{
           background:
-            "radial-gradient(90% 55% at 50% 108%, rgba(255,230,190,0.55) 0%, transparent 55%), radial-gradient(1200px 900px at 50% -10%, #fbf4e3 0%, transparent 55%), linear-gradient(180deg, #f5eddc 0%, #efe3c9 100%)",
+            "radial-gradient(120% 80% at 85% -10%, #ffe9c4 0%, transparent 55%), radial-gradient(90% 70% at -10% 110%, #ffd7b0 0%, transparent 55%), linear-gradient(180deg, #fbf5e8 0%, #f4e8cf 100%)",
+        }}
+      />
+      {/* colored orbs */}
+      <motion.div
+        aria-hidden
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.4 }}
+        className="absolute -left-32 top-24 h-[420px] w-[420px] rounded-full"
+        style={{
+          background: "radial-gradient(closest-side, rgba(255,151,102,0.55), transparent 70%)",
+          filter: "blur(60px)",
+        }}
+      />
+      <motion.div
+        aria-hidden
+        animate={{ y: [0, -24, 0] }}
+        transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute -right-24 top-10 h-[520px] w-[520px] rounded-full"
+        style={{
+          background: "radial-gradient(closest-side, rgba(139,111,63,0.35), transparent 70%)",
+          filter: "blur(80px)",
+        }}
+      />
+      <motion.div
+        aria-hidden
+        animate={{ y: [0, 18, 0] }}
+        transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute bottom-[-200px] left-1/3 h-[520px] w-[520px] rounded-full"
+        style={{
+          background: "radial-gradient(closest-side, rgba(232,161,122,0.4), transparent 70%)",
+          filter: "blur(90px)",
         }}
       />
       {/* faint grid */}
-      <svg
-        className="absolute inset-0 h-full w-full opacity-[0.06]"
-        xmlns="http://www.w3.org/2000/svg"
-      >
+      <svg className="absolute inset-0 h-full w-full opacity-[0.05]" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <pattern id="grid" width="56" height="56" patternUnits="userSpaceOnUse">
-            <path d="M 56 0 L 0 0 0 56" fill="none" stroke="#1a1614" strokeWidth="0.5" />
+          <pattern id="hero-grid" width="64" height="64" patternUnits="userSpaceOnUse">
+            <path d="M 64 0 L 0 0 0 64" fill="none" stroke="#1a1614" strokeWidth="0.5" />
           </pattern>
         </defs>
-        <rect width="100%" height="100%" fill="url(#grid)" />
+        <rect width="100%" height="100%" fill="url(#hero-grid)" />
       </svg>
-      {/* horizon curve */}
+      {/* subtle grain */}
       <div
-        className="absolute -bottom-[48vh] left-1/2 h-[100vh] w-[140vw] -translate-x-1/2 rounded-full"
+        className="absolute inset-0 opacity-[0.08] mix-blend-multiply"
         style={{
-          background:
-            "radial-gradient(closest-side, rgba(255,220,170,0.55), rgba(255,220,170,0) 70%)",
-          filter: "blur(20px)",
+          backgroundImage:
+            "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0 0.05 0 0 0 0.55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\")",
         }}
       />
     </div>
   );
 }
 
-/* ─────────────────── PRODUCT MOCK (hero) ─────────────────── */
+/* ─────────── PRODUCT MOCKUP (interactive map card) ─────────── */
 
 function HeroMock() {
+  const ref = useRef<HTMLDivElement>(null);
+  const rx = useMotionValue(0);
+  const ry = useMotionValue(0);
+  const sx = useSpring(rx, { stiffness: 120, damping: 18 });
+  const sy = useSpring(ry, { stiffness: 120, damping: 18 });
+
+  const onMove = (e: React.MouseEvent) => {
+    const r = ref.current?.getBoundingClientRect();
+    if (!r) return;
+    const px = (e.clientX - r.left) / r.width - 0.5;
+    const py = (e.clientY - r.top) / r.height - 0.5;
+    ry.set(px * 8);
+    rx.set(-py * 8);
+  };
+  const onLeave = () => { rx.set(0); ry.set(0); };
+
+  const pins = [
+    { x: "22%", y: "34%", name: "Fabrique", tag: "Coffee", tone: "#8b6f3f", live: 6 },
+    { x: "48%", y: "48%", name: "Ozone Lab", tag: "Focus", tone: "#c96a3a", live: 12 },
+    { x: "70%", y: "30%", name: "Casa Verde", tag: "Terrace", tone: "#5a7d5a", live: 4 },
+    { x: "60%", y: "68%", name: "Kōhī Bar", tag: "Quiet", tone: "#3a5a7d", live: 9 },
+  ];
+
+  const avatars = ["#c9a97a","#e3a17a","#8b6f3f","#c96a3a","#6b5c48"];
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 40, rotateX: 8 }}
-      animate={{ opacity: 1, y: 0, rotateX: 0 }}
-      transition={{ duration: 1.2, ease: EASE, delay: 0.35 }}
-      className="relative mx-auto mt-20 w-full max-w-[980px]"
-      style={{ perspective: 1600 }}
+      ref={ref}
+      onMouseMove={onMove}
+      onMouseLeave={onLeave}
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 1, ease: EASE, delay: 0.5 }}
+      style={{ perspective: 1400 }}
+      className="relative w-full"
     >
-      <div
+      <motion.div
+        style={{ rotateX: sx, rotateY: sy, transformStyle: "preserve-3d" }}
         className="relative overflow-hidden rounded-[28px]"
-        style={{
-          background: "linear-gradient(180deg, #fdf6e6 0%, #f3e6ca 100%)",
-          boxShadow:
-            "0 40px 90px -30px rgba(50,34,15,0.35), 0 8px 24px -12px rgba(50,34,15,0.15), inset 0 1px 0 rgba(255,255,255,0.6)",
-          border: "1px solid rgba(20,18,16,0.06)",
-        }}
       >
-        {/* Fake map surface */}
-        <div className="relative aspect-[16/9] w-full">
+        <div
+          className="relative aspect-[4/5] w-full"
+          style={{
+            background: "linear-gradient(180deg, #fdf6e6 0%, #f0dfb7 100%)",
+            boxShadow:
+              "0 60px 120px -40px rgba(50,34,15,0.45), 0 12px 40px -20px rgba(50,34,15,0.2), inset 0 1px 0 rgba(255,255,255,0.7)",
+            border: "1px solid rgba(20,18,16,0.06)",
+          }}
+        >
+          {/* map surface */}
           <div
             className="absolute inset-0"
             style={{
               background:
-                "radial-gradient(60% 90% at 30% 40%, #e8d4a8 0%, transparent 60%), radial-gradient(50% 80% at 80% 70%, #d9c290 0%, transparent 60%), linear-gradient(180deg, #efe0bd 0%, #e3cf9e 100%)",
+                "radial-gradient(60% 90% at 30% 30%, #ecd7a8 0%, transparent 60%), radial-gradient(50% 70% at 78% 72%, #d9c290 0%, transparent 60%), linear-gradient(180deg, #efe0bd 0%, #e3cf9e 100%)",
             }}
           />
-          {/* topographic lines */}
-          <svg className="absolute inset-0 h-full w-full opacity-40" viewBox="0 0 800 450">
-            {Array.from({ length: 14 }).map((_, i) => (
-              <path
-                key={i}
-                d={`M0 ${40 + i * 30} C 150 ${20 + i * 30}, 350 ${80 + i * 30}, 800 ${30 + i * 30}`}
-                stroke="#8b6f3f"
-                strokeOpacity="0.25"
-                strokeWidth="0.7"
-                fill="none"
-              />
+          {/* roads */}
+          <svg className="absolute inset-0 h-full w-full" viewBox="0 0 400 500" fill="none">
+            {[
+              "M 0 120 C 100 90, 220 160, 400 130",
+              "M 0 260 C 140 220, 260 300, 400 260",
+              "M 0 380 C 120 340, 280 420, 400 380",
+              "M 80 0 C 60 140, 180 260, 140 500",
+              "M 260 0 C 300 140, 220 320, 300 500",
+            ].map((d, i) => (
+              <path key={i} d={d} stroke="#8b6f3f" strokeOpacity="0.28" strokeWidth="1" />
             ))}
           </svg>
 
-          {/* Floating pins */}
-          {[
-            { x: "22%", y: "38%", label: "Sunset supper", cat: "Dinner", delay: 0.6 },
-            { x: "55%", y: "26%", label: "Coffee crawl", cat: "Coffee", delay: 0.9 },
-            { x: "72%", y: "60%", label: "Ridge hike", cat: "Hike", delay: 1.2 },
-          ].map((p, i) => (
+          {/* connection lines between pins */}
+          <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <motion.path
+              d="M 22 34 Q 35 42 48 48"
+              stroke="#1a1614" strokeOpacity="0.35" strokeWidth="0.25" fill="none" strokeDasharray="1 1.5"
+              initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.4, delay: 1 }}
+            />
+            <motion.path
+              d="M 48 48 Q 60 40 70 30"
+              stroke="#1a1614" strokeOpacity="0.35" strokeWidth="0.25" fill="none" strokeDasharray="1 1.5"
+              initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.4, delay: 1.3 }}
+            />
+            <motion.path
+              d="M 48 48 Q 56 58 60 68"
+              stroke="#1a1614" strokeOpacity="0.35" strokeWidth="0.25" fill="none" strokeDasharray="1 1.5"
+              initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.4, delay: 1.6 }}
+            />
+          </svg>
+
+          {/* animated pins */}
+          {pins.map((p, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, y: -14, scale: 0.85 }}
+              initial={{ opacity: 0, y: -10, scale: 0.8 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ delay: p.delay, duration: 0.7, ease: EASE }}
-              className="absolute -translate-x-1/2 -translate-y-full"
+              transition={{ delay: 0.9 + i * 0.15, duration: 0.7, ease: EASE }}
               style={{ left: p.x, top: p.y }}
+              className="absolute -translate-x-1/2 -translate-y-full"
             >
-              <div
-                className="flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10.5px] font-medium text-[#1a1614]"
-                style={{
-                  background: "color-mix(in oklab, white 78%, transparent)",
-                  backdropFilter: "blur(10px)",
-                  boxShadow: "0 8px 20px -8px rgba(50,34,15,0.35)",
-                  border: "1px solid rgba(20,18,16,0.06)",
-                }}
-              >
-                <MapPin className="h-3 w-3 text-[#8b6f3f]" strokeWidth={2.4} />
-                {p.label}
+              <div className="relative">
+                <motion.span
+                  className="absolute left-1/2 top-full h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full"
+                  style={{ background: p.tone }}
+                  animate={{ boxShadow: [`0 0 0 0 ${p.tone}55`, `0 0 0 14px ${p.tone}00`] }}
+                  transition={{ duration: 2.2, repeat: Infinity, delay: i * 0.4 }}
+                />
+                <div
+                  className="flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10.5px] font-medium text-[#1a1614]"
+                  style={{
+                    background: "color-mix(in oklab, white 85%, transparent)",
+                    backdropFilter: "blur(12px)",
+                    boxShadow: "0 10px 24px -8px rgba(50,34,15,0.35)",
+                    border: "1px solid rgba(20,18,16,0.06)",
+                  }}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full" style={{ background: p.tone }} />
+                  {p.name}
+                  <span className="text-[9.5px] text-[#8b6f3f]">· {p.live}</span>
+                </div>
+                <div
+                  className="mx-auto mt-1 h-2.5 w-2.5 rounded-full"
+                  style={{
+                    background: "linear-gradient(180deg, #1c1815, #0a0908)",
+                    boxShadow: "0 3px 8px rgba(20,18,16,0.5)",
+                  }}
+                />
               </div>
-              <div
-                className="mx-auto mt-0.5 h-2 w-2 rounded-full"
-                style={{
-                  background: "linear-gradient(180deg, #1c1815, #0a0908)",
-                  boxShadow: "0 2px 6px rgba(20,18,16,0.5)",
-                }}
-              />
             </motion.div>
           ))}
 
-          {/* Bottom activity card */}
+          {/* Floating profile card - top right */}
+          <motion.div
+            initial={{ opacity: 0, x: 30, y: -10 }}
+            animate={{ opacity: 1, x: 0, y: 0 }}
+            transition={{ delay: 1.4, duration: 0.8, ease: EASE }}
+            className="absolute right-3 top-3 flex items-center gap-2.5 rounded-2xl px-3 py-2"
+            style={{
+              background: "color-mix(in oklab, white 88%, transparent)",
+              backdropFilter: "blur(18px)",
+              border: "1px solid rgba(20,18,16,0.06)",
+              boxShadow: "0 14px 30px -14px rgba(50,34,15,0.3)",
+            }}
+          >
+            <div className="relative h-8 w-8 rounded-full" style={{ background: "linear-gradient(135deg,#e3a17a,#8b6f3f)" }}>
+              <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-white bg-[#5a9d5a]" />
+            </div>
+            <div className="pr-1">
+              <div className="text-[11px] font-semibold tracking-[-0.01em] text-[#141210]">Mira joined</div>
+              <div className="text-[10px] text-[#6b5c48]">Ozone Lab · now</div>
+            </div>
+          </motion.div>
+
+          {/* Availability chip */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.7, duration: 0.7, ease: EASE }}
+            className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10.5px] font-medium text-[#1a1614]"
+            style={{
+              background: "color-mix(in oklab, white 85%, transparent)",
+              backdropFilter: "blur(12px)",
+              border: "1px solid rgba(20,18,16,0.06)",
+              boxShadow: "0 8px 20px -8px rgba(50,34,15,0.25)",
+            }}
+          >
+            <motion.span
+              className="h-1.5 w-1.5 rounded-full bg-[#5a9d5a]"
+              animate={{ opacity: [1, 0.3, 1] }}
+              transition={{ duration: 1.8, repeat: Infinity }}
+            />
+            Live · 214 nearby
+          </motion.div>
+
+          {/* Bottom café card */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1, duration: 0.8, ease: EASE }}
-            className="absolute inset-x-4 bottom-4 rounded-2xl p-4"
+            transition={{ delay: 1.2, duration: 0.8, ease: EASE }}
+            className="absolute inset-x-3 bottom-3 rounded-2xl p-4"
             style={{
-              background: "color-mix(in oklab, white 82%, transparent)",
-              backdropFilter: "blur(20px)",
+              background: "color-mix(in oklab, white 90%, transparent)",
+              backdropFilter: "blur(22px)",
               border: "1px solid rgba(20,18,16,0.06)",
-              boxShadow: "0 20px 40px -20px rgba(50,34,15,0.3)",
+              boxShadow: "0 24px 50px -20px rgba(50,34,15,0.35)",
             }}
           >
-            <div className="flex items-center justify-between gap-4">
-              <div>
-                <div className="text-[10px] font-medium uppercase tracking-[0.12em] text-[#8b6f3f]">
-                  Tonight · Lisbon
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-[0.14em] text-[#c96a3a]">
+                  <Zap className="h-3 w-3" strokeWidth={2.6} /> Table forming
                 </div>
-                <div className="mt-0.5 font-display text-[17px] font-semibold tracking-[-0.02em] text-[#141210]">
-                  Rooftop paella with 6 nomads
+                <div className="mt-1 font-display text-[16px] font-semibold tracking-[-0.02em] text-[#141210]">
+                  Deep-work morning at Ozone Lab
                 </div>
-                <div className="mt-0.5 text-[12px] text-[#6b5c48]">
-                  Hosted by Mira · 2 spots left
+                <div className="mt-1 flex items-center gap-3 text-[11px] text-[#6b5c48]">
+                  <span className="inline-flex items-center gap-1"><Wifi className="h-3 w-3" /> 320 Mb</span>
+                  <span className="inline-flex items-center gap-1"><Coffee className="h-3 w-3" /> Specialty</span>
+                  <span className="inline-flex items-center gap-1"><Users className="h-3 w-3" /> 4 seats</span>
                 </div>
               </div>
+              <button
+                className="shrink-0 rounded-full px-3 py-1.5 text-[11px] font-medium text-white"
+                style={{
+                  background: "linear-gradient(180deg,#c96a3a,#a3512a)",
+                  boxShadow: "0 8px 18px -8px rgba(201,106,58,0.6)",
+                }}
+              >
+                Join
+              </button>
+            </div>
+            <div className="mt-3 flex items-center justify-between">
               <div className="flex -space-x-2">
-                {["#c9a97a", "#8b6f3f", "#e3a17a", "#6b5c48"].map((c, i) => (
-                  <div
-                    key={i}
-                    className="h-7 w-7 rounded-full border-2 border-white"
-                    style={{ background: c }}
-                  />
+                {avatars.map((c, i) => (
+                  <div key={i} className="h-6 w-6 rounded-full border-2 border-white" style={{ background: c }} />
                 ))}
+                <div className="grid h-6 w-6 place-items-center rounded-full border-2 border-white bg-[#1c1815] text-[9px] font-semibold text-white">
+                  +3
+                </div>
               </div>
+              <span className="text-[10.5px] text-[#6b5c48]">Starts in 12 min</span>
             </div>
           </motion.div>
         </div>
-      </div>
+      </motion.div>
 
-      {/* Reflection */}
-      <div
-        className="mx-auto mt-2 h-16 w-[85%] rounded-full"
+      {/* Floating notification card */}
+      <motion.div
+        initial={{ opacity: 0, x: 40, y: 20 }}
+        animate={{ opacity: 1, x: 0, y: 0 }}
+        transition={{ delay: 1.9, duration: 0.9, ease: EASE }}
+        className="absolute -right-6 top-1/3 hidden w-[220px] rounded-2xl p-3 md:block"
         style={{
-          background:
-            "radial-gradient(closest-side, rgba(50,34,15,0.18), rgba(50,34,15,0) 70%)",
-          filter: "blur(14px)",
+          background: "color-mix(in oklab, white 92%, transparent)",
+          backdropFilter: "blur(22px)",
+          border: "1px solid rgba(20,18,16,0.06)",
+          boxShadow: "0 30px 60px -20px rgba(50,34,15,0.4)",
         }}
-      />
+      >
+        <div className="flex items-center gap-2">
+          <div className="grid h-8 w-8 place-items-center rounded-xl" style={{ background: "linear-gradient(135deg,#5a9d5a,#3d7b3d)" }}>
+            <Check className="h-4 w-4 text-white" strokeWidth={3} />
+          </div>
+          <div className="min-w-0">
+            <div className="text-[11px] font-semibold text-[#141210]">You&rsquo;re in</div>
+            <div className="truncate text-[10.5px] text-[#6b5c48]">Casa Verde · 3:00 PM</div>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Floating stat card */}
+      <motion.div
+        initial={{ opacity: 0, x: -30, y: 20 }}
+        animate={{ opacity: 1, x: 0, y: 0 }}
+        transition={{ delay: 2.1, duration: 0.9, ease: EASE }}
+        className="absolute -left-6 bottom-24 hidden w-[200px] rounded-2xl p-3 md:block"
+        style={{
+          background: "color-mix(in oklab, white 92%, transparent)",
+          backdropFilter: "blur(22px)",
+          border: "1px solid rgba(20,18,16,0.06)",
+          boxShadow: "0 30px 60px -20px rgba(50,34,15,0.4)",
+        }}
+      >
+        <div className="text-[10px] font-medium uppercase tracking-[0.14em] text-[#8b6f3f]">This week</div>
+        <div className="mt-1 font-display text-[22px] font-semibold tracking-[-0.02em] text-[#141210]">
+          38 new tables
+        </div>
+        <div className="mt-2 flex h-1.5 overflow-hidden rounded-full bg-[#1a161410]">
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: "72%" }}
+            transition={{ delay: 2.4, duration: 1.2, ease: EASE }}
+            className="h-full rounded-full"
+            style={{ background: "linear-gradient(90deg,#c96a3a,#e3a17a)" }}
+          />
+        </div>
+      </motion.div>
     </motion.div>
   );
 }
@@ -294,99 +479,143 @@ function HeroMock() {
 function Hero() {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const y = useTransform(scrollYProgress, [0, 1], [0, -80]);
-  const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0.3]);
+  const y = useTransform(scrollYProgress, [0, 1], [0, -60]);
 
   return (
     <section
       ref={ref}
-      className="relative flex min-h-[100svh] items-center justify-center overflow-hidden px-6 pt-32"
+      className="relative flex min-h-[100svh] items-center overflow-hidden px-6 pb-24 pt-32 lg:pt-36"
     >
-      <AtmosphericGlobe />
-      <motion.div style={{ y, opacity }} className="relative mx-auto max-w-4xl text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: EASE }}
-          className="inline-flex items-center gap-2 rounded-full border border-[rgba(20,18,16,0.08)] bg-white/50 px-3 py-1 text-[11.5px] font-medium uppercase tracking-[0.14em] text-[#4a3f33] backdrop-blur"
-        >
-          <Sparkles className="h-3 w-3 text-[#8b6f3f]" strokeWidth={2.4} />
-          Now gathering in 40+ cities
-        </motion.div>
+      <HeroBackdrop />
 
-        <motion.h1
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.1, ease: EASE, delay: 0.15 }}
-          className="serif-hero mx-auto mt-6 max-w-[18ch] text-[clamp(48px,8.5vw,110px)] text-[#141210]"
-        >
-          Meet strangers.{" "}
-          <span style={{ color: "#8b6f3f" }}>Leave with friends.</span>
-        </motion.h1>
-
-        <motion.p
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: EASE, delay: 0.35 }}
-          className="mx-auto mt-6 max-w-[52ch] text-[17px] leading-[1.55] text-[#4a3f33]"
-        >
-          Gobber turns cities into gathering places. Discover intimate dinners,
-          spontaneous hikes and small adventures — hosted by curious people, minutes from where you are.
-        </motion.p>
-
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: EASE, delay: 0.5 }}
-          className="mt-9 flex flex-wrap items-center justify-center gap-3"
-        >
-          <Link
-            to="/auth"
-            className="group inline-flex items-center gap-2 rounded-full px-6 py-3 text-[15px] font-medium text-white"
-            style={{
-              background: "linear-gradient(180deg, #1c1815 0%, #0a0908 100%)",
-              boxShadow:
-                "0 1px 0 rgba(255,255,255,0.08) inset, 0 20px 40px -20px rgba(20,18,16,0.6), 0 4px 10px rgba(20,18,16,0.15)",
-            }}
+      <motion.div
+        style={{ y }}
+        className="relative mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-16 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10"
+      >
+        {/* LEFT — copy */}
+        <div className="relative max-w-2xl">
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: EASE }}
+            className="inline-flex items-center gap-2 rounded-full border border-[rgba(20,18,16,0.08)] bg-white/55 px-3 py-1 text-[11.5px] font-medium uppercase tracking-[0.14em] text-[#4a3f33] backdrop-blur"
           >
-            Start gathering
-            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-          </Link>
-          <Link
-            to="/auth"
-            className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-[15px] font-medium text-[#141210]"
-            style={{
-              background: "color-mix(in oklab, white 65%, transparent)",
-              backdropFilter: "blur(14px)",
-              border: "1px solid rgba(20,18,16,0.08)",
-            }}
-          >
-            Sign in
-          </Link>
-        </motion.div>
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#c96a3a] opacity-75" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#c96a3a]" />
+            </span>
+            Live in 42 cities · 1,280 cafés
+          </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 0.7 }}
-          className="mt-8 flex items-center justify-center gap-3 text-[12px] text-[#6b5c48]"
-        >
-          <img
-            src={memojiGroup}
-            alt=""
-            className="h-9 w-auto object-contain"
-            style={{ filter: "drop-shadow(0 6px 12px rgba(50,34,15,0.15))" }}
-          />
-          <span>Joined this week by 2,400+ curious wanderers</span>
-        </motion.div>
+          <motion.h1
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.1, ease: EASE, delay: 0.12 }}
+            className="serif-hero mt-6 text-[clamp(44px,6.4vw,84px)] leading-[0.98] tracking-[-0.035em] text-[#141210]"
+          >
+            Work anywhere.
+            <br />
+            <span style={{ color: "#c96a3a" }}>Connect</span>{" "}
+            <em style={{ fontStyle: "italic", fontFamily: "'Instrument Serif', serif", fontWeight: 400 }}>
+              everywhere.
+            </em>
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease: EASE, delay: 0.28 }}
+            className="mt-6 max-w-[52ch] text-[17px] leading-[1.6] text-[#4a3f33]"
+            style={{ fontFamily: "'SF Pro Text', -apple-system, 'Figtree', sans-serif" }}
+          >
+            Gobber is where remote workers find their next café, their next focus table, and the people
+            worth sharing it with. Discover coworking-ready spots nearby — join a live table in one tap.
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease: EASE, delay: 0.42 }}
+            className="mt-9 flex flex-wrap items-center gap-3"
+          >
+            <Link
+              to="/auth"
+              className="group inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-[15px] font-medium text-white transition hover:-translate-y-0.5"
+              style={{
+                background: "linear-gradient(180deg, #1c1815 0%, #0a0908 100%)",
+                boxShadow:
+                  "0 1px 0 rgba(255,255,255,0.08) inset, 0 24px 40px -18px rgba(20,18,16,0.55), 0 6px 12px rgba(20,18,16,0.15)",
+              }}
+            >
+              Get started — it&rsquo;s free
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+            </Link>
+            <Link
+              to="/auth"
+              className="group inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-[15px] font-medium text-[#141210] transition hover:-translate-y-0.5"
+              style={{
+                background: "color-mix(in oklab, white 70%, transparent)",
+                backdropFilter: "blur(14px)",
+                border: "1px solid rgba(20,18,16,0.09)",
+                boxShadow: "0 10px 22px -14px rgba(20,18,16,0.25)",
+              }}
+            >
+              <Compass className="h-4 w-4 text-[#8b6f3f]" strokeWidth={2.4} />
+              Explore spaces
+              <ArrowUpRight className="h-3.5 w-3.5 opacity-60 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </Link>
+          </motion.div>
+
+          {/* trust row */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease: EASE, delay: 0.6 }}
+            className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4"
+          >
+            <div className="flex items-center gap-3">
+              <div className="flex -space-x-2">
+                {["#c9a97a","#e3a17a","#8b6f3f","#c96a3a","#6b5c48"].map((c, i) => (
+                  <div key={i} className="h-8 w-8 rounded-full border-2 border-[#fbf5e8]" style={{ background: c }} />
+                ))}
+              </div>
+              <div className="text-[12.5px] leading-tight text-[#4a3f33]">
+                <div className="font-semibold text-[#141210]">62,000+ members</div>
+                <div className="text-[#6b5c48]">joined this year</div>
+              </div>
+            </div>
+            <div className="h-8 w-px bg-[#1a161418]" />
+            <TrustStat value="4.9" label="App Store" icon={<Star className="h-3 w-3 fill-current" />} />
+            <div className="h-8 w-px bg-[#1a161418]" />
+            <TrustStat value="1,280" label="Cafés listed" icon={<Coffee className="h-3 w-3" />} />
+            <div className="h-8 w-px bg-[#1a161418]" />
+            <TrustStat value="42" label="Cities" icon={<Globe2 className="h-3 w-3" />} />
+          </motion.div>
+        </div>
+
+        {/* RIGHT — product mock */}
+        <div className="relative">
+          <HeroMock />
+        </div>
       </motion.div>
-
-      <div className="absolute inset-x-0 bottom-0">
-        <HeroMock />
-      </div>
     </section>
   );
 }
+
+function TrustStat({ value, label, icon }: { value: string; label: string; icon: React.ReactNode }) {
+  return (
+    <div className="flex items-center gap-2">
+      <span className="grid h-7 w-7 place-items-center rounded-full bg-white/60 text-[#8b6f3f] backdrop-blur" style={{ border: "1px solid rgba(20,18,16,0.06)" }}>
+        {icon}
+      </span>
+      <div className="text-[12.5px] leading-tight">
+        <div className="font-semibold text-[#141210]">{value}</div>
+        <div className="text-[#6b5c48]">{label}</div>
+      </div>
+    </div>
+  );
+}
+
 
 /* ─────────────────────── SECTION SHELL ─────────────────────── */
 
