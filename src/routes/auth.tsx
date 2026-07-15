@@ -240,6 +240,62 @@ function AuthPage() {
         }}
       />
 
+      {/* Warm glowing globe horizon at bottom — subtle Apple-style earth curvature */}
+      {view === "welcome" && (
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[28vh] overflow-hidden">
+          {/* Curved horizon disc — sits low, only crown visible */}
+          <div
+            className="absolute left-1/2 -translate-x-1/2"
+            style={{
+              bottom: "-140vh",
+              width: "220vw",
+              height: "160vh",
+              borderRadius: "50%",
+              background:
+                "radial-gradient(ellipse at 50% 8%, rgba(255,232,182,0.35) 0%, rgba(228,192,138,0.18) 6%, rgba(196,158,110,0.10) 12%, transparent 22%)",
+              filter: "blur(0.4px)",
+            }}
+          />
+          {/* Rim light along the top of the disc */}
+          <div
+            className="absolute left-1/2 -translate-x-1/2"
+            style={{
+              bottom: "19vh",
+              width: "170vw",
+              height: "2px",
+              background:
+                "radial-gradient(ellipse at center, rgba(255,236,196,0.55) 0%, rgba(255,220,160,0.2) 40%, transparent 70%)",
+              filter: "blur(2.5px)",
+            }}
+          />
+          {/* Tiny city lights scattered on the horizon crown */}
+          <svg
+            className="absolute inset-x-0 bottom-0 h-[22vh] w-full opacity-60"
+            viewBox="0 0 1000 220"
+            preserveAspectRatio="xMidYMax slice"
+            aria-hidden
+          >
+            {[
+              [140, 60, 1.2], [220, 90, 1], [310, 70, 1.4], [400, 100, 1.6],
+              [500, 80, 1], [600, 110, 1.3], [700, 85, 1.4], [800, 105, 1.1],
+              [880, 75, 1.2], [180, 140, 1], [360, 160, 1.3], [560, 165, 1.1],
+              [740, 155, 1.4], [860, 150, 1],
+            ].map(([x, y, r], i) => (
+              <circle
+                key={i}
+                cx={x}
+                cy={y}
+                r={r}
+                fill="#ffd98a"
+                style={{ filter: "drop-shadow(0 0 3px rgba(255,200,120,0.8))" }}
+              />
+            ))}
+          </svg>
+        </div>
+      )}
+
+
+
       <AnimatePresence mode="wait" initial={false}>
       {view === "welcome" ? (
         /* iCloud-style welcome screen — cloud mark, wordmark, sign in */
@@ -284,7 +340,7 @@ function AuthPage() {
             <span className="h-px w-6 bg-[#a08a68]/40" />
           </motion.div>
 
-          <div className="mt-6 w-full">
+          <div className="mt-3 w-full">
             <MemojiOrbit />
           </div>
 
@@ -292,8 +348,9 @@ function AuthPage() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.5, ease: EASE }}
-            className="mt-2 flex w-full max-w-[360px] flex-col gap-2.5"
+            className="mt-4 flex w-full max-w-[380px] flex-col gap-2.5"
           >
+
             <motion.button
               whileHover={{ y: -1 }}
               whileTap={{ scale: 0.98 }}
