@@ -62,7 +62,7 @@ export function MemojiOrbit() {
           className="absolute"
           style={{
             left: `${(m.x / 460) * 100}%`,
-            top: `${(m.y / 340) * 100}%`,
+            top: `${(m.y / 300) * 100}%`,
             width: `${(m.size / 460) * 100}%`,
             aspectRatio: "1 / 1",
             transform: "translate(-50%, -50%)",
