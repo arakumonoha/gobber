@@ -34,7 +34,7 @@ export function MessageBell() {
       <button
         aria-label={`Messages${unread ? `, ${unread} unread` : ""}`}
         onClick={() => setOpen(true)}
-        className="fixed right-4 top-[calc(env(safe-area-inset-top,0px)+64px)] z-40 flex h-11 w-11 items-center justify-center rounded-full border border-white/40 bg-white/55 shadow-glass backdrop-blur-2xl transition active:scale-95"
+        className="fixed right-[68px] top-[calc(env(safe-area-inset-top,0px)+12px)] z-40 flex h-11 w-11 items-center justify-center rounded-full border border-white/40 bg-white/55 shadow-glass backdrop-blur-2xl transition active:scale-95"
         style={{ WebkitBackdropFilter: "blur(24px) saturate(1.4)" }}
       >
         <MessageCircle className="h-[18px] w-[18px] text-ink" strokeWidth={2.2} />
