@@ -99,24 +99,52 @@ export function DraggableSheet({
     canDragSheet.current = scrollRef.current.scrollTop <= 0;
   }
 
+  function toggleDesktop() {
+    // Toggle between the smallest (closed/peek) and the largest (open) snap.
+    const target = snapIndex.current === snapPoints.length - 1 ? 0 : snapPoints.length - 1;
+    snapTo(target);
+  }
+
   return (
     <motion.div
-      drag="y"
+      drag={isDesktop ? false : "y"}
       dragConstraints={{ top: topFor(snapPoints.length - 1), bottom: topFor(0) }}
       dragElastic={{ top: 0.02, bottom: 0.08 }}
       dragMomentum={false}
       onDragEnd={handleDragEnd}
       style={{ y, height: vh }}
-      className={`absolute inset-x-0 top-0 z-20 rounded-t-3xl glass shadow-float touch-none ${className ?? ""}`}
+      className={`absolute inset-x-0 top-0 z-20 rounded-t-3xl glass shadow-float ${isDesktop ? "" : "touch-none"} ${className ?? ""}`}
     >
-      {/* Handle */}
-      <div className={`flex flex-col items-center pt-2.5 pb-1 select-none ${headerClassName ?? ""}`}>
-        <motion.div
-          className="h-1.5 w-10 rounded-full bg-foreground/25"
-          whileTap={{ scaleX: 1.4, backgroundColor: "rgba(0,0,0,0.5)" }}
-          transition={{ duration: 0.2 }}
-        />
-      </div>
+      {/* Handle — drag grip on mobile/tablet, click-to-toggle on desktop */}
+      {isDesktop ? (
+        <button
+          type="button"
+          onClick={toggleDesktop}
+          aria-label={snapIndex.current === snapPoints.length - 1 ? "Collapse gatherings" : "Expand gatherings"}
+          className={`group flex w-full flex-col items-center pt-2.5 pb-1 select-none ${headerClassName ?? ""}`}
+        >
+          <motion.div
+            className="flex h-6 items-center justify-center rounded-full px-2 text-[#3d3120]/70 transition-colors group-hover:text-[#0f0d0b]"
+            whileTap={{ scale: 0.92 }}
+          >
+            <ChevronDown
+              className="h-4 w-4 transition-transform"
+              style={{
+                transform: snapIndex.current === snapPoints.length - 1 ? "rotate(0deg)" : "rotate(180deg)",
+              }}
+              strokeWidth={2.4}
+            />
+          </motion.div>
+        </button>
+      ) : (
+        <div className={`flex flex-col items-center pt-2.5 pb-1 select-none ${headerClassName ?? ""}`}>
+          <motion.div
+            className="h-1.5 w-10 rounded-full bg-foreground/40"
+            whileTap={{ scaleX: 1.4, backgroundColor: "rgba(0,0,0,0.6)" }}
+            transition={{ duration: 0.2 }}
+          />
+        </div>
+      )}
 
       {/* Pull-to-refresh indicator */}
       {onRefresh && (
