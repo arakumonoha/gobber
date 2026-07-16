@@ -397,102 +397,159 @@ function Discover() {
       <AnimatePresence>
         {showCreate && (
           <motion.div
+            key="create-overlay"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 backdrop-blur-sm sm:items-center"
+            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            className="fixed inset-0 z-[100] flex items-center justify-center px-5"
+            style={{
+              background: "rgba(30,22,12,0.28)",
+              backdropFilter: "blur(22px) saturate(140%)",
+              WebkitBackdropFilter: "blur(22px) saturate(140%)",
+            }}
             onClick={cancelCreate}
           >
             <motion.form
               onSubmit={submitCreate}
               onClick={(e) => e.stopPropagation()}
-              initial={{ y: 40, opacity: 0, scale: 0.98 }}
-              animate={{ y: 0, opacity: 1, scale: 1 }}
-              exit={{ y: 40, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 320, damping: 32 }}
-              className="w-full max-w-md rounded-t-[28px] bg-[#faf3e1] p-6 shadow-2xl sm:rounded-[28px]"
-              style={{ border: "1px solid rgba(20,18,16,0.06)" }}
+              initial={{ opacity: 0, y: 20, scale: 0.96, filter: "blur(10px)" }}
+              animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+              exit={{ opacity: 0, y: 10, scale: 0.97, filter: "blur(8px)" }}
+              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+              className="relative w-full max-w-[420px] overflow-hidden rounded-[26px]"
+              style={{
+                background: "linear-gradient(180deg, rgba(255,253,247,0.42) 0%, rgba(255,247,230,0.28) 100%)",
+                backdropFilter: "saturate(180%) blur(48px)",
+                WebkitBackdropFilter: "saturate(180%) blur(48px)",
+                border: "1px solid rgba(255,255,255,0.55)",
+                boxShadow:
+                  "0 1px 0 rgba(255,255,255,0.75) inset, 0 40px 90px -30px rgba(60,42,20,0.4), 0 10px 30px -18px rgba(60,42,20,0.18)",
+              }}
             >
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-[10.5px] font-medium uppercase tracking-[0.2em] text-[#8b6f3f]">Drop a pin</p>
-                  <h3 className="mt-1 font-serif italic text-[26px] leading-[1] tracking-[-0.02em] text-[#0f0d0b]">
+              <motion.button
+                type="button"
+                onClick={cancelCreate}
+                aria-label="Close"
+                whileHover={{ rotate: 90, scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                transition={{ type: "spring", stiffness: 400, damping: 18 }}
+                className="absolute right-3 top-3 z-20 flex h-8 w-8 items-center justify-center rounded-full text-[#2b1d0f] transition-colors hover:bg-black/5"
+              >
+                <X className="h-4 w-4" />
+              </motion.button>
+
+              <div className="px-7 pt-9 pb-6">
+                <div className="text-left">
+                  <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-[#4a3820]">Drop a pin</p>
+                  <h3 className="mt-1.5 font-serif italic text-[28px] leading-[1] tracking-[-0.02em] text-[#0f0d0b]">
                     New gathering
                   </h3>
-                </div>
-                <button type="button" onClick={cancelCreate} className="grid h-9 w-9 place-items-center rounded-full bg-white/70 text-[#4a3f33]">
-                  <X className="h-4 w-4" />
-                </button>
-              </div>
-
-              <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white/70 px-3 py-1 text-[12px] text-[#4a3f33]">
-                <MapPin className="h-3.5 w-3.5 text-[#e85a3c]" />
-                <span className="truncate max-w-[240px]">{placeLabel || "Selected location"}</span>
-              </div>
-
-              <div className="mt-4 space-y-3">
-                <input
-                  autoFocus
-                  value={form.title}
-                  onChange={(e) => setForm({ ...form, title: e.target.value })}
-                  placeholder="Sunset ramen in Shibuya"
-                  className="h-11 w-full rounded-xl border border-[#1a161418] bg-white/85 px-3.5 text-[14px] text-[#0f0d0b] outline-none placeholder:text-[#a89676] focus:border-[#5a4222]/50"
-                />
-                <textarea
-                  value={form.description}
-                  onChange={(e) => setForm({ ...form, description: e.target.value })}
-                  placeholder="What's the vibe? (optional)"
-                  rows={2}
-                  className="w-full resize-none rounded-xl border border-[#1a161418] bg-white/85 px-3.5 py-2.5 text-[14px] text-[#0f0d0b] outline-none placeholder:text-[#a89676] focus:border-[#5a4222]/50"
-                />
-
-                <div className="flex flex-wrap gap-1.5">
-                  {CATEGORIES.map((c) => (
-                    <button
-                      key={c.id}
-                      type="button"
-                      onClick={() => setForm({ ...form, category: c.id })}
-                      className={`rounded-full px-3 py-1.5 text-[12px] font-medium transition ${
-                        form.category === c.id ? "bg-[#0f0d0b] text-white" : "bg-white/70 text-[#4a3f33]"
-                      }`}
-                    >
-                      {c.icon} {c.label}
-                    </button>
-                  ))}
+                  <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white/60 px-2.5 py-1 text-[11.5px] text-[#2b1d0f] ring-1 ring-white/60">
+                    <MapPin className="h-3.5 w-3.5 text-[#e85a3c]" />
+                    <span className="max-w-[240px] truncate">{placeLabel || "Selected location"}</span>
+                  </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2">
-                  <input
-                    type="datetime-local"
-                    value={form.starts_at}
-                    onChange={(e) => setForm({ ...form, starts_at: e.target.value })}
-                    className="h-11 w-full rounded-xl border border-[#1a161418] bg-white/85 px-3 text-[13.5px] text-[#0f0d0b] outline-none focus:border-[#5a4222]/50"
+                <div className="mt-5 space-y-2.5">
+                  <GlassInput
+                    autoFocus
+                    value={form.title}
+                    onChange={(v) => setForm({ ...form, title: v })}
+                    placeholder="Sunset ramen in Shibuya"
                   />
-                  <input
-                    type="number"
-                    min={2}
-                    max={30}
-                    value={form.max_spots}
-                    onChange={(e) => setForm({ ...form, max_spots: parseInt(e.target.value) || 6 })}
-                    placeholder="Spots"
-                    className="h-11 w-full rounded-xl border border-[#1a161418] bg-white/85 px-3 text-[13.5px] text-[#0f0d0b] outline-none focus:border-[#5a4222]/50"
+                  <GlassTextarea
+                    value={form.description}
+                    onChange={(v) => setForm({ ...form, description: v })}
+                    placeholder="What's the vibe? (optional)"
                   />
-                </div>
-              </div>
 
-              <button
-                type="submit"
-                disabled={creating}
-                className="mt-5 flex h-12 w-full items-center justify-center gap-2 rounded-full text-[15px] font-medium text-white transition disabled:opacity-70"
-                style={{
-                  background: "linear-gradient(180deg,#ff7a5c,#e85a3c)",
-                  boxShadow: "inset 0 1px 0 rgba(255,255,255,0.28), 0 14px 28px -14px rgba(232,90,60,0.65)",
-                }}
-              >
-                {creating ? <Loader2 className="h-4 w-4 animate-spin" /> : "Post gathering"}
-              </button>
+                  <div
+                    className="relative -mx-1 mt-1"
+                    style={{
+                      WebkitMaskImage:
+                        "linear-gradient(to right, transparent 0, #000 20px, #000 calc(100% - 20px), transparent 100%)",
+                      maskImage:
+                        "linear-gradient(to right, transparent 0, #000 20px, #000 calc(100% - 20px), transparent 100%)",
+                    }}
+                  >
+                    <div className="flex gap-1.5 overflow-x-auto px-1 py-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                      {CATEGORIES.map((c) => {
+                        const active = form.category === c.id;
+                        return (
+                          <button
+                            key={c.id}
+                            type="button"
+                            onClick={() => setForm({ ...form, category: c.id })}
+                            className={`shrink-0 rounded-full px-3 py-1.5 text-[12px] font-medium transition ${
+                              active
+                                ? "bg-[#0f0d0b] text-white shadow-[0_10px_24px_-12px_rgba(20,14,8,0.5)]"
+                                : "bg-white/45 text-[#2b1d0f] ring-1 ring-white/60"
+                            }`}
+                          >
+                            {c.icon} {c.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2.5 pt-1">
+                    <div>
+                      <label className="mb-1 block px-1 text-[10.5px] font-semibold uppercase tracking-[0.2em] text-[#4a3820]">Starts</label>
+                      <GlassInputRaw
+                        type="datetime-local"
+                        value={form.starts_at}
+                        onChange={(v) => setForm({ ...form, starts_at: v })}
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-1 block px-1 text-[10.5px] font-semibold uppercase tracking-[0.2em] text-[#4a3820]">
+                        Duration · max 24h
+                      </label>
+                      <GlassInputRaw
+                        type="number"
+                        min={1}
+                        max={24}
+                        value={String(form.duration_hours)}
+                        onChange={(v) => {
+                          const n = Math.min(24, Math.max(1, parseInt(v) || 1));
+                          setForm({ ...form, duration_hours: n });
+                        }}
+                        suffix="hrs"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="mb-1 block px-1 text-[10.5px] font-semibold uppercase tracking-[0.2em] text-[#4a3820]">Spots</label>
+                    <GlassInputRaw
+                      type="number"
+                      min={2}
+                      max={30}
+                      value={String(form.max_spots)}
+                      onChange={(v) => setForm({ ...form, max_spots: Math.min(30, Math.max(2, parseInt(v) || 6)) })}
+                    />
+                  </div>
+                </div>
+
+                <motion.button
+                  type="submit"
+                  disabled={creating}
+                  whileTap={{ scale: 0.98 }}
+                  className="mt-6 flex h-12 w-full items-center justify-center gap-2 rounded-full text-[15px] font-medium text-white transition disabled:opacity-70"
+                  style={{
+                    background: "linear-gradient(180deg,#1a1614,#0a0908)",
+                    boxShadow:
+                      "inset 0 1px 0 rgba(255,255,255,0.14), 0 14px 28px -14px rgba(20,14,8,0.65)",
+                  }}
+                >
+                  {creating ? <Loader2 className="h-4 w-4 animate-spin" /> : "Post gathering"}
+                </motion.button>
+              </div>
             </motion.form>
           </motion.div>
+
         )}
       </AnimatePresence>
 
