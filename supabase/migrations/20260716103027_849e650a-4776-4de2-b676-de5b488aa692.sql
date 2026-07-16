@@ -1,0 +1,1 @@
+CREATE POLICY "Activities publicly viewable" ON public.activities FOR SELECT TO anon USING (true); GRANT SELECT ON public.activities TO anon;
