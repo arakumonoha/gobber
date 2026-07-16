@@ -360,20 +360,27 @@ function MiniCard({ a, onClick }: { a: Activity; onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      className="group flex w-56 shrink-0 items-center gap-3 rounded-2xl glass p-2 pr-3 text-left shadow-glass transition hover:-translate-y-0.5"
+      className="group flex w-60 shrink-0 items-center gap-3 rounded-2xl p-2 pr-3.5 text-left ring-1 ring-black/[0.06] transition hover:-translate-y-0.5"
+      style={{
+        background: "linear-gradient(180deg, rgba(255,252,246,0.9) 0%, rgba(246,238,224,0.8) 100%)",
+        backdropFilter: "saturate(180%) blur(22px)",
+        boxShadow:
+          "0 18px 40px -22px rgba(60,40,14,0.42), 0 1px 0 rgba(255,255,255,0.9) inset",
+      }}
     >
       <div
-        className="h-14 w-14 shrink-0 rounded-xl bg-cover bg-center"
+        className="h-14 w-14 shrink-0 rounded-xl bg-cover bg-center ring-1 ring-black/5"
         style={{ backgroundImage: `url(${a.cover_url ?? "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=600&q=80"})` }}
       />
       <div className="min-w-0 flex-1">
-        <p className="text-[10px] font-medium uppercase tracking-widest text-clay">{a.category}</p>
-        <h4 className="line-clamp-1 text-sm font-semibold text-ink">{a.title}</h4>
-        <p className="line-clamp-1 text-[11px] text-muted-foreground">{a.city}, {a.country}</p>
+        <p className="text-[9.5px] font-bold uppercase tracking-[0.22em] text-[#7a3f16]">{a.category}</p>
+        <h4 className="line-clamp-1 text-[13.5px] font-semibold tracking-[-0.01em] text-[#0f0a05]">{a.title}</h4>
+        <p className="line-clamp-1 text-[11px] font-medium text-[#5c4527]">{a.city}, {a.country}</p>
       </div>
     </button>
   );
 }
+
 
 function QuickCreate({
   drop,
