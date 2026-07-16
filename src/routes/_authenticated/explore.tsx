@@ -234,23 +234,15 @@ function Explore() {
         </div>
       </motion.div>
 
-      {/* Map style toggle */}
-      <motion.div
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 0.25 }}
-        className="absolute right-4 top-40 z-20 sm:right-6"
-      >
-        <MapTypeToggle value={mapView} onChange={setMapView} />
-      </motion.div>
-
       {/* Stat chip */}
       {!dropMode && (
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="pointer-events-none absolute left-1/2 top-40 z-10 -translate-x-1/2 rounded-full glass px-4 py-1.5 text-[11px] font-medium text-foreground shadow-glass"
+          role="status"
+          aria-live="polite"
+          className="pointer-events-none absolute inset-x-0 bottom-40 z-10 mx-auto w-fit rounded-full glass px-4 py-1.5 text-[11px] font-medium text-foreground shadow-glass"
         >
           {filtered.length > 0
             ? `${filtered.length} gathering${filtered.length === 1 ? "" : "s"} pinned worldwide`
