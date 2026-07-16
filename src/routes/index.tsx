@@ -475,10 +475,28 @@ function LiveMap({
   );
 
   return (
-    <section id="live" className="relative px-6 py-24">
-      <div className="mx-auto max-w-6xl">
-        <div className="mx-auto max-w-2xl text-center">
-          <div
+    <section id="live" className="relative px-6 pb-24 pt-32">
+      {/* top blend with hero's cream tail */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 z-0 h-40"
+        style={{
+          background: `linear-gradient(180deg, ${PALETTE.cream} 0%, transparent 100%)`,
+        }}
+      />
+      <div className="relative z-10 mx-auto max-w-6xl">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-15% 0px" }}
+          transition={{ duration: 0.9, ease: EASE }}
+          className="mx-auto max-w-2xl text-center"
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true, margin: "-15% 0px" }}
+            transition={{ duration: 0.7, ease: EASE, delay: 0.05 }}
             className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-[11px] font-medium uppercase tracking-[0.16em]"
             style={{ background: PALETTE.blueSoft, color: PALETTE.blueDeep, border: `1px solid ${PALETTE.blue}22` }}
           >
@@ -487,8 +505,12 @@ function LiveMap({
               <span className="relative inline-flex h-1.5 w-1.5 rounded-full" style={{ background: PALETTE.blue }} />
             </span>
             live map
-          </div>
-          <h2
+          </motion.div>
+          <motion.h2
+            initial={{ opacity: 0, y: 18, filter: "blur(8px)" }}
+            whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            viewport={{ once: true, margin: "-15% 0px" }}
+            transition={{ duration: 1, ease: EASE, delay: 0.15 }}
             className="mt-4 font-display font-semibold leading-[1.02] tracking-[-0.03em]"
             style={{ fontSize: "clamp(32px,5vw,56px)", color: PALETTE.ink }}
           >
@@ -497,20 +519,38 @@ function LiveMap({
               real
             </span>{" "}
             gathering, right now
-          </h2>
-          <p className="mt-4 text-[15.5px] leading-[1.55]" style={{ color: "#4a3f33" }}>
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-15% 0px" }}
+            transition={{ duration: 0.8, ease: EASE, delay: 0.3 }}
+            className="mt-4 text-[15.5px] leading-[1.55]"
+            style={{ color: "#4a3f33" }}
+          >
             no algorithm, no feed — just an actual world map of tables you can sit at tonight.
-          </p>
+          </motion.p>
 
           {/* Trending strip pulled from live data */}
           {stats && (
-            <div className="mt-6 flex justify-center">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-15% 0px" }}
+              transition={{ duration: 0.8, ease: EASE, delay: 0.42 }}
+              className="mt-6 flex justify-center"
+            >
               <TrendingStrip trending={stats.trending} fallbackFlags={COUNTRY_FLAGS} />
-            </div>
+            </motion.div>
           )}
-        </div>
+        </motion.div>
 
-        <div
+
+        <motion.div
+          initial={{ opacity: 0, y: 40, scale: 0.97 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+          viewport={{ once: true, margin: "-10% 0px" }}
+          transition={{ duration: 1.1, ease: EASE, delay: 0.2 }}
           className="relative mx-auto mt-10 overflow-hidden rounded-[28px]"
           style={{
             border: "1px solid rgba(20,18,16,0.08)",
@@ -628,7 +668,7 @@ function LiveMap({
               </div>
             </>
           )}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
