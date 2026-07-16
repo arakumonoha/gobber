@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Globe2, MapPin, Users, X, Plus, Minus, Loader2, Check, LocateFixed, Compass } from "lucide-react";
+import { MapPin, Users, X, Plus, Minus, Loader2, Check, LocateFixed, Compass } from "lucide-react";
 import { format } from "date-fns";
 import { GoogleMap, type GoogleMapHandle } from "@/components/google-map";
 import { MapTypeToggle, type MapView } from "@/components/map-type-toggle";
@@ -179,61 +179,59 @@ function Explore() {
         )}
       </AnimatePresence>
 
-      {/* Header */}
+      {/* Header — editorial, centered */}
       <motion.div
-        initial={{ y: -20, opacity: 0 }}
+        initial={{ y: -12, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        className="relative z-20 px-4 pt-6 sm:px-6"
+        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+        className="relative z-20 mx-auto w-full max-w-[860px] px-5 pt-9 sm:px-7"
       >
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full glass shadow-glass">
-              <Globe2 className="h-4 w-4 text-clay" />
-            </div>
-            <div>
-              <p className="text-[11px] font-medium uppercase tracking-widest text-muted-foreground">Live on the globe</p>
-              <h1 className="text-2xl font-semibold tracking-tight text-ink">Explore</h1>
-            </div>
+        <div className="flex flex-col items-center text-center">
+          <p className="text-[10.5px] font-semibold uppercase tracking-[0.28em] text-[#4a3820]">Right now</p>
+          <h1 className="mt-1.5 font-serif italic text-[44px] leading-[0.95] tracking-[-0.03em] text-[#0f0d0b] sm:text-[52px]">
+            Explore.
+          </h1>
+          <div className="mt-4">
+            <MapTypeToggle value={mapView} onChange={setMapView} />
           </div>
+
+          <div
+            className="mt-5 flex max-w-full gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            role="tablist"
+            aria-label="Filter by category"
+          >
+            <button
+              onClick={() => setCategory(null)}
+              role="tab"
+              aria-selected={!category}
+              className={`shrink-0 rounded-full px-4 py-1.5 text-xs font-medium transition ${!category ? "bg-primary text-primary-foreground" : "glass text-foreground"}`}
+            >
+              All
+            </button>
+            {CATEGORIES.map((c) => (
+              <button
+                key={c.id}
+                onClick={() => setCategory(c.id === category ? null : c.id)}
+                role="tab"
+                aria-selected={category === c.id}
+                className={`shrink-0 rounded-full px-4 py-1.5 text-xs font-medium transition ${category === c.id ? "bg-primary text-primary-foreground" : "glass text-foreground"}`}
+              >
+                <span className="mr-1" aria-hidden="true">{c.icon}</span>{c.label}
+              </button>
+            ))}
+          </div>
+
           <button
             onClick={() => { setDropMode((v) => !v); setDrop(null); setSelectedId(null); }}
-            className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold shadow-float transition hover:-translate-y-0.5 ${
+            aria-pressed={dropMode}
+            className={`mt-4 inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold shadow-float transition hover:-translate-y-0.5 ${
               dropMode ? "bg-ink text-background" : "bg-primary text-primary-foreground"
             }`}
           >
-            <Plus className={`h-3.5 w-3.5 transition-transform ${dropMode ? "rotate-45" : ""}`} />
+            <Plus className={`h-3.5 w-3.5 transition-transform ${dropMode ? "rotate-45" : ""}`} aria-hidden="true" />
             {dropMode ? "Cancel pin" : "Drop a pin"}
           </button>
         </div>
-
-        <div className="mt-4 flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          <button
-            onClick={() => setCategory(null)}
-            className={`shrink-0 rounded-full px-4 py-1.5 text-xs font-medium transition ${!category ? "bg-primary text-primary-foreground" : "glass text-foreground"}`}
-          >
-            All
-          </button>
-          {CATEGORIES.map((c) => (
-            <button
-              key={c.id}
-              onClick={() => setCategory(c.id === category ? null : c.id)}
-              className={`shrink-0 rounded-full px-4 py-1.5 text-xs font-medium transition ${category === c.id ? "bg-primary text-primary-foreground" : "glass text-foreground"}`}
-            >
-              <span className="mr-1">{c.icon}</span>{c.label}
-            </button>
-          ))}
-        </div>
-      </motion.div>
-
-      {/* Map style toggle */}
-      <motion.div
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 0.25 }}
-        className="absolute right-4 top-40 z-20 sm:right-6"
-      >
-        <MapTypeToggle value={mapView} onChange={setMapView} />
       </motion.div>
 
       {/* Stat chip */}
@@ -242,7 +240,9 @@ function Explore() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="pointer-events-none absolute left-1/2 top-40 z-10 -translate-x-1/2 rounded-full glass px-4 py-1.5 text-[11px] font-medium text-foreground shadow-glass"
+          role="status"
+          aria-live="polite"
+          className="pointer-events-none absolute inset-x-0 bottom-40 z-10 mx-auto w-fit rounded-full glass px-4 py-1.5 text-[11px] font-medium text-foreground shadow-glass"
         >
           {filtered.length > 0
             ? `${filtered.length} gathering${filtered.length === 1 ? "" : "s"} pinned worldwide`
