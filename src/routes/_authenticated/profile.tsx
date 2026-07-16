@@ -80,6 +80,10 @@ function Profile() {
           <StatCard n={citiesVisited} label="Cities on the map" />
         </div>
 
+        <div className="mt-6">
+          <FriendsPanel />
+        </div>
+
         <div className="mt-8 space-y-4 rounded-3xl bg-card p-5 shadow-glass">
           <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Edit profile</h2>
           <div><Label className="text-xs">Display name</Label><Input value={profile.display_name} onChange={(e) => setProfile({ ...profile, display_name: e.target.value })} className="mt-1 h-11 rounded-xl" /></div>
@@ -89,8 +93,8 @@ function Profile() {
           <Button onClick={save} disabled={loading} className="h-11 w-full rounded-xl">{loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save"}</Button>
         </div>
 
-        <FriendsPanel />
         <BlockedPanel />
+
 
         <Button onClick={signOut} disabled={signingOut} variant="ghost" className="mt-4 h-11 w-full rounded-xl text-muted-foreground">
           <LogOut className="mr-2 h-4 w-4" /> Sign out
