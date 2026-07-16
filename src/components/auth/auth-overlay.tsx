@@ -142,10 +142,10 @@ function AuthCard({ onClose }: { onClose: () => void }) {
       transition={{ duration: 0.45, ease: EASE }}
       className="relative z-10 w-full max-w-[380px] overflow-hidden rounded-[26px]"
       style={{
-        background: "rgba(255,253,247,0.92)",
-        backdropFilter: "saturate(180%) blur(40px)",
-        border: "1px solid rgba(255,255,255,0.75)",
-        boxShadow: "0 1px 0 rgba(255,255,255,0.9) inset, 0 40px 90px -30px rgba(60,42,20,0.4), 0 10px 30px -18px rgba(60,42,20,0.18)",
+        background: "linear-gradient(180deg, rgba(255,253,247,0.35) 0%, rgba(255,247,230,0.22) 100%)",
+        backdropFilter: "saturate(180%) blur(48px)",
+        border: "1px solid rgba(255,255,255,0.55)",
+        boxShadow: "0 1px 0 rgba(255,255,255,0.75) inset, 0 40px 90px -30px rgba(60,42,20,0.4), 0 10px 30px -18px rgba(60,42,20,0.18)",
       }}
     >
       <button
