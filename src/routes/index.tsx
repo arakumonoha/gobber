@@ -565,7 +565,13 @@ function LiveMap({
             height: "clamp(360px, 60vh, 560px)",
           }}
         >
-          {mounted ? (
+          {!interactive ? (
+            mounted ? (
+              <ArcgisGlobe basemap="satellite" spin className="absolute inset-0" />
+            ) : (
+              <div className="absolute inset-0" style={{ background: PALETTE.paper }} />
+            )
+          ) : mounted ? (
             <GoogleMap
               ref={mapRef}
               pins={pins}
