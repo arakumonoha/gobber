@@ -35,7 +35,20 @@ function Explore() {
   const [dropMode, setDropMode] = useState(false);
   const [drop, setDrop] = useState<DropCoords | null>(null);
   const [mapView, setMapView] = useState<MapView>("satellite");
+  const [heading, setHeading] = useState(0);
+  const [locating, setLocating] = useState(false);
+  const mapRef = useRef<GoogleMapHandle>(null);
   const navigate = useNavigate();
+
+  async function handleLocate() {
+    setLocating(true);
+    try {
+      await mapRef.current?.locate();
+    } finally {
+      setLocating(false);
+    }
+  }
+
 
   const filtered = useMemo(
     () => activities.filter((a) => (category ? a.category === category : true)),
