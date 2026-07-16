@@ -168,7 +168,6 @@ function InlineField({
 function AuthPage() {
   const navigate = useNavigate();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [step, setStep] = useState<"email" | "password">("email");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
