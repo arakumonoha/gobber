@@ -251,13 +251,20 @@ function Explore() {
           transition={{ delay: 0.3 }}
           role="status"
           aria-live="polite"
-          className="pointer-events-none absolute inset-x-0 bottom-40 z-10 mx-auto w-fit rounded-full glass px-4 py-1.5 text-[11px] font-medium text-foreground shadow-glass"
+          className="pointer-events-none absolute inset-x-0 bottom-40 z-10 mx-auto w-fit rounded-full px-4 py-1.5 text-[11.5px] font-semibold tracking-[-0.005em] text-[#1a1108] ring-1 ring-black/[0.06]"
+          style={{
+            background: "linear-gradient(180deg, rgba(255,252,246,0.88) 0%, rgba(246,238,224,0.78) 100%)",
+            backdropFilter: "saturate(180%) blur(22px)",
+            boxShadow:
+              "0 18px 40px -20px rgba(60,40,14,0.4), 0 1px 0 rgba(255,255,255,0.9) inset",
+          }}
         >
           {filtered.length > 0
             ? `${filtered.length} gathering${filtered.length === 1 ? "" : "s"} pinned worldwide`
             : "Nothing pinned yet — tap Drop a pin to start"}
         </motion.div>
       )}
+
 
       {/* Quick create sheet */}
       <AnimatePresence>
