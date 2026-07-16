@@ -161,13 +161,17 @@ function AuthCard({ onClose }: { onClose: () => void }) {
         boxShadow: "0 1px 0 rgba(255,255,255,0.75) inset, 0 40px 90px -30px rgba(60,42,20,0.4), 0 10px 30px -18px rgba(60,42,20,0.18)",
       }}
     >
-      <button
+      <motion.button
         onClick={onClose}
         aria-label="Close"
-        className="absolute right-3 top-3 z-20 flex h-8 w-8 items-center justify-center rounded-full text-[#2b1d0f] transition hover:bg-black/5"
+        whileHover={{ rotate: 90, scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        transition={{ type: "spring", stiffness: 400, damping: 18 }}
+        className="absolute right-3 top-3 z-20 flex h-8 w-8 items-center justify-center rounded-full text-[#2b1d0f] transition-colors hover:bg-black/5"
       >
         <X className="h-4 w-4" />
-      </button>
+      </motion.button>
+
       <div className="px-7 pt-10 pb-6">
         <div className="space-y-2.5 text-left">
           <AnimatePresence mode="wait" initial={false}>
