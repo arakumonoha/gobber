@@ -249,14 +249,8 @@ function Hero({ stats, nearYou }: { stats: LandingStats | undefined; nearYou: Ne
   const hosts = stats?.activeHosts ?? 0;
   const nearbyCount = nearYou && stats ? stats.perCountry[nearYou.countryName] ?? 0 : 0;
 
-  // Live vibing count — animates upward for a sense of pulse
-  const base = 91336 + live * 47;
-  const [count, setCount] = useState(base);
-  useEffect(() => {
-    setCount(base);
-    const t = setInterval(() => setCount((c) => c + Math.floor(Math.random() * 5) + 1), 2200);
-    return () => clearInterval(t);
-  }, [base]);
+  // Real live count from backend (activities starting now or later)
+  const count = live;
 
   return (
     <section
