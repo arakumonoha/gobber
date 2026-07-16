@@ -311,7 +311,7 @@ function Hero({ stats, nearYou }: { stats: LandingStats | undefined; nearYou: Ne
             label="live worldwide"
             tint="blue"
           />
-          {nearYou && (
+          {nearYou && nearbyCount > 0 && (
             <LivePill
               icon={<Compass className="h-3.5 w-3.5" style={{ color: PALETTE.amberDeep }} strokeWidth={2.4} />}
               value={nearbyCount}
