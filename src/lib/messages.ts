@@ -30,7 +30,11 @@ export type MessageRow = {
   sender_id: string;
   body: string;
   created_at: string;
+  media_url: string | null;
+  media_type: string | null;
+  signed_url?: string | null;
 };
+
 
 export type ConversationSummary = ConversationRow & {
   members: MemberRow[];
@@ -128,7 +132,16 @@ export function useMessages(conversationId?: string) {
         .order("created_at", { ascending: true })
         .limit(200);
       if (error) throw error;
-      return (data ?? []) as MessageRow[];
+      const rows = (data ?? []) as MessageRow[];
+      const paths = rows.filter((m) => m.media_url).map((m) => m.media_url!) as string[];
+      if (paths.length) {
+        const { data: signed } = await supabase.storage.from("chat-media").createSignedUrls(paths, 3600);
+        const map = new Map((signed ?? []).map((s) => [s.path!, s.signedUrl]));
+        rows.forEach((m) => {
+          if (m.media_url) m.signed_url = map.get(m.media_url) ?? null;
+        });
+      }
+      return rows;
     },
   });
 }
@@ -136,13 +149,31 @@ export function useMessages(conversationId?: string) {
 export function useSendMessage(conversationId?: string) {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (body: string) => {
-      const trimmed = body.trim();
-      if (!trimmed) return;
+    mutationFn: async (input: string | { body?: string; file?: File | null }) => {
+      const arg = typeof input === "string" ? { body: input } : input;
+      const trimmed = (arg.body ?? "").trim();
+      const file = arg.file ?? null;
+      if (!trimmed && !file) return;
       const { data: userRes } = await supabase.auth.getUser();
       const uid = userRes.user?.id;
       if (!uid || !conversationId) return;
-      const { error } = await supabase.from("messages").insert({ conversation_id: conversationId, sender_id: uid, body: trimmed });
+
+      let media_url: string | null = null;
+      let media_type: string | null = null;
+      if (file) {
+        const ext = (file.name.split(".").pop() || "bin").toLowerCase().slice(0, 8);
+        const path = `${conversationId}/${uid}/${crypto.randomUUID()}.${ext}`;
+        const { error: upErr } = await supabase.storage
+          .from("chat-media")
+          .upload(path, file, { contentType: file.type, upsert: false });
+        if (upErr) throw upErr;
+        media_url = path;
+        media_type = file.type.startsWith("video") ? "video" : "image";
+      }
+
+      const { error } = await supabase
+        .from("messages")
+        .insert({ conversation_id: conversationId, sender_id: uid, body: trimmed, media_url, media_type });
       if (error) throw error;
     },
     onSuccess: () => {
@@ -151,6 +182,7 @@ export function useSendMessage(conversationId?: string) {
     },
   });
 }
+
 
 export function useMarkConvRead(conversationId?: string, userId?: string) {
   const qc = useQueryClient();
