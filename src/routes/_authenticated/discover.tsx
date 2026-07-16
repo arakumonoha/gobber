@@ -379,6 +379,7 @@ function Discover() {
                 </div>
               </motion.button>
             ))}
+            </AnimatePresence>
           </div>
         </div>
       </DraggableSheet>
