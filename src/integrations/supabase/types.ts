@@ -110,6 +110,42 @@ export type Database = {
         }
         Relationships: []
       }
+      notifications: {
+        Row: {
+          actor_id: string | null
+          created_at: string
+          data: Json
+          entity_id: string | null
+          entity_type: string | null
+          id: string
+          read_at: string | null
+          type: string
+          user_id: string
+        }
+        Insert: {
+          actor_id?: string | null
+          created_at?: string
+          data?: Json
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          read_at?: string | null
+          type: string
+          user_id: string
+        }
+        Update: {
+          actor_id?: string | null
+          created_at?: string
+          data?: Json
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          read_at?: string | null
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -207,6 +243,17 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      suggested_profiles: {
+        Args: { _limit?: number; _user_id: string }
+        Returns: {
+          avatar_url: string
+          display_name: string
+          home_city: string
+          id: string
+          mutual_count: number
+          username: string
+        }[]
       }
     }
     Enums: {
