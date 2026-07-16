@@ -95,13 +95,6 @@ function NotificationSheet({ open, onOpenChange }: { open: boolean; onOpenChange
                 Mark all read
               </button>
             )}
-            <button
-              onClick={() => onOpenChange(false)}
-              className="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition hover:bg-black/5"
-              aria-label="Close"
-            >
-              <X className="h-4 w-4" />
-            </button>
           </div>
         </div>
 
