@@ -282,7 +282,7 @@ function Hero({ stats, nearYou }: { stats: LandingStats | undefined; nearYou: Ne
             <span className="relative inline-flex h-2 w-2 rounded-full bg-[#7DA88E]" />
           </span>
           <span className="font-semibold" style={{ color: PALETTE.ink }}>{count.toLocaleString()}</span>
-          <span>people vibing right now</span>
+          <span>{count === 1 ? "table live right now" : "tables live right now"}</span>
           <span className="text-base leading-none">🌍</span>
         </motion.div>
 
