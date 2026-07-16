@@ -47,7 +47,13 @@ function InlineField(props: {
         autoFocus={autoFocus}
         autoComplete={autoComplete}
         onKeyDown={(e) => { if (e.key === "Enter" && onSubmit) { e.preventDefault(); onSubmit(); } }}
-        className="h-[46px] w-full rounded-[10px] border border-[#1a1614]/12 bg-white/85 px-4 pr-12 text-[15px] tracking-[-0.01em] text-[#0f0d0b] placeholder:text-[#a89676] outline-none transition focus:border-[#8a6b45]/50 focus:bg-white"
+        className="h-[48px] w-full rounded-[12px] px-4 pr-12 text-[15px] tracking-[-0.01em] text-[#0f0d0b] placeholder:text-[#8a7a5f] outline-none transition focus:bg-white/40"
+        style={{
+          background: "rgba(255,255,255,0.22)",
+          border: "1px solid rgba(255,255,255,0.55)",
+          backdropFilter: "blur(18px) saturate(180%)",
+          boxShadow: "inset 0 1px 0 rgba(255,255,255,0.7), inset 0 -1px 0 rgba(20,18,16,0.05), 0 4px 12px -8px rgba(60,42,20,0.15)",
+        }}
       />
       {showSubmit && (
         <motion.button
