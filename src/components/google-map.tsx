@@ -13,7 +13,9 @@ export interface MapPin {
   lng: number;
   label?: string;
   category?: string;
+  mine?: boolean;
 }
+
 
 interface Props {
   pins: MapPin[];
