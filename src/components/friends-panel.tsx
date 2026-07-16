@@ -48,6 +48,10 @@ export function FriendsPanel() {
         <ChevronRight className="h-4 w-4 text-muted-foreground" />
       </button>
 
+      {/* Blocked people */}
+      <BlockedPanel />
+
+
       {/* Suggested for you */}
       <section className="mt-8">
         <div className="mb-3 flex items-center justify-between px-1">
