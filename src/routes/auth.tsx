@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { toast } from "sonner";
-import { Loader2, ArrowRight } from "lucide-react";
+import { Loader2, ArrowRight, X } from "lucide-react";
 
 
 export const Route = createFileRoute("/auth")({
@@ -276,17 +276,17 @@ function AuthPage() {
         </div>
       )}
 
-      <AnimatePresence mode="wait" initial={false}>
-      {view === "welcome" ? (
-        /* Goldfish-inspired minimal welcome — tight sans wordmark, restrained CTAs */
-        <motion.div
-          key="welcome"
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.985, filter: "blur(6px)" }}
-          transition={{ duration: 0.7, ease: EASE }}
-          className="relative z-10 flex w-full max-w-[440px] flex-col items-center text-center"
-        >
+      {/* Welcome layer — always mounted; blurs & dims when auth overlay opens */}
+      <motion.div
+        animate={
+          view === "auth"
+            ? { filter: "blur(18px)", scale: 0.97, opacity: 0.55 }
+            : { filter: "blur(0px)", scale: 1, opacity: 1 }
+        }
+        transition={{ duration: 0.7, ease: EASE }}
+        className="relative z-10 flex w-full max-w-[440px] flex-col items-center text-center"
+        style={{ pointerEvents: view === "auth" ? "none" : "auto" }}
+      >
           {/* Micro mark */}
           <motion.div
             initial={{ opacity: 0, scale: 0.6 }}
@@ -398,198 +398,165 @@ function AuthPage() {
             <span className="mx-2 opacity-50">/</span>
             <span>© Gobber</span>
           </motion.p>
-        </motion.div>
-
-      ) : (
-      /* iCloud-style centered card */
-      <motion.div
-        key="auth"
-        initial={{ opacity: 0, y: 18, scale: 0.985, filter: "blur(6px)" }}
-        animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
-        exit={{ opacity: 0, scale: 0.985 }}
-        transition={{ duration: 0.65, ease: EASE }}
-        className="relative z-10 w-full max-w-[420px] overflow-hidden rounded-[28px]"
-        style={{
-          background: "rgba(255,253,247,0.72)",
-          backdropFilter: "saturate(180%) blur(30px)",
-          border: "1px solid rgba(255,255,255,0.7)",
-          boxShadow:
-            "0 1px 0 rgba(255,255,255,0.9) inset, 0 30px 70px -25px rgba(60,42,20,0.28), 0 8px 24px -14px rgba(60,42,20,0.14)",
-        }}
-      >
-        <div className="px-8 pt-9 pb-8 text-center">
-          <CloudMark />
-
-          <motion.h1
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.15, ease: EASE }}
-            className="mt-5 text-[26px] font-semibold tracking-[-0.028em] text-[#0f0d0b]"
-            style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif' }}
-          >
-            Sign In to Gobber
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.7, delay: 0.28 }}
-            className="mt-1.5 text-[13.5px] tracking-[-0.005em] text-[#8a7a5f]"
-          >
-            {mode === "signin"
-              ? "Use your account to continue."
-              : "Create an account to get started."}
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.4, ease: EASE }}
-            className="mt-7 space-y-2.5 text-left"
-          >
-            <AnimatePresence mode="wait" initial={false}>
-              {step === "email" ? (
-                <motion.div
-                  key="email"
-                  initial={{ opacity: 0, x: -12 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -12 }}
-                  transition={{ duration: 0.35, ease: EASE }}
-                  className="space-y-2.5"
-                >
-                  {mode === "signup" && (
-                    <InlineField
-                      type="text"
-                      placeholder="Name"
-                      value={name}
-                      onChange={setName}
-                      autoComplete="name"
-                    />
-                  )}
-                  <InlineField
-                    type="email"
-                    placeholder="Email"
-                    value={email}
-                    onChange={setEmail}
-                    autoFocus
-                    autoComplete="email"
-                    showSubmit
-                    onSubmit={handleEmailContinue}
-                  />
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="password"
-                  initial={{ opacity: 0, x: 12 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 12 }}
-                  transition={{ duration: 0.35, ease: EASE }}
-                  className="space-y-2"
-                >
-                  <div className="flex items-center justify-between px-1 text-[12.5px] text-[#8a7a5f]">
-                    <span className="truncate">{email}</span>
-                    <button
-                      onClick={() => setStep("email")}
-                      className="text-[#8a6b45] hover:underline"
-                    >
-                      Change
-                    </button>
-                  </div>
-                  <InlineField
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={setPassword}
-                    autoFocus
-                    autoComplete={mode === "signin" ? "current-password" : "new-password"}
-                    showSubmit
-                    submitting={loading === "form"}
-                    onSubmit={submit}
-                  />
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            <div className="flex items-center justify-between px-1 pt-1.5 text-[12.5px]">
-              <label className="flex items-center gap-2 text-[#8a7a5f]">
-                <input
-                  type="checkbox"
-                  defaultChecked
-                  className="h-3.5 w-3.5 rounded-[3px] border border-[#1a1614]/25 accent-[#0f0d0b]"
-                />
-                Keep me signed in
-              </label>
-              <button className="text-[#8a6b45] hover:underline">Forgot?</button>
-            </div>
-          </motion.div>
-
-          {/* Divider */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.7, delay: 0.55 }}
-            className="mt-7 flex items-center gap-3"
-          >
-            <span className="h-px flex-1 bg-[#1a1614]/10" />
-            <span className="text-[10.5px] font-medium uppercase tracking-[0.22em] text-[#a08a68]">
-              or
-            </span>
-            <span className="h-px flex-1 bg-[#1a1614]/10" />
-          </motion.div>
-
-          {/* Social — quiet iCloud-style icon row */}
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.65, ease: EASE }}
-            className="mt-5 flex items-center justify-center gap-3"
-          >
-            <SocialButton onClick={apple} loading={loading === "apple"} disabled={!!loading} label="Continue with Apple">
-              <AppleIcon className="h-[19px] w-[19px] text-[#0f0d0b]" />
-            </SocialButton>
-            <SocialButton onClick={google} loading={loading === "google"} disabled={!!loading} label="Continue with Google">
-              <GoogleIcon className="h-[19px] w-[19px]" />
-            </SocialButton>
-          </motion.div>
-
-          {/* Create account switch */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.7, delay: 0.8 }}
-            className="mt-7 text-[13px] text-[#8a7a5f]"
-          >
-            {mode === "signin" ? (
-              <>
-                Don't have an account?{" "}
-                <button
-                  onClick={() => { setMode("signup"); setStep("email"); }}
-                  className="font-medium text-[#8a6b45] hover:underline"
-                >
-                  Create yours now
-                </button>
-              </>
-            ) : (
-              <>
-                Already have an account?{" "}
-                <button
-                  onClick={() => { setMode("signin"); setStep("email"); }}
-                  className="font-medium text-[#8a6b45] hover:underline"
-                >
-                  Sign in
-                </button>
-              </>
-            )}
-          </motion.div>
-        </div>
-
-        {/* Footer strip */}
-        <div className="border-t border-[#1a1614]/8 bg-white/40 px-8 py-3 text-center text-[11px] tracking-[-0.005em] text-[#a08a68]">
-          Manage your account · <span className="text-[#8a6b45] hover:underline cursor-pointer">Privacy</span> · <span className="text-[#8a6b45] hover:underline cursor-pointer">Terms</span>
-        </div>
       </motion.div>
-      )}
+
+      {/* Auth overlay — minimal card, front & center */}
+      <AnimatePresence>
+        {view === "auth" && (
+          <motion.div
+            key="auth-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.4, ease: EASE }}
+            className="absolute inset-0 z-20 flex items-center justify-center px-5"
+            style={{ background: "rgba(30,22,14,0.14)" }}
+            onClick={() => setView("welcome")}
+          >
+
+      /* iCloud-style centered card */
+            <motion.div
+              key="auth"
+              initial={{ opacity: 0, y: 20, scale: 0.96, filter: "blur(10px)" }}
+              animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+              exit={{ opacity: 0, y: 12, scale: 0.97, filter: "blur(8px)" }}
+              transition={{ duration: 0.55, ease: EASE }}
+              onClick={(e) => e.stopPropagation()}
+              className="relative w-full max-w-[380px] overflow-hidden rounded-[26px]"
+              style={{
+                background: "rgba(255,253,247,0.82)",
+                backdropFilter: "saturate(180%) blur(40px)",
+                border: "1px solid rgba(255,255,255,0.75)",
+                boxShadow:
+                  "0 1px 0 rgba(255,255,255,0.9) inset, 0 40px 90px -30px rgba(60,42,20,0.4), 0 10px 30px -18px rgba(60,42,20,0.18)",
+              }}
+            >
+              <button
+                onClick={() => setView("welcome")}
+                aria-label="Close"
+                className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full text-[#8a7a5f] transition hover:bg-black/5 hover:text-[#0f0d0b]"
+              >
+                <X className="h-4 w-4" strokeWidth={2.2} />
+              </button>
+
+              <div className="px-7 pt-10 pb-6">
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.1, ease: EASE }}
+                  className="space-y-2.5 text-left"
+                >
+                  <AnimatePresence mode="wait" initial={false}>
+                    {step === "email" ? (
+                      <motion.div
+                        key="email"
+                        initial={{ opacity: 0, x: -12 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -12 }}
+                        transition={{ duration: 0.3, ease: EASE }}
+                        className="space-y-2.5"
+                      >
+                        {mode === "signup" && (
+                          <InlineField
+                            type="text"
+                            placeholder="Name"
+                            value={name}
+                            onChange={setName}
+                            autoComplete="name"
+                          />
+                        )}
+                        <InlineField
+                          type="email"
+                          placeholder="Email"
+                          value={email}
+                          onChange={setEmail}
+                          autoFocus
+                          autoComplete="email"
+                          showSubmit
+                          onSubmit={handleEmailContinue}
+                        />
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        key="password"
+                        initial={{ opacity: 0, x: 12 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: 12 }}
+                        transition={{ duration: 0.3, ease: EASE }}
+                        className="space-y-2"
+                      >
+                        <div className="flex items-center justify-between px-1 text-[12.5px] text-[#8a7a5f]">
+                          <span className="truncate">{email}</span>
+                          <button
+                            onClick={() => setStep("email")}
+                            className="text-[#8a6b45] hover:underline"
+                          >
+                            Change
+                          </button>
+                        </div>
+                        <InlineField
+                          type="password"
+                          placeholder="Password"
+                          value={password}
+                          onChange={setPassword}
+                          autoFocus
+                          autoComplete={mode === "signin" ? "current-password" : "new-password"}
+                          showSubmit
+                          submitting={loading === "form"}
+                          onSubmit={submit}
+                        />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+
+                {/* Divider */}
+                <div className="mt-6 flex items-center gap-3">
+                  <span className="h-px flex-1 bg-[#1a1614]/10" />
+                  <span className="text-[10.5px] font-medium uppercase tracking-[0.22em] text-[#a08a68]">or</span>
+                  <span className="h-px flex-1 bg-[#1a1614]/10" />
+                </div>
+
+                {/* Social row */}
+                <div className="mt-5 flex items-center justify-center gap-3">
+                  <SocialButton onClick={apple} loading={loading === "apple"} disabled={!!loading} label="Continue with Apple">
+                    <AppleIcon className="h-[19px] w-[19px] text-[#0f0d0b]" />
+                  </SocialButton>
+                  <SocialButton onClick={google} loading={loading === "google"} disabled={!!loading} label="Continue with Google">
+                    <GoogleIcon className="h-[19px] w-[19px]" />
+                  </SocialButton>
+                </div>
+
+                {/* Switch mode */}
+                <div className="mt-6 text-center text-[13px] text-[#8a7a5f]">
+                  {mode === "signin" ? (
+                    <>
+                      New here?{" "}
+                      <button
+                        onClick={() => { setMode("signup"); setStep("email"); }}
+                        className="font-medium text-[#8a6b45] hover:underline"
+                      >
+                        Create an account
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      Already have an account?{" "}
+                      <button
+                        onClick={() => { setMode("signin"); setStep("email"); }}
+                        className="font-medium text-[#8a6b45] hover:underline"
+                      >
+                        Sign in
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
       </AnimatePresence>
+
     </div>
   );
 }
