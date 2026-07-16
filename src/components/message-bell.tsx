@@ -87,27 +87,29 @@ function InboxView({ onOpen }: { onOpen: (id: string) => void }) {
 
   return (
     <div className="flex h-full flex-col">
-      <div className="flex items-center justify-between border-b border-black/5 px-5 py-4">
-        <div>
-          <h2 className="text-[19px] font-semibold tracking-tight text-ink">Messages</h2>
-          <p className="text-[12px] text-muted-foreground">Chat with friends & gatherings</p>
-        </div>
+      {/* Centered header with symmetric side actions (New on left, native close on right) */}
+      <div className="relative flex items-center justify-center border-b border-black/5 px-14 py-4">
         <button
           onClick={() => setComposeOpen(true)}
-          className="rounded-full bg-primary px-3 py-1.5 text-[12px] font-semibold text-primary-foreground shadow-sm transition active:scale-95"
+          aria-label="New message"
+          className="absolute left-4 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-black/[0.06] text-ink transition hover:bg-black/[0.09] active:scale-95"
         >
-          New
+          <SquarePen className="h-4 w-4" strokeWidth={2.2} />
         </button>
+        <div className="text-center">
+          <h2 className="text-[17px] font-semibold tracking-tight text-ink">Messages</h2>
+          <p className="text-[11.5px] text-muted-foreground">Friends & gatherings</p>
+        </div>
       </div>
 
-      {/* Tabs */}
-      <div className="mx-4 mt-3 grid grid-cols-2 rounded-full bg-black/5 p-1">
+      {/* Tabs — equal columns, centered */}
+      <div className="mx-4 mt-3 grid grid-cols-2 gap-1 rounded-full bg-black/[0.05] p-1">
         {(["dm", "location"] as const).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`relative flex items-center justify-center gap-1.5 rounded-full py-1.5 text-[12.5px] font-semibold transition ${
-              tab === t ? "bg-white text-ink shadow" : "text-muted-foreground"
+            className={`relative flex h-8 items-center justify-center gap-1.5 rounded-full text-[12.5px] font-semibold transition ${
+              tab === t ? "bg-white text-ink shadow-sm" : "text-muted-foreground hover:text-ink"
             }`}
           >
             {t === "dm" ? <MessageCircle className="h-3.5 w-3.5" /> : <MapPin className="h-3.5 w-3.5" />}
@@ -115,6 +117,7 @@ function InboxView({ onOpen }: { onOpen: (id: string) => void }) {
           </button>
         ))}
       </div>
+
 
       <div className="mt-2 flex-1 overflow-y-auto px-2 py-2">
         {isLoading ? (
