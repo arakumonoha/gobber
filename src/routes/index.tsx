@@ -2,24 +2,25 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion, useScroll, useTransform, type Variants } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowRight, Star, Coffee, Users, MapPin, Sparkles } from "lucide-react";
+import { ArrowRight, Star, Coffee, Users, MapPin, Hand } from "lucide-react";
 import { GoogleMap, type GoogleMapHandle } from "@/components/google-map";
 import { activitiesQuery } from "@/lib/activities";
+import owlLogo from "@/assets/gobber-owl.png.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Gobber — meet strangers, leave as friends" },
+      { title: "Gobber — Visit n Vibe" },
       {
         name: "description",
         content:
-          "Gobber turns cities into gathering places. Browse nearby tables, join one, and make real friendships with people around you. Today, not someday.",
+          "Gobber turns cities into gathering places. Browse nearby tables, join one, and vibe with people around you. Today, not someday.",
       },
-      { property: "og:title", content: "Gobber — meet strangers, leave as friends" },
+      { property: "og:title", content: "Gobber — Visit n Vibe" },
       {
         property: "og:description",
         content:
-          "Browse nearby tables, join one, and make real friendships with people around you. Today, not someday.",
+          "Browse nearby tables, join one, and vibe with people around you. Today, not someday.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -30,10 +31,11 @@ export const Route = createFileRoute("/")({
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
-const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.9, ease: EASE } },
-};
+/* Apple accent palette */
+const APPLE_BLUE = "#0071e3";
+const APPLE_BLUE_HOVER = "#0a84ff";
+const APPLE_BLUE_SOFT = "#e8f2ff";
+const APPLE_BLUE_DEEP = "#0058b8";
 
 /* ───────────────────────── ICONS ───────────────────────── */
 
@@ -53,6 +55,18 @@ function GoogleIcon({ className }: { className?: string }) {
       <path fill="#FBBC05" d="M5.84 14.1c-.22-.66-.35-1.36-.35-2.1s.13-1.44.35-2.1V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" />
       <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84C6.71 7.31 9.14 5.38 12 5.38z" />
     </svg>
+  );
+}
+
+function OwlMark({ size = 32 }: { size?: number }) {
+  return (
+    <img
+      src={owlLogo.url}
+      alt="Gobber"
+      width={size}
+      height={size}
+      style={{ width: size, height: size, objectFit: "contain", filter: "drop-shadow(0 6px 12px rgba(60,42,20,0.18))" }}
+    />
   );
 }
 
@@ -78,15 +92,7 @@ function Nav() {
     >
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
         <Link to="/" className="flex items-center gap-2">
-          <span
-            className="grid h-8 w-8 place-items-center rounded-full text-white"
-            style={{
-              background: "linear-gradient(135deg,#ff8a6b,#e85a3c)",
-              boxShadow: "0 6px 14px -6px rgba(232,90,60,0.55), inset 0 1px 0 rgba(255,255,255,0.28)",
-            }}
-          >
-            <Sparkles className="h-4 w-4" strokeWidth={2.4} />
-          </span>
+          <OwlMark size={30} />
           <span className="text-[17px] font-semibold tracking-[-0.02em] text-[#141210]">gobber</span>
         </Link>
         <nav className="hidden items-center gap-8 text-[14px] text-[#4a3f33] md:flex">
@@ -98,8 +104,8 @@ function Nav() {
           to="/auth"
           className="group inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[13.5px] font-medium text-white transition hover:-translate-y-0.5"
           style={{
-            background: "linear-gradient(180deg,#ff7a5c,#e85a3c)",
-            boxShadow: "inset 0 1px 0 rgba(255,255,255,0.28), 0 10px 22px -12px rgba(232,90,60,0.6)",
+            background: `linear-gradient(180deg,${APPLE_BLUE_HOVER},${APPLE_BLUE})`,
+            boxShadow: `inset 0 1px 0 rgba(255,255,255,0.28), 0 10px 22px -12px ${APPLE_BLUE}88`,
           }}
         >
           sign in
@@ -154,13 +160,12 @@ function FloatingFlags() {
 
 /* ───────────── AUTH BUTTONS (Apple / Google) ───────────── */
 
-function AuthButtons({ variant = "light" }: { variant?: "light" | "dark" }) {
-  const isDark = variant === "dark";
+function AuthButtons() {
   return (
     <div className="flex w-full max-w-md flex-col items-center gap-3 sm:flex-row sm:justify-center">
       <Link
         to="/auth"
-        className="group inline-flex w-full items-center justify-center gap-2 rounded-full px-6 py-4 text-[15px] font-medium transition hover:-translate-y-0.5 sm:w-auto"
+        className="inline-flex w-full items-center justify-center gap-2 rounded-full px-6 py-4 text-[15px] font-medium transition hover:-translate-y-0.5 sm:w-auto"
         style={{
           background: "linear-gradient(180deg,#1c1815 0%,#0a0908 100%)",
           color: "#ffffff",
@@ -173,9 +178,9 @@ function AuthButtons({ variant = "light" }: { variant?: "light" | "dark" }) {
       </Link>
       <Link
         to="/auth"
-        className="group inline-flex w-full items-center justify-center gap-2.5 rounded-full px-6 py-4 text-[15px] font-medium transition hover:-translate-y-0.5 sm:w-auto"
+        className="inline-flex w-full items-center justify-center gap-2.5 rounded-full px-6 py-4 text-[15px] font-medium transition hover:-translate-y-0.5 sm:w-auto"
         style={{
-          background: isDark ? "#ffffff" : "color-mix(in oklab, white 96%, transparent)",
+          background: "color-mix(in oklab, white 96%, transparent)",
           color: "#141210",
           border: "1px solid rgba(20,18,16,0.08)",
           boxShadow: "0 10px 22px -14px rgba(20,18,16,0.22)",
@@ -209,7 +214,7 @@ function Hero({ liveCount, cityCount }: { liveCount: number; cityCount: number }
       className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-6 pb-16 pt-32"
       style={{
         background:
-          "radial-gradient(90% 60% at 50% 0%, #fff2d6 0%, transparent 55%), radial-gradient(80% 60% at 50% 110%, #ffd9c0 0%, transparent 55%), linear-gradient(180deg, #fbf5e8 0%, #f5e6c9 100%)",
+          "radial-gradient(90% 60% at 50% 0%, #fff2d6 0%, transparent 55%), radial-gradient(80% 60% at 50% 110%, #d8ecff 0%, transparent 55%), linear-gradient(180deg, #fbf5e8 0%, #f0e2c4 100%)",
       }}
     >
       <FloatingFlags />
@@ -233,39 +238,49 @@ function Hero({ liveCount, cityCount }: { liveCount: number; cityCount: number }
             <span className="relative inline-flex h-2 w-2 rounded-full bg-[#2fbf5a]" />
           </span>
           <span className="font-semibold text-[#141210]">{count.toLocaleString()}</span>
-          <span>people gathering right now</span>
+          <span>people vibing right now</span>
           <span className="text-base leading-none">🌍</span>
+        </motion.div>
+
+        {/* Owl mark above headline */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.7, y: -6 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.9, ease: EASE, delay: 0.05 }}
+          className="mt-8"
+        >
+          <OwlMark size={88} />
         </motion.div>
 
         <motion.h1
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.1, ease: EASE, delay: 0.12 }}
-          className="mt-8 font-display text-[clamp(48px,8vw,104px)] font-semibold leading-[0.98] tracking-[-0.035em] text-[#141210]"
+          transition={{ duration: 1.1, ease: EASE, delay: 0.15 }}
+          className="mt-6 font-display font-semibold leading-[0.95] tracking-[-0.04em] text-[#141210]"
+          style={{ fontSize: "clamp(56px, 10vw, 128px)" }}
         >
-          meet{" "}
+          Visit{" "}
           <span
-            className="serif-hero"
             style={{
-              color: "#e85a3c",
               fontFamily: "'Instrument Serif', serif",
               fontStyle: "italic",
               fontWeight: 400,
+              color: APPLE_BLUE,
+              letterSpacing: "-0.02em",
             }}
           >
-            strangers
-          </span>
-          <br />
-          leave as friends
+            n
+          </span>{" "}
+          Vibe
         </motion.h1>
 
         <motion.p
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: EASE, delay: 0.28 }}
+          transition={{ duration: 1, ease: EASE, delay: 0.32 }}
           className="mt-6 max-w-[54ch] text-[17.5px] leading-[1.55] text-[#4a3f33]"
         >
-          browse nearby tables, join one, and make real friendships with people around you.
+          browse nearby tables, join one, and vibe with people around you.
           today, not someday <span className="inline-block">:)</span>
         </motion.p>
 
@@ -273,7 +288,7 @@ function Hero({ liveCount, cityCount }: { liveCount: number; cityCount: number }
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: EASE, delay: 0.42 }}
+          transition={{ duration: 1, ease: EASE, delay: 0.44 }}
           className="mt-10 flex flex-wrap items-center justify-center gap-3"
         >
           <div
@@ -283,7 +298,7 @@ function Hero({ liveCount, cityCount }: { liveCount: number; cityCount: number }
               border: "1px solid rgba(20,18,16,0.06)",
             }}
           >
-            <MapPin className="h-3.5 w-3.5 text-[#e85a3c]" strokeWidth={2.4} />
+            <MapPin className="h-3.5 w-3.5" style={{ color: APPLE_BLUE }} strokeWidth={2.4} />
             <span className="font-semibold text-[#141210]">{liveCount}</span> live gatherings
           </div>
           <div
@@ -314,7 +329,7 @@ function Hero({ liveCount, cityCount }: { liveCount: number; cityCount: number }
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: EASE, delay: 0.58 }}
+          transition={{ duration: 1, ease: EASE, delay: 0.6 }}
           className="mt-8"
         >
           <AuthButtons />
@@ -338,31 +353,40 @@ function Hero({ liveCount, cityCount }: { liveCount: number; cityCount: number }
 function LiveMap({ activities }: { activities: { id: string; lat: number; lng: number; category: string; title: string; city: string; country: string }[] }) {
   const [mounted, setMounted] = useState(false);
   const [view, setView] = useState<"satellite" | "roadmap">("roadmap");
+  const [interactive, setInteractive] = useState(false);
   const mapRef = useRef<GoogleMapHandle>(null);
   useEffect(() => setMounted(true), []);
 
-  const pins = activities.map((a) => ({
-    id: a.id,
-    lat: a.lat,
-    lng: a.lng,
-    category: a.category,
-    label: a.title,
-  }));
+  // Stable pins reference to avoid re-init flickers
+  const pins = useMemo(
+    () =>
+      activities.map((a) => ({
+        id: a.id,
+        lat: a.lat,
+        lng: a.lng,
+        category: a.category,
+        label: a.title,
+      })),
+    [activities],
+  );
 
   return (
     <section id="live" className="relative px-6 py-24">
       <div className="mx-auto max-w-6xl">
         <div className="mx-auto max-w-2xl text-center">
-          <div className="inline-flex items-center gap-2 rounded-full bg-white/70 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.16em] text-[#8b6f3f]" style={{ border: "1px solid rgba(20,18,16,0.06)" }}>
+          <div
+            className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-[11px] font-medium uppercase tracking-[0.16em]"
+            style={{ background: APPLE_BLUE_SOFT, color: APPLE_BLUE_DEEP, border: `1px solid ${APPLE_BLUE}22` }}
+          >
             <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#e85a3c] opacity-70" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#e85a3c]" />
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-70" style={{ background: APPLE_BLUE }} />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full" style={{ background: APPLE_BLUE }} />
             </span>
             live map
           </div>
           <h2 className="mt-4 font-display text-[clamp(32px,5vw,56px)] font-semibold leading-[1.02] tracking-[-0.03em] text-[#141210]">
             every pin is a{" "}
-            <span className="serif-hero" style={{ color: "#e85a3c", fontFamily: "'Instrument Serif', serif", fontStyle: "italic", fontWeight: 400 }}>
+            <span style={{ color: APPLE_BLUE, fontFamily: "'Instrument Serif', serif", fontStyle: "italic", fontWeight: 400 }}>
               real
             </span>{" "}
             gathering, right now
@@ -392,67 +416,111 @@ function LiveMap({ activities }: { activities: { id: string; lat: number; lng: n
             <div className="absolute inset-0 bg-[#f0e2c4]" />
           )}
 
-          {/* toggle */}
-          <div className="absolute left-4 top-4 z-10 inline-flex items-center gap-0.5 rounded-full p-1"
-            style={{
-              background: "color-mix(in oklab, white 75%, transparent)",
-              backdropFilter: "blur(14px)",
-              border: "1px solid rgba(20,18,16,0.06)",
-              boxShadow: "0 8px 20px -14px rgba(60,42,20,0.25)",
-            }}
-          >
-            {(["satellite", "roadmap"] as const).map((v) => (
-              <button
-                key={v}
-                onClick={() => setView(v)}
-                className={`rounded-full px-3 py-1.5 text-[11.5px] font-medium transition ${
-                  view === v ? "bg-[#141210] text-white" : "text-[#4a3f33] hover:text-[#141210]"
-                }`}
-              >
-                {v === "satellite" ? "Satellite" : "Street"}
-              </button>
-            ))}
-          </div>
-
-          {/* live counter badge */}
-          <div className="absolute right-4 top-4 z-10 inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[12px] text-[#141210]"
-            style={{
-              background: "color-mix(in oklab, white 82%, transparent)",
-              backdropFilter: "blur(14px)",
-              border: "1px solid rgba(20,18,16,0.06)",
-            }}
-          >
-            <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#2fbf5a] opacity-75" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#2fbf5a]" />
-            </span>
-            <span className="font-semibold">{activities.length}</span> gathering{activities.length === 1 ? "" : "s"} live
-          </div>
-
-          {/* bottom gradient with CTA */}
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex justify-center pb-5"
-            style={{ background: "linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.28) 100%)" }}
-          >
-            <Link
-              to="/discover"
-              className="pointer-events-auto inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-[13.5px] font-medium text-[#141210] transition hover:-translate-y-0.5"
+          {/* Idle overlay — blocks all map interaction until the user opts in */}
+          {!interactive && (
+            <motion.button
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+              onClick={() => setInteractive(true)}
+              className="absolute inset-0 z-20 flex cursor-pointer flex-col items-center justify-center gap-3 text-white"
               style={{
-                background: "color-mix(in oklab, white 92%, transparent)",
-                backdropFilter: "blur(14px)",
-                boxShadow: "0 14px 28px -16px rgba(0,0,0,0.5)",
-                border: "1px solid rgba(255,255,255,0.6)",
+                background:
+                  "linear-gradient(180deg, rgba(10,12,20,0.05) 0%, rgba(10,12,20,0.35) 55%, rgba(10,12,20,0.55) 100%)",
+                backdropFilter: "blur(0.5px)",
               }}
+              aria-label="Explore the map"
             >
-              open the full map <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
+              <motion.div
+                animate={{ y: [0, -6, 0] }}
+                transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+                className="inline-flex items-center gap-2 rounded-full px-5 py-3 text-[14px] font-medium text-[#141210]"
+                style={{
+                  background: "color-mix(in oklab, white 94%, transparent)",
+                  backdropFilter: "blur(16px)",
+                  boxShadow: "0 18px 40px -14px rgba(0,0,0,0.45)",
+                  border: "1px solid rgba(255,255,255,0.5)",
+                }}
+              >
+                <Hand className="h-4 w-4" style={{ color: APPLE_BLUE }} strokeWidth={2.2} />
+                Tap to explore the map
+              </motion.div>
+              <span
+                className="text-[11.5px] font-medium tracking-[0.12em] uppercase"
+                style={{ color: "rgba(255,255,255,0.85)", textShadow: "0 1px 6px rgba(0,0,0,0.35)" }}
+              >
+                {activities.length} gathering{activities.length === 1 ? "" : "s"} · worldwide
+              </span>
+            </motion.button>
+          )}
+
+          {/* Controls — only after activation */}
+          {interactive && (
+            <>
+              <div
+                className="absolute left-4 top-4 z-10 inline-flex items-center gap-0.5 rounded-full p-1"
+                style={{
+                  background: "color-mix(in oklab, white 75%, transparent)",
+                  backdropFilter: "blur(14px)",
+                  border: "1px solid rgba(20,18,16,0.06)",
+                  boxShadow: "0 8px 20px -14px rgba(60,42,20,0.25)",
+                }}
+              >
+                {(["satellite", "roadmap"] as const).map((v) => (
+                  <button
+                    key={v}
+                    onClick={() => setView(v)}
+                    className={`rounded-full px-3 py-1.5 text-[11.5px] font-medium transition ${
+                      view === v ? "text-white" : "text-[#4a3f33] hover:text-[#141210]"
+                    }`}
+                    style={view === v ? { background: APPLE_BLUE } : undefined}
+                  >
+                    {v === "satellite" ? "Satellite" : "Street"}
+                  </button>
+                ))}
+              </div>
+
+              <div
+                className="absolute right-4 top-4 z-10 inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[12px] text-[#141210]"
+                style={{
+                  background: "color-mix(in oklab, white 82%, transparent)",
+                  backdropFilter: "blur(14px)",
+                  border: "1px solid rgba(20,18,16,0.06)",
+                }}
+              >
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#2fbf5a] opacity-75" />
+                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#2fbf5a]" />
+                </span>
+                <span className="font-semibold">{activities.length}</span> gathering{activities.length === 1 ? "" : "s"} live
+              </div>
+
+              <div
+                className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex justify-center pb-5"
+                style={{ background: "linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.28) 100%)" }}
+              >
+                <Link
+                  to="/discover"
+                  className="pointer-events-auto inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-[13.5px] font-medium text-[#141210] transition hover:-translate-y-0.5"
+                  style={{
+                    background: "color-mix(in oklab, white 92%, transparent)",
+                    backdropFilter: "blur(14px)",
+                    boxShadow: "0 14px 28px -16px rgba(0,0,0,0.5)",
+                    border: "1px solid rgba(255,255,255,0.6)",
+                  }}
+                >
+                  open the full map <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </section>
   );
 }
 
-/* ───────────────── TRENDING TRIPS (real cities from DB, fallback list) ───────────────── */
+/* ───────────────── TRENDING TRIPS ───────────────── */
 
 type Trip = { flag: string; city: string; dates: string; going: string };
 
@@ -484,7 +552,7 @@ function TripCard({ t }: { t: Trip }) {
       </div>
       <span
         className="shrink-0 rounded-full px-2.5 py-1 text-[11.5px] font-medium"
-        style={{ background: "#ffe4d8", color: "#c94a2a" }}
+        style={{ background: APPLE_BLUE_SOFT, color: APPLE_BLUE_DEEP }}
       >
         {t.going}+ going
       </span>
@@ -500,8 +568,8 @@ function TrendingTrips({ trips }: { trips: Trip[] }) {
         <span className="text-lg">✈️</span> trending trips
       </div>
       <div className="relative">
-        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-24" style={{ background: "linear-gradient(90deg,#f5e6c9,transparent)" }} />
-        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24" style={{ background: "linear-gradient(-90deg,#f5e6c9,transparent)" }} />
+        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-24" style={{ background: "linear-gradient(90deg,#f0e2c4,transparent)" }} />
+        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24" style={{ background: "linear-gradient(-90deg,#f0e2c4,transparent)" }} />
         <motion.div
           className="flex gap-3"
           animate={{ x: ["0%", "-50%"] }}
@@ -520,9 +588,9 @@ function TrendingTrips({ trips }: { trips: Trip[] }) {
 
 function How() {
   const steps = [
-    { n: "01", icon: MapPin, title: "open the map", body: "every warm pin is a real gathering nearby — tonight, this weekend, or next city over." },
+    { n: "01", icon: MapPin, title: "open the map", body: "every pin is a real gathering nearby — tonight, this weekend, or next city over." },
     { n: "02", icon: Coffee, title: "tap what excites you", body: "see the host, the vibe, who's coming. reserve one of the few spots with a single tap." },
-    { n: "03", icon: Users, title: "show up. belong.", body: "meet a handful of strangers over dinner, at a trailhead, at a corner café. leave with new group chats." },
+    { n: "03", icon: Users, title: "show up. belong.", body: "meet strangers over dinner, at a trailhead, at a corner café. leave with new group chats." },
   ];
   return (
     <section id="how" className="relative px-6 py-24">
@@ -530,7 +598,7 @@ function How() {
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="font-display text-[clamp(32px,5vw,56px)] font-semibold leading-[1.02] tracking-[-0.03em] text-[#141210]">
             three taps.{" "}
-            <span className="serif-hero" style={{ color: "#e85a3c", fontFamily: "'Instrument Serif', serif", fontStyle: "italic", fontWeight: 400 }}>
+            <span style={{ color: APPLE_BLUE, fontFamily: "'Instrument Serif', serif", fontStyle: "italic", fontWeight: 400 }}>
               one
             </span>{" "}
             unforgettable night.
@@ -546,16 +614,20 @@ function How() {
               transition={{ duration: 0.8, ease: EASE, delay: i * 0.1 }}
               className="relative overflow-hidden rounded-3xl p-7"
               style={{
-                background: "linear-gradient(180deg,#fef7e5 0%,#f4e5c4 100%)",
+                background: "linear-gradient(180deg,#fef7e5 0%,#eaf3ff 100%)",
                 border: "1px solid rgba(20,18,16,0.06)",
                 boxShadow: "0 20px 40px -28px rgba(60,42,20,0.22)",
               }}
             >
               <div className="flex items-center justify-between">
-                <span className="font-display text-[13px] font-medium tracking-[0.14em] text-[#8b6f3f]">{s.n}</span>
+                <span className="font-display text-[13px] font-medium tracking-[0.14em]" style={{ color: APPLE_BLUE_DEEP }}>{s.n}</span>
                 <span
-                  className="grid h-10 w-10 place-items-center rounded-full text-[#1a1614]"
-                  style={{ background: "color-mix(in oklab, white 70%, transparent)", border: "1px solid rgba(20,18,16,0.06)" }}
+                  className="grid h-10 w-10 place-items-center rounded-full"
+                  style={{
+                    background: "color-mix(in oklab, white 70%, transparent)",
+                    border: "1px solid rgba(20,18,16,0.06)",
+                    color: APPLE_BLUE,
+                  }}
                 >
                   <s.icon className="h-4 w-4" strokeWidth={2} />
                 </span>
@@ -579,19 +651,19 @@ function CTA() {
         className="relative mx-auto max-w-4xl overflow-hidden rounded-[36px] px-8 py-16 text-center"
         style={{
           background:
-            "radial-gradient(80% 100% at 50% 0%, #ff9575 0%, transparent 55%), linear-gradient(180deg,#1c1815 0%,#0a0908 100%)",
+            `radial-gradient(80% 100% at 50% 0%, ${APPLE_BLUE_HOVER}66 0%, transparent 55%), linear-gradient(180deg,#1c1815 0%,#0a0908 100%)`,
           boxShadow: "0 60px 120px -40px rgba(20,18,16,0.55), inset 0 1px 0 rgba(255,255,255,0.06)",
         }}
       >
-        <div className="text-[11.5px] font-medium uppercase tracking-[0.2em] text-[#ffcbb5]">
+        <div className="mx-auto mb-6 flex justify-center">
+          <OwlMark size={72} />
+        </div>
+        <div className="text-[11.5px] font-medium uppercase tracking-[0.2em]" style={{ color: "#a8c7ff" }}>
           your seat is waiting
         </div>
         <h2 className="mt-4 font-display text-[clamp(34px,5.5vw,60px)] font-semibold leading-[1.02] tracking-[-0.03em] text-white">
           today is a{" "}
-          <span
-            className="serif-hero"
-            style={{ color: "#ffb094", fontFamily: "'Instrument Serif', serif", fontStyle: "italic", fontWeight: 400 }}
-          >
+          <span style={{ color: "#a8c7ff", fontFamily: "'Instrument Serif', serif", fontStyle: "italic", fontWeight: 400 }}>
             good day
           </span>{" "}
           to meet someone.
@@ -600,7 +672,7 @@ function CTA() {
           gobber is free. joining a table takes ten seconds. the memory lasts a lot longer.
         </p>
         <div className="mt-9 flex justify-center">
-          <AuthButtons variant="dark" />
+          <AuthButtons />
         </div>
       </div>
     </section>
@@ -614,14 +686,9 @@ function Footer() {
     <footer className="px-6 pb-10">
       <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 border-t border-[#1a161410] pt-8 text-[12.5px] text-[#6b5c48] sm:flex-row">
         <div className="flex items-center gap-2">
-          <span
-            className="grid h-6 w-6 place-items-center rounded-full text-white"
-            style={{ background: "linear-gradient(135deg,#ff8a6b,#e85a3c)" }}
-          >
-            <Sparkles className="h-3 w-3" strokeWidth={2.4} />
-          </span>
+          <OwlMark size={22} />
           <span className="font-semibold text-[#141210]">gobber</span>
-          <span>· made for meeting people, in real life.</span>
+          <span>· visit n vibe, made for meeting people in real life.</span>
         </div>
         <div className="flex items-center gap-5">
           <a href="#" className="transition hover:text-[#141210]">privacy</a>
@@ -641,7 +708,6 @@ function Landing() {
 
   const trips = useMemo<Trip[]>(() => {
     if (activities.length === 0) return FALLBACK_TRIPS;
-    // Group by city, count activities
     const grouped = new Map<string, { count: number; country: string; date: string }>();
     for (const a of activities) {
       const key = a.city;
@@ -665,7 +731,7 @@ function Landing() {
   }, [activities]);
 
   return (
-    <main className="relative min-h-screen" style={{ background: "#f5e6c9" }}>
+    <main className="relative min-h-screen" style={{ background: "#f0e2c4" }}>
       <Nav />
       <Hero liveCount={activities.length} cityCount={cityCount} />
       <LiveMap activities={activities} />
