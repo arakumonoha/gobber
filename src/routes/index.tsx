@@ -565,21 +565,40 @@ function LiveMap({
             height: "clamp(360px, 60vh, 560px)",
           }}
         >
-          {!interactive ? (
-            mounted ? (
-              <ArcgisGlobe basemap="satellite" spin className="absolute inset-0" />
-            ) : (
-              <div className="absolute inset-0" style={{ background: PALETTE.paper }} />
-            )
-          ) : mounted ? (
-            <GoogleMap
-              ref={mapRef}
-              pins={pins}
-              mapTypeId={view}
-              zoom={2}
+          {/* Ambient globe (always mounted while preview is idle) */}
+          {mounted && !interactive && (
+            <motion.div
+              key="globe"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.6, ease: EASE }}
               className="absolute inset-0"
-            />
-          ) : (
+            >
+              <ArcgisGlobe basemap="satellite" spin className="absolute inset-0" />
+            </motion.div>
+          )}
+
+          {/* Interactive Google map — mounted once the user chooses to explore */}
+          {mounted && interactive && (
+            <motion.div
+              key="gmap"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, ease: EASE }}
+              className="absolute inset-0"
+            >
+              <GoogleMap
+                ref={mapRef}
+                pins={pins}
+                mapTypeId={view}
+                zoom={2}
+                className="absolute inset-0"
+              />
+            </motion.div>
+          )}
+
+          {!mounted && (
             <div className="absolute inset-0" style={{ background: PALETTE.paper }} />
           )}
 
