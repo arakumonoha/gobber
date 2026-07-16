@@ -198,50 +198,8 @@ function Discover() {
           <div className="mt-4">
             <MapTypeToggle value={mapView} onChange={setMapView} />
           </div>
-        </div>
-
-        <div
-          className="mx-auto mt-5 flex w-full max-w-[560px] items-center gap-2.5 rounded-full px-4 py-3 ring-1 ring-[#3a2a12]/[0.06]"
-          style={{
-            background: "color-mix(in oklab, #fffaf0 72%, transparent)",
-            backdropFilter: "saturate(180%) blur(28px)",
-            WebkitBackdropFilter: "saturate(180%) blur(28px)",
-            boxShadow:
-              "inset 0 1px 0 rgba(255,255,255,0.65), 0 1px 2px rgba(60,42,20,0.05), 0 18px 40px -20px rgba(60,42,20,0.22)",
-          }}
-        >
-          <Search className="h-4 w-4 text-[#4a3820]" strokeWidth={2} />
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Where to? Lisbon, Tokyo, Bali…"
-            className="w-full bg-transparent text-[14px] tracking-[-0.01em] outline-none placeholder:text-[#5a4530] text-[#1a1614]"
-          />
-        </div>
-
-        <div
-          className="relative mx-auto mt-4 w-full max-w-[640px]"
-          style={{
-            WebkitMaskImage:
-              "linear-gradient(to right, transparent 0, #000 28px, #000 calc(100% - 28px), transparent 100%)",
-            maskImage:
-              "linear-gradient(to right, transparent 0, #000 28px, #000 calc(100% - 28px), transparent 100%)",
-          }}
-        >
-          <div className="flex justify-start gap-2 overflow-x-auto px-6 py-2 sm:justify-center [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            <CategoryChip active={!category} onClick={() => setCategory(null)}>All</CategoryChip>
-            {CATEGORIES.map((c) => (
-              <CategoryChip
-                key={c.id}
-                active={category === c.id}
-                onClick={() => setCategory(c.id === category ? null : c.id)}
-              >
-                <span className="mr-1">{c.icon}</span>{c.label}
-              </CategoryChip>
-            ))}
-          </div>
-        </div>
       </motion.div>
+
 
       {/* Compass — mirrors FAB position on the left */}
       <AnimatePresence>
