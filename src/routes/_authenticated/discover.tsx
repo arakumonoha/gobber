@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, MapPin, Compass, Plus, X, Loader2, Trash2 } from "lucide-react";
+import { Search, MapPin, Compass, Plus, X, Loader2, Trash2, LocateFixed, Minus } from "lucide-react";
 import { GoogleMap, type GoogleMapHandle } from "@/components/google-map";
 import { MapTypeToggle, type MapView } from "@/components/map-type-toggle";
 import { BottomNav } from "@/components/bottom-nav";
@@ -196,6 +196,51 @@ function Discover() {
     setGhostPin(null);
   }
 
+  const [locating, setLocating] = useState(false);
+  async function handleLocate() {
+    setLocating(true);
+    try {
+      const pos = await mapRef.current?.locate();
+      if (!pos) toast.error("Location unavailable");
+    } finally {
+      setLocating(false);
+    }
+  }
+
+  const [searching, setSearching] = useState(false);
+  async function handleSearchSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const q = query.trim();
+    if (!q) return;
+    // If any local activity matches, focus that first — cheapest hit.
+    const local = filtered[0] ?? activities.find((a) =>
+      `${a.title} ${a.city} ${a.country}`.toLowerCase().includes(q.toLowerCase()),
+    );
+    if (local) {
+      mapRef.current?.flyTo(local.lat, local.lng, 11);
+      setSelectedId(local.id);
+      return;
+    }
+    setSearching(true);
+    try {
+      const r = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(q)}`,
+        { headers: { "Accept-Language": "en" } },
+      );
+      const j = await r.json();
+      const hit = Array.isArray(j) ? j[0] : null;
+      if (!hit) {
+        toast.error(`Couldn't find "${q}"`);
+        return;
+      }
+      mapRef.current?.flyTo(parseFloat(hit.lat), parseFloat(hit.lon), 11);
+    } catch {
+      toast.error("Search failed");
+    } finally {
+      setSearching(false);
+    }
+  }
+
   function onRailScroll() {
     const el = railRef.current;
     if (!el) return;
@@ -267,22 +312,57 @@ function Discover() {
 
 
       {/* Compass — mirrors FAB position on the left */}
-      <AnimatePresence>
-        {Math.abs(heading) > 1 && (
+      {/* Left column: stacked glass controls (zoom / locate / compass) */}
+      <div className="absolute bottom-28 left-5 z-30 flex flex-col gap-2 sm:left-7">
+        <div
+          className="flex flex-col overflow-hidden rounded-2xl bg-white/85 ring-1 ring-black/[0.06] shadow-[0_18px_36px_-14px_rgba(60,42,20,0.28)]"
+          style={{ backdropFilter: "saturate(180%) blur(20px)", WebkitBackdropFilter: "saturate(180%) blur(20px)" }}
+        >
           <motion.button
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0, opacity: 0 }}
             whileTap={{ scale: 0.92 }}
-            onClick={() => mapRef.current?.resetHeading()}
-            className="absolute bottom-28 left-5 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-white/85 ring-1 ring-black/[0.06] shadow-[0_18px_36px_-14px_rgba(60,42,20,0.35)] backdrop-blur-xl sm:left-7"
-            style={{ backdropFilter: "saturate(180%) blur(20px)" }}
-            aria-label="Reset north"
+            onClick={() => mapRef.current?.zoomIn()}
+            className="flex h-11 w-11 items-center justify-center text-[#1a1614] transition hover:bg-black/5"
+            aria-label="Zoom in"
           >
-            <Compass className="h-5 w-5 text-[#1a1614]" style={{ transform: `rotate(${-heading}deg)` }} strokeWidth={2} />
+            <Plus className="h-4.5 w-4.5" strokeWidth={2.2} />
           </motion.button>
-        )}
-      </AnimatePresence>
+          <div className="mx-2 h-px bg-black/[0.08]" />
+          <motion.button
+            whileTap={{ scale: 0.92 }}
+            onClick={() => mapRef.current?.zoomOut()}
+            className="flex h-11 w-11 items-center justify-center text-[#1a1614] transition hover:bg-black/5"
+            aria-label="Zoom out"
+          >
+            <Minus className="h-4.5 w-4.5" strokeWidth={2.2} />
+          </motion.button>
+        </div>
+        <motion.button
+          whileTap={{ scale: 0.92 }}
+          onClick={handleLocate}
+          disabled={locating}
+          className="flex h-11 w-11 items-center justify-center rounded-full bg-white/85 text-[#1a1614] ring-1 ring-black/[0.06] shadow-[0_18px_36px_-14px_rgba(60,42,20,0.28)] transition hover:bg-white"
+          style={{ backdropFilter: "saturate(180%) blur(20px)", WebkitBackdropFilter: "saturate(180%) blur(20px)" }}
+          aria-label="My location"
+        >
+          {locating ? <Loader2 className="h-4 w-4 animate-spin" /> : <LocateFixed className="h-4 w-4" strokeWidth={2.2} />}
+        </motion.button>
+        <AnimatePresence>
+          {Math.abs(heading) > 1 && (
+            <motion.button
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0, opacity: 0 }}
+              whileTap={{ scale: 0.92 }}
+              onClick={() => mapRef.current?.resetHeading()}
+              className="flex h-11 w-11 items-center justify-center rounded-full bg-white/85 ring-1 ring-black/[0.06] shadow-[0_18px_36px_-14px_rgba(60,42,20,0.28)]"
+              style={{ backdropFilter: "saturate(180%) blur(20px)", WebkitBackdropFilter: "saturate(180%) blur(20px)" }}
+              aria-label="Reset north"
+            >
+              <Compass className="h-4 w-4 text-[#1a1614]" style={{ transform: `rotate(${-heading}deg)` }} strokeWidth={2} />
+            </motion.button>
+          )}
+        </AnimatePresence>
+      </div>
 
       {/* Add-mode banner */}
       <AnimatePresence>
@@ -339,7 +419,8 @@ function Discover() {
       >
         <div className="px-5 pt-1">
           {/* Search + categories live inside the sheet, beneath the handle */}
-          <div
+          <form
+            onSubmit={handleSearchSubmit}
             className="flex w-full items-center gap-2.5 rounded-full px-4 py-3 ring-1 ring-[#3a2a12]/[0.06]"
             style={{
               background: "color-mix(in oklab, #fffaf0 72%, transparent)",
@@ -349,14 +430,29 @@ function Discover() {
                 "inset 0 1px 0 rgba(255,255,255,0.65), 0 1px 2px rgba(60,42,20,0.05), 0 18px 40px -20px rgba(60,42,20,0.22)",
             }}
           >
-            <Search className="h-4 w-4 text-[#4a3820]" strokeWidth={2} />
+            {searching ? (
+              <Loader2 className="h-4 w-4 animate-spin text-[#4a3820]" />
+            ) : (
+              <Search className="h-4 w-4 text-[#4a3820]" strokeWidth={2} />
+            )}
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Where to? Lisbon, Tokyo, Bali…"
+              placeholder="Search a city or vibe — press enter to fly"
               className="w-full bg-transparent text-[14px] tracking-[-0.01em] outline-none placeholder:text-[#5a4530] text-[#1a1614]"
+              enterKeyHint="search"
             />
-          </div>
+            {query && (
+              <button
+                type="button"
+                onClick={() => setQuery("")}
+                aria-label="Clear"
+                className="text-[#4a3820] transition hover:text-[#1a1614]"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
+          </form>
 
           <div
             className="relative -mx-5 mt-3"
@@ -412,10 +508,51 @@ function Discover() {
                 />
               ))}
               {!isLoading && filtered.length === 0 && (
-                <div className="w-full rounded-2xl bg-secondary/60 p-8 text-center">
-                  <p className="text-sm font-medium">No gatherings here yet</p>
-                  <p className="mt-1 text-xs text-muted-foreground">Tap the + button to drop the first pin.</p>
-                </div>
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="w-full rounded-[22px] p-7 text-center ring-1 ring-[#3a2a12]/[0.06]"
+                  style={{
+                    background: "color-mix(in oklab, #fffaf0 72%, transparent)",
+                    backdropFilter: "saturate(180%) blur(24px)",
+                    WebkitBackdropFilter: "saturate(180%) blur(24px)",
+                  }}
+                >
+                  <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-[#4a3820]">Quiet spot</p>
+                  <h4 className="mt-1.5 font-serif italic text-[22px] leading-[1.05] tracking-[-0.02em] text-[#0f0d0b]">
+                    {query || category ? "Nothing matches — yet." : "No gatherings here yet."}
+                  </h4>
+                  <p className="mt-1.5 text-[12.5px] text-[#4a3820]">
+                    {query
+                      ? "Try a different city, or start the vibe yourself."
+                      : "Be the first to drop a pin and set the vibe."}
+                  </p>
+                  <div className="mt-4 flex items-center justify-center gap-2">
+                    {(query || category) && (
+                      <button
+                        onClick={() => {
+                          setQuery("");
+                          setCategory(null);
+                        }}
+                        className="rounded-full bg-white/70 px-4 py-2 text-[12.5px] font-medium text-[#2b1d0f] ring-1 ring-[#3a2a12]/[0.08] transition hover:bg-white"
+                      >
+                        Clear filters
+                      </button>
+                    )}
+                    <button
+                      onClick={() => {
+                        if (!user) return toast.error("Sign in to drop a pin");
+                        if (myActivePin) return confirmRemovePin();
+                        setAddMode(true);
+                      }}
+                      className="inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[12.5px] font-medium text-white shadow-[0_12px_28px_-12px_rgba(232,90,60,0.7)] transition"
+                      style={{ background: "linear-gradient(180deg,#ff7a5c,#e85a3c)" }}
+                    >
+                      <Plus className="h-3.5 w-3.5" strokeWidth={2.4} />
+                      Drop the first pin
+                    </button>
+                  </div>
+                </motion.div>
               )}
             </AnimatePresence>
           </div>
