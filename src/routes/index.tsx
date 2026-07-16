@@ -156,7 +156,7 @@ function Nav() {
       >
         <Link to="/" className="flex items-center gap-2">
           <OwlMark size={26} />
-          <span className="text-[16px] font-semibold tracking-[-0.02em]" style={{ color: PALETTE.ink }}>
+          <span className="text-[16px] font-semibold tracking-[-0.02em]" style={{ color: "#FAF3E1" }}>
             gobber
           </span>
         </Link>
@@ -165,13 +165,14 @@ function Nav() {
           className="relative hidden items-center gap-1 rounded-full p-1 text-[13px] md:flex"
           style={{
             background:
-              "linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.25) 100%)",
-            border: "1px solid rgba(255,255,255,0.6)",
+              "linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.2) 100%)",
+            border: "1px solid rgba(255,255,255,0.1)",
             backdropFilter: "blur(14px) saturate(160%)",
             boxShadow:
-              "inset 0 1px 0 rgba(255,255,255,0.9), inset 0 -1px 0 rgba(20,18,16,0.04), 0 4px 12px -6px rgba(20,18,16,0.12)",
+              "inset 0 1px 0 rgba(255,255,255,0.08), inset 0 -1px 0 rgba(0,0,0,0.2), 0 4px 12px -6px rgba(0,0,0,0.3)",
           }}
         >
+
           {links.map((l) => {
             const isActive = active === l.id;
             return (
