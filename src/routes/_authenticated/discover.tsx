@@ -181,44 +181,44 @@ function Discover() {
       />
 
       {/* Top gradient */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-48 bg-gradient-to-b from-[#f5eddc]/85 via-[#f5eddc]/40 to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-56 bg-gradient-to-b from-[#f5eddc]/92 via-[#f5eddc]/55 to-transparent" />
 
-      {/* Header */}
+      {/* Header — centered, symmetric */}
       <motion.div
         initial={{ y: -12, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-        className="relative z-30 px-5 pt-8 sm:px-7"
+        className="relative z-30 mx-auto w-full max-w-[720px] px-5 pt-9 sm:px-7"
       >
-        <div className="flex items-end justify-between gap-3">
-          <div>
-            <p className="text-[10.5px] font-medium uppercase tracking-[0.22em] text-[#9a8770]">Right now</p>
-            <h1 className="mt-1 font-serif italic text-[42px] leading-[0.95] tracking-[-0.028em] text-[#0f0d0b]">
-              Discover.
-            </h1>
+        <div className="flex flex-col items-center text-center">
+          <p className="text-[10.5px] font-semibold uppercase tracking-[0.28em] text-[#6b5540]">Right now</p>
+          <h1 className="mt-1.5 font-serif italic text-[44px] leading-[0.95] tracking-[-0.03em] text-[#0f0d0b] sm:text-[52px]">
+            Discover.
+          </h1>
+          <div className="mt-4">
+            <MapTypeToggle value={mapView} onChange={setMapView} />
           </div>
-          <MapTypeToggle value={mapView} onChange={setMapView} />
         </div>
 
         <div
-          className="mt-5 flex items-center gap-2.5 rounded-full px-4 py-3 ring-1 ring-black/[0.04]"
+          className="mx-auto mt-5 flex w-full max-w-[560px] items-center gap-2.5 rounded-full px-4 py-3 ring-1 ring-black/[0.05]"
           style={{
-            background: "color-mix(in oklab, white 72%, transparent)",
+            background: "color-mix(in oklab, white 78%, transparent)",
             backdropFilter: "saturate(180%) blur(24px)",
             WebkitBackdropFilter: "saturate(180%) blur(24px)",
-            boxShadow: "0 1px 2px rgba(60,42,20,0.04), 0 10px 30px -18px rgba(60,42,20,0.15)",
+            boxShadow: "0 1px 2px rgba(60,42,20,0.05), 0 12px 34px -18px rgba(60,42,20,0.2)",
           }}
         >
-          <Search className="h-4 w-4 text-[#9a8770]" strokeWidth={2} />
+          <Search className="h-4 w-4 text-[#6b5540]" strokeWidth={2} />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Where to? Lisbon, Tokyo, Bali…"
-            className="w-full bg-transparent text-[14px] outline-none placeholder:text-[#b3a48a] text-[#1a1614]"
+            className="w-full bg-transparent text-[14px] outline-none placeholder:text-[#8a7658] text-[#1a1614]"
           />
         </div>
 
-        <div className="mt-4 flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="mx-auto mt-4 flex w-full max-w-[640px] justify-start gap-2 overflow-x-auto pb-1 sm:justify-center [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <CategoryChip active={!category} onClick={() => setCategory(null)}>All</CategoryChip>
           {CATEGORIES.map((c) => (
             <CategoryChip
@@ -232,18 +232,20 @@ function Discover() {
         </div>
       </motion.div>
 
-      {/* Compass */}
+      {/* Compass — mirrors FAB position on the left */}
       <AnimatePresence>
         {Math.abs(heading) > 1 && (
           <motion.button
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0, opacity: 0 }}
+            whileTap={{ scale: 0.92 }}
             onClick={() => mapRef.current?.resetHeading()}
-            className="absolute right-4 top-56 z-20 flex h-11 w-11 items-center justify-center rounded-full glass shadow-float sm:right-6"
+            className="absolute bottom-28 left-5 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-white/85 ring-1 ring-black/[0.06] shadow-[0_18px_36px_-14px_rgba(60,42,20,0.35)] backdrop-blur-xl sm:left-7"
+            style={{ backdropFilter: "saturate(180%) blur(20px)" }}
             aria-label="Reset north"
           >
-            <Compass className="h-5 w-5 text-clay" style={{ transform: `rotate(${-heading}deg)` }} />
+            <Compass className="h-5 w-5 text-[#1a1614]" style={{ transform: `rotate(${-heading}deg)` }} strokeWidth={2} />
           </motion.button>
         )}
       </AnimatePresence>
@@ -295,11 +297,14 @@ function Discover() {
         }}
       >
         <div className="px-5 pt-1">
-          <div className="mb-3 flex items-baseline justify-between">
-            <h2 className="text-lg font-semibold text-ink">
-              {isLoading ? "Loading…" : `${filtered.length} gathering${filtered.length === 1 ? "" : "s"}`}
-            </h2>
-            <span className="text-xs text-muted-foreground">Swipe · Pull to refresh</span>
+          <div className="mb-3 flex items-center justify-between">
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#6b5540]">Around you</p>
+              <h2 className="mt-0.5 text-[17px] font-semibold tracking-[-0.01em] text-[#0f0d0b]">
+                {isLoading ? "Loading…" : `${filtered.length} gathering${filtered.length === 1 ? "" : "s"}`}
+              </h2>
+            </div>
+            <span className="text-[11px] font-medium uppercase tracking-[0.16em] text-[#6b5540]">Swipe · Pull to refresh</span>
           </div>
 
           <div
@@ -470,7 +475,7 @@ function CategoryChip({ active, onClick, children }: { active: boolean; onClick:
       className={`shrink-0 rounded-full px-4 py-1.5 text-[12px] font-medium tracking-[-0.005em] transition ring-1 ${
         active
           ? "bg-[#1a1614] text-white ring-transparent shadow-[0_8px_20px_-10px_rgba(20,18,16,0.5)]"
-          : "bg-white/70 text-[#5a4a35] ring-black/[0.04] backdrop-blur-xl"
+          : "bg-white/70 text-[#3d3120] ring-black/[0.04] backdrop-blur-xl"
       }`}
     >
       {children}
@@ -508,9 +513,9 @@ function ActivityCard({
         style={{ backgroundImage: `url(${a.cover_url ?? "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=1200&q=80"})` }}
       />
       <div className="p-4">
-        <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-[#8b7355]">{a.category}</p>
+        <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-[#5a4a35]">{a.category}</p>
         <h3 className="mt-1 line-clamp-1 font-serif italic text-[19px] leading-tight tracking-[-0.02em] text-[#0f0d0b]">{a.title}</h3>
-        <div className="mt-2 flex items-center gap-1.5 text-[11.5px] text-[#9a8770]">
+        <div className="mt-2 flex items-center gap-1.5 text-[11.5px] text-[#6b5540]">
           <MapPin className="h-3 w-3" strokeWidth={2} />
           <span className="line-clamp-1">{a.city}, {a.country}</span>
           <span className="mx-0.5">·</span>
