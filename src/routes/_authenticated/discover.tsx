@@ -297,11 +297,14 @@ function Discover() {
         }}
       >
         <div className="px-5 pt-1">
-          <div className="mb-3 flex items-baseline justify-between">
-            <h2 className="text-lg font-semibold text-ink">
-              {isLoading ? "Loading…" : `${filtered.length} gathering${filtered.length === 1 ? "" : "s"}`}
-            </h2>
-            <span className="text-xs text-muted-foreground">Swipe · Pull to refresh</span>
+          <div className="mb-3 flex items-center justify-between">
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#6b5540]">Around you</p>
+              <h2 className="mt-0.5 text-[17px] font-semibold tracking-[-0.01em] text-[#0f0d0b]">
+                {isLoading ? "Loading…" : `${filtered.length} gathering${filtered.length === 1 ? "" : "s"}`}
+              </h2>
+            </div>
+            <span className="text-[11px] font-medium uppercase tracking-[0.16em] text-[#6b5540]">Swipe · Pull to refresh</span>
           </div>
 
           <div
