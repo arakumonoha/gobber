@@ -145,17 +145,18 @@ function Nav() {
           marginLeft: "clamp(12px, 3vw, 24px)",
           marginRight: "clamp(12px, 3vw, 24px)",
           background:
-            "linear-gradient(180deg, color-mix(in oklab, #FAF3E1 60%, transparent) 0%, color-mix(in oklab, #FAF3E1 38%, transparent) 100%)",
+            "linear-gradient(180deg, color-mix(in oklab, #2A2320 82%, transparent) 0%, color-mix(in oklab, #2A2320 68%, transparent) 100%)",
           backdropFilter: "saturate(180%) blur(22px)",
-          border: "1px solid rgba(255,255,255,0.55)",
+          border: "1px solid rgba(255,255,255,0.12)",
           boxShadow: scrolled
-            ? "inset 0 1px 0 rgba(255,255,255,0.7), inset 0 -1px 0 rgba(20,18,16,0.04), 0 20px 40px -20px rgba(20,18,16,0.22), 0 4px 12px -6px rgba(20,18,16,0.08)"
-            : "inset 0 1px 0 rgba(255,255,255,0.7), 0 12px 28px -18px rgba(20,18,16,0.18)",
+            ? "inset 0 1px 0 rgba(255,255,255,0.14), inset 0 -1px 0 rgba(0,0,0,0.2), 0 20px 40px -20px rgba(0,0,0,0.5), 0 4px 12px -6px rgba(0,0,0,0.25)"
+            : "inset 0 1px 0 rgba(255,255,255,0.14), 0 12px 28px -18px rgba(0,0,0,0.4)",
+
         }}
       >
         <Link to="/" className="flex items-center gap-2">
           <OwlMark size={26} />
-          <span className="text-[16px] font-semibold tracking-[-0.02em]" style={{ color: PALETTE.ink }}>
+          <span className="text-[16px] font-semibold tracking-[-0.02em]" style={{ color: "#FAF3E1" }}>
             gobber
           </span>
         </Link>
@@ -164,13 +165,14 @@ function Nav() {
           className="relative hidden items-center gap-1 rounded-full p-1 text-[13px] md:flex"
           style={{
             background:
-              "linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.25) 100%)",
-            border: "1px solid rgba(255,255,255,0.6)",
+              "linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.2) 100%)",
+            border: "1px solid rgba(255,255,255,0.1)",
             backdropFilter: "blur(14px) saturate(160%)",
             boxShadow:
-              "inset 0 1px 0 rgba(255,255,255,0.9), inset 0 -1px 0 rgba(20,18,16,0.04), 0 4px 12px -6px rgba(20,18,16,0.12)",
+              "inset 0 1px 0 rgba(255,255,255,0.08), inset 0 -1px 0 rgba(0,0,0,0.2), 0 4px 12px -6px rgba(0,0,0,0.3)",
           }}
         >
+
           {links.map((l) => {
             const isActive = active === l.id;
             return (
@@ -179,21 +181,22 @@ function Nav() {
                 href={l.href}
                 onClick={() => setActive(l.id)}
                 className="relative rounded-full px-4 py-1.5 transition"
-                style={{ color: isActive ? PALETTE.ink : "#5a4f43" }}
-              >
-                {isActive && (
-                  <motion.span
-                    layoutId="nav-glass-pill"
-                    className="absolute inset-0 rounded-full"
-                    transition={{ type: "spring", stiffness: 380, damping: 32 }}
-                    style={{
-                      background:
-                        "linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.6) 100%)",
-                      border: "1px solid rgba(255,255,255,0.9)",
-                      boxShadow:
-                        "inset 0 1px 0 rgba(255,255,255,1), inset 0 -1px 0 rgba(20,18,16,0.06), 0 6px 14px -6px rgba(20,18,16,0.18)",
-                    }}
-                  />
+              style={{ color: isActive ? "#FAF3E1" : "rgba(250,243,225,0.65)" }}
+            >
+              {isActive && (
+                <motion.span
+                  layoutId="nav-glass-pill"
+                  className="absolute inset-0 rounded-full"
+                  transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                  style={{
+                    background:
+                      "linear-gradient(180deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.08) 100%)",
+                    border: "1px solid rgba(255,255,255,0.2)",
+                    boxShadow:
+                      "inset 0 1px 0 rgba(255,255,255,0.25), inset 0 -1px 0 rgba(0,0,0,0.15), 0 6px 14px -6px rgba(0,0,0,0.35)",
+                  }}
+                />
+
                 )}
                 <span className="relative z-10 font-medium">{l.label}</span>
               </a>
