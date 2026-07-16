@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -10,6 +10,7 @@ import { FloatingFlags } from "@/components/landing/floating-flags";
 import { JoinsTicker, TrendingStrip, twemojiUrl } from "@/components/landing/live-signals";
 import owlLogo from "@/assets/gobber-owl.png.asset.json";
 import { AuthOverlay, openAuth } from "@/components/auth/auth-overlay";
+import { supabase } from "@/integrations/supabase/client";
 
 // Heavy map/globe modules are split out of the landing bundle; both live
 // below the fold and the interactive map only mounts after user intent.
@@ -957,6 +958,25 @@ function Footer() {
 /* ───────────────── PAGE ───────────────── */
 
 function Landing() {
+  const navigate = useNavigate();
+  // If a session is already present (e.g. after an OAuth full-page redirect
+  // returned to the origin on tablets/in-app browsers), push into the app.
+  useEffect(() => {
+    let cancelled = false;
+    supabase.auth.getSession().then(({ data }) => {
+      if (!cancelled && data.session) navigate({ to: "/discover", replace: true });
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session && (event === "SIGNED_IN" || event === "INITIAL_SESSION")) {
+        navigate({ to: "/discover", replace: true });
+      }
+    });
+    return () => {
+      cancelled = true;
+      sub.subscription.unsubscribe();
+    };
+  }, [navigate]);
+
   const { data: activities = [] } = useQuery(activitiesQuery());
   const { data: stats } = useQuery({
     queryKey: ["landing-stats"],
