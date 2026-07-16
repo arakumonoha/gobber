@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { LogOut, Loader2 } from "lucide-react";
+import { LogOut, Loader2, AtSign } from "lucide-react";
 import { useUser } from "@/hooks/use-user";
 import { supabase } from "@/integrations/supabase/client";
 import { useMyRsvps, useActivities } from "@/lib/activities";
@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { BottomNav } from "@/components/bottom-nav";
+import { FriendsPanel } from "@/components/friends-panel";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
