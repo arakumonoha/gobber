@@ -130,9 +130,8 @@ function Nav() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
-  const [active, setActive] = useState<string>("trips");
+  const [active, setActive] = useState<string>("live");
   const links = [
-    { id: "trips", label: "trips", href: "#trips" },
     { id: "live", label: "live map", href: "#live" },
     { id: "how", label: "how it works", href: "#how" },
   ];
