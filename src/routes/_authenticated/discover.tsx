@@ -201,12 +201,13 @@ function Discover() {
         </div>
 
         <div
-          className="mx-auto mt-5 flex w-full max-w-[560px] items-center gap-2.5 rounded-full px-4 py-3 ring-1 ring-black/[0.05]"
+          className="mx-auto mt-5 flex w-full max-w-[560px] items-center gap-2.5 rounded-full px-4 py-3 ring-1 ring-[#3a2a12]/[0.06]"
           style={{
-            background: "color-mix(in oklab, white 78%, transparent)",
-            backdropFilter: "saturate(180%) blur(24px)",
-            WebkitBackdropFilter: "saturate(180%) blur(24px)",
-            boxShadow: "0 1px 2px rgba(60,42,20,0.05), 0 12px 34px -18px rgba(60,42,20,0.2)",
+            background: "color-mix(in oklab, #fffaf0 72%, transparent)",
+            backdropFilter: "saturate(180%) blur(28px)",
+            WebkitBackdropFilter: "saturate(180%) blur(28px)",
+            boxShadow:
+              "inset 0 1px 0 rgba(255,255,255,0.65), 0 1px 2px rgba(60,42,20,0.05), 0 18px 40px -20px rgba(60,42,20,0.22)",
           }}
         >
           <Search className="h-4 w-4 text-[#6b5540]" strokeWidth={2} />
@@ -214,21 +215,31 @@ function Discover() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Where to? Lisbon, Tokyo, Bali…"
-            className="w-full bg-transparent text-[14px] outline-none placeholder:text-[#8a7658] text-[#1a1614]"
+            className="w-full bg-transparent text-[14px] tracking-[-0.01em] outline-none placeholder:text-[#8a7658] text-[#1a1614]"
           />
         </div>
 
-        <div className="mx-auto mt-4 flex w-full max-w-[640px] justify-start gap-2 overflow-x-auto pb-1 sm:justify-center [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          <CategoryChip active={!category} onClick={() => setCategory(null)}>All</CategoryChip>
-          {CATEGORIES.map((c) => (
-            <CategoryChip
-              key={c.id}
-              active={category === c.id}
-              onClick={() => setCategory(c.id === category ? null : c.id)}
-            >
-              <span className="mr-1">{c.icon}</span>{c.label}
-            </CategoryChip>
-          ))}
+        <div
+          className="relative mx-auto mt-4 w-full max-w-[640px]"
+          style={{
+            WebkitMaskImage:
+              "linear-gradient(to right, transparent 0, #000 28px, #000 calc(100% - 28px), transparent 100%)",
+            maskImage:
+              "linear-gradient(to right, transparent 0, #000 28px, #000 calc(100% - 28px), transparent 100%)",
+          }}
+        >
+          <div className="flex justify-start gap-2 overflow-x-auto px-6 py-2 sm:justify-center [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <CategoryChip active={!category} onClick={() => setCategory(null)}>All</CategoryChip>
+            {CATEGORIES.map((c) => (
+              <CategoryChip
+                key={c.id}
+                active={category === c.id}
+                onClick={() => setCategory(c.id === category ? null : c.id)}
+              >
+                <span className="mr-1">{c.icon}</span>{c.label}
+              </CategoryChip>
+            ))}
+          </div>
         </div>
       </motion.div>
 
@@ -336,25 +347,39 @@ function Discover() {
           </div>
 
           <div className="mt-4 space-y-2">
-            {filtered.map((a) => (
-              <button
+            <AnimatePresence mode="popLayout" initial={false}>
+            {filtered.map((a, i) => (
+              <motion.button
                 key={"row-" + a.id}
+                layout
+                initial={{ opacity: 0, y: 10, filter: "blur(10px)" }}
+                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                exit={{ opacity: 0, y: -6, filter: "blur(10px)" }}
+                transition={{ delay: i * 0.02, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
                 onClick={() => navigate({ to: "/activity/$id", params: { id: a.id } })}
-                className="flex w-full items-center gap-3 rounded-2xl bg-white/60 p-3 text-left shadow-glass transition hover:-translate-y-0.5"
+                className="flex w-full items-center gap-3 rounded-2xl p-3 text-left ring-1 ring-[#3a2a12]/[0.06] transition hover:-translate-y-0.5"
+                style={{
+                  background: "color-mix(in oklab, #fffaf0 70%, transparent)",
+                  backdropFilter: "saturate(180%) blur(22px)",
+                  WebkitBackdropFilter: "saturate(180%) blur(22px)",
+                  boxShadow:
+                    "inset 0 1px 0 rgba(255,255,255,0.6), 0 10px 26px -18px rgba(50,34,15,0.22)",
+                }}
               >
                 <div
-                  className="h-14 w-14 shrink-0 rounded-xl bg-cover bg-center"
+                  className="h-14 w-14 shrink-0 rounded-xl bg-cover bg-center ring-1 ring-[#3a2a12]/[0.06]"
                   style={{ backgroundImage: `url(${a.cover_url ?? "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=400&q=80"})` }}
                 />
                 <div className="min-w-0 flex-1">
-                  <p className="text-[10px] font-medium uppercase tracking-widest text-clay">{a.category}</p>
-                  <h4 className="line-clamp-1 text-sm font-semibold text-ink">{a.title}</h4>
-                  <p className="line-clamp-1 text-[11px] text-muted-foreground">
+                  <p className="text-[9.5px] font-semibold uppercase tracking-[0.22em] text-[#8a6b45]">{a.category}</p>
+                  <h4 className="line-clamp-1 text-[14px] font-semibold tracking-[-0.01em] text-[#0f0d0b]">{a.title}</h4>
+                  <p className="line-clamp-1 text-[11.5px] text-[#6b5540]">
                     {a.city}, {a.country} · {format(new Date(a.starts_at), "MMM d")}
                   </p>
                 </div>
-              </button>
+              </motion.button>
             ))}
+            </AnimatePresence>
           </div>
         </div>
       </DraggableSheet>
@@ -470,18 +495,43 @@ function Discover() {
 function CategoryChip({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
   return (
     <motion.button
+      layout
       whileTap={{ scale: 0.94 }}
       onClick={onClick}
-      className={`shrink-0 rounded-full px-4 py-1.5 text-[12px] font-medium tracking-[-0.005em] transition ring-1 ${
-        active
-          ? "bg-[#1a1614] text-white ring-transparent shadow-[0_8px_20px_-10px_rgba(20,18,16,0.5)]"
-          : "bg-white/70 text-[#3d3120] ring-black/[0.04] backdrop-blur-xl"
-      }`}
+      transition={{ type: "spring", stiffness: 420, damping: 32 }}
+      className="relative shrink-0 rounded-full px-4 py-1.5 text-[12.5px] font-medium tracking-[-0.005em]"
+      style={{
+        color: active ? "#fffaf0" : "#3d3120",
+      }}
     >
-      {children}
+      {active && (
+        <motion.span
+          layoutId="chipActive"
+          transition={{ type: "spring", stiffness: 380, damping: 34 }}
+          className="absolute inset-0 -z-10 rounded-full"
+          style={{
+            background: "linear-gradient(180deg,#221a12,#0f0b07)",
+            boxShadow:
+              "inset 0 1px 0 rgba(255,255,255,0.12), 0 10px 24px -12px rgba(20,14,8,0.55)",
+          }}
+        />
+      )}
+      {!active && (
+        <span
+          className="absolute inset-0 -z-10 rounded-full ring-1 ring-[#3a2a12]/[0.06]"
+          style={{
+            background: "color-mix(in oklab, #fffaf0 68%, transparent)",
+            backdropFilter: "saturate(180%) blur(20px)",
+            WebkitBackdropFilter: "saturate(180%) blur(20px)",
+            boxShadow: "inset 0 1px 0 rgba(255,255,255,0.6)",
+          }}
+        />
+      )}
+      <span className="relative">{children}</span>
     </motion.button>
   );
 }
+
 
 function ActivityCard({
   a,
@@ -496,24 +546,30 @@ function ActivityCard({
 }) {
   return (
     <motion.button
+      layout
       data-id={a.id}
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 8 }}
-      transition={{ delay, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      initial={{ opacity: 0, y: 18, filter: "blur(14px)", scale: 0.96 }}
+      animate={{ opacity: 1, y: 0, filter: "blur(0px)", scale: 1 }}
+      exit={{ opacity: 0, y: -8, filter: "blur(14px)", scale: 0.96 }}
+      transition={{ delay, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
       whileHover={{ y: -3 }}
       whileTap={{ scale: 0.98 }}
       onClick={onClick}
-      className={`group w-[260px] shrink-0 snap-center overflow-hidden rounded-[22px] bg-white text-left ring-1 ring-black/[0.04] transition-shadow ${
-        active ? "shadow-[0_20px_50px_-24px_rgba(50,34,15,0.32)]" : "shadow-[0_10px_28px_-18px_rgba(50,34,15,0.18)]"
+      className={`group w-[260px] shrink-0 snap-center overflow-hidden rounded-[22px] text-left ring-1 ring-[#3a2a12]/[0.06] transition-shadow ${
+        active ? "shadow-[0_24px_54px_-24px_rgba(50,34,15,0.36)]" : "shadow-[0_10px_28px_-18px_rgba(50,34,15,0.18)]"
       }`}
+      style={{
+        background: "color-mix(in oklab, #fffaf0 88%, transparent)",
+        backdropFilter: "saturate(180%) blur(20px)",
+        WebkitBackdropFilter: "saturate(180%) blur(20px)",
+      }}
     >
       <div
         className="h-36 w-full bg-cover bg-center transition-transform duration-[900ms] group-hover:scale-[1.04]"
         style={{ backgroundImage: `url(${a.cover_url ?? "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=1200&q=80"})` }}
       />
       <div className="p-4">
-        <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-[#5a4a35]">{a.category}</p>
+        <p className="text-[9.5px] font-semibold uppercase tracking-[0.22em] text-[#8a6b45]">{a.category}</p>
         <h3 className="mt-1 line-clamp-1 font-serif italic text-[19px] leading-tight tracking-[-0.02em] text-[#0f0d0b]">{a.title}</h3>
         <div className="mt-2 flex items-center gap-1.5 text-[11.5px] text-[#6b5540]">
           <MapPin className="h-3 w-3" strokeWidth={2} />
@@ -523,5 +579,6 @@ function ActivityCard({
         </div>
       </div>
     </motion.button>
+
   );
 }
