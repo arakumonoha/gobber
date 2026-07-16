@@ -325,11 +325,7 @@ export const GoogleMap = forwardRef<GoogleMapHandle, Props>(function GoogleMap({
       ghostRef.current?.setMap(null);
       ghostRef.current = null;
       if (ghostPin) {
-        ghostRef.current = new g.maps.marker.AdvancedMarkerElement
-          ? null
-          : new g.maps.OverlayView();
-        // Use a plain Marker with a custom label via a DOM overlay for reliability.
-        const overlay = new g.maps.OverlayView();
+        const overlay: any = new g.maps.OverlayView();
         overlay.onAdd = function () {
           const panes = this.getPanes();
           this.div = pinElement(undefined, true);
@@ -352,6 +348,7 @@ export const GoogleMap = forwardRef<GoogleMapHandle, Props>(function GoogleMap({
         overlay.setMap(map);
         ghostRef.current = overlay;
       }
+
     };
     attach();
     return () => cancelAnimationFrame(raf);
