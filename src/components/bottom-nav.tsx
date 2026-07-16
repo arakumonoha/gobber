@@ -63,9 +63,24 @@ export function BottomNav() {
               to={item.to}
               className="relative flex flex-1 flex-col items-center gap-0.5 py-1.5"
             >
+              {active && (
+                <motion.span
+                  layoutId="nav-glass-pill"
+                  transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                  className="absolute inset-0 -z-0 rounded-full ring-1 ring-black/[0.05]"
+                  style={{
+                    background:
+                      "linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(255,247,232,0.78) 100%)",
+                    backdropFilter: "saturate(180%) blur(14px)",
+                    WebkitBackdropFilter: "saturate(180%) blur(14px)",
+                    boxShadow:
+                      "inset 0 1px 0 rgba(255,255,255,0.9), 0 6px 16px -8px rgba(60,42,20,0.25)",
+                  }}
+                />
+              )}
               <motion.div
                 whileTap={{ scale: 0.92 }}
-                className="flex flex-col items-center"
+                className="relative z-10 flex flex-col items-center"
               >
                 <Icon
                   className={`h-[19px] w-[19px] transition-colors ${
@@ -81,13 +96,6 @@ export function BottomNav() {
                   {item.label}
                 </span>
               </motion.div>
-              {active && (
-                <motion.span
-                  layoutId="nav-dot"
-                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                  className="absolute -top-0.5 h-1 w-1 rounded-full bg-[#1a1614]"
-                />
-              )}
             </Link>
           );
         })}

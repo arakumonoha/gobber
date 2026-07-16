@@ -90,26 +90,29 @@ function Discover() {
     mapRef.current?.panTo(a.lat, a.lng, 12);
   }
 
+  const [removing, setRemoving] = useState(false);
+  const [showRemoveConfirm, setShowRemoveConfirm] = useState(false);
+
   async function removeMyPin() {
     if (!myActivePin || !user) return;
     const id = myActivePin.id;
+    setRemoving(true);
     try {
       const { error } = await supabase.from("activities").delete().eq("id", id).eq("host_id", user.id);
       if (error) throw error;
       toast.success("Pin removed");
       await qc.invalidateQueries({ queryKey: ["activities"] });
+      setShowRemoveConfirm(false);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Could not remove");
+    } finally {
+      setRemoving(false);
     }
   }
 
   function confirmRemovePin() {
     if (!myActivePin) return;
-    toast(`Remove "${myActivePin.title}"?`, {
-      description: "This takes down your pin for everyone.",
-      action: { label: "Remove", onClick: removeMyPin },
-      duration: 6000,
-    });
+    setShowRemoveConfirm(true);
   }
 
 
@@ -735,6 +738,93 @@ function Discover() {
             </motion.form>
           </motion.div>
 
+        )}
+      </AnimatePresence>
+
+      {/* Remove pin confirmation — glass modal */}
+      <AnimatePresence>
+        {showRemoveConfirm && myActivePin && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="fixed inset-0 z-[60] flex items-end justify-center px-4 pb-24 sm:items-center sm:pb-0"
+            style={{
+              background: "color-mix(in oklab, #1a1006 32%, transparent)",
+              backdropFilter: "blur(14px) saturate(140%)",
+              WebkitBackdropFilter: "blur(14px) saturate(140%)",
+            }}
+            onClick={() => !removing && setShowRemoveConfirm(false)}
+          >
+            <motion.div
+              initial={{ y: 30, scale: 0.94, opacity: 0 }}
+              animate={{ y: 0, scale: 1, opacity: 1 }}
+              exit={{ y: 20, scale: 0.96, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 320, damping: 30 }}
+              onClick={(e) => e.stopPropagation()}
+              className="relative w-full max-w-[380px] overflow-hidden rounded-[26px] ring-1 ring-black/[0.06]"
+              style={{
+                background:
+                  "linear-gradient(180deg, rgba(255,251,242,0.92) 0%, rgba(250,240,220,0.88) 100%)",
+                backdropFilter: "saturate(180%) blur(30px)",
+                WebkitBackdropFilter: "saturate(180%) blur(30px)",
+                boxShadow:
+                  "inset 0 1px 0 rgba(255,255,255,0.9), 0 30px 80px -20px rgba(60,42,20,0.5)",
+              }}
+            >
+              <div className="flex flex-col items-center px-7 pb-6 pt-8 text-center">
+                <motion.div
+                  initial={{ scale: 0.6, rotate: -8, opacity: 0 }}
+                  animate={{ scale: 1, rotate: 0, opacity: 1 }}
+                  transition={{ delay: 0.05, type: "spring", stiffness: 300, damping: 20 }}
+                  className="mb-4 flex h-14 w-14 items-center justify-center rounded-full"
+                  style={{
+                    background: "linear-gradient(180deg, #fef1e6, #fbdcc4)",
+                    boxShadow:
+                      "inset 0 1px 0 rgba(255,255,255,0.8), 0 8px 20px -8px rgba(232,90,60,0.35)",
+                  }}
+                >
+                  <Trash2 className="h-6 w-6 text-[#c94a2a]" strokeWidth={2.2} />
+                </motion.div>
+                <h3 className="font-serif text-[26px] italic leading-[1] tracking-[-0.02em] text-[#0f0d0b]">
+                  Remove pin?
+                </h3>
+                <p className="mt-2.5 text-[13.5px] leading-[1.5] tracking-[-0.005em] text-[#4a3820]">
+                  "<span className="font-medium text-[#1a1614]">{myActivePin.title}</span>" will disappear from the map for everyone.
+                </p>
+              </div>
+
+              <div className="flex gap-2 border-t border-black/[0.06] bg-white/25 px-4 py-4">
+                <button
+                  type="button"
+                  onClick={() => setShowRemoveConfirm(false)}
+                  disabled={removing}
+                  className="flex-1 rounded-full py-3 text-[13.5px] font-semibold text-[#1a1614] ring-1 ring-black/[0.08] transition hover:bg-white/60 disabled:opacity-50"
+                  style={{
+                    background: "rgba(255,255,255,0.55)",
+                    backdropFilter: "blur(12px)",
+                    WebkitBackdropFilter: "blur(12px)",
+                  }}
+                >
+                  Keep it
+                </button>
+                <motion.button
+                  type="button"
+                  whileTap={{ scale: 0.96 }}
+                  onClick={removeMyPin}
+                  disabled={removing}
+                  className="flex flex-1 items-center justify-center gap-2 rounded-full py-3 text-[13.5px] font-semibold text-white shadow-[0_10px_24px_-10px_rgba(232,90,60,0.7)] transition disabled:opacity-70"
+                  style={{
+                    background: "linear-gradient(180deg,#ff6a4c,#c94a2a)",
+                  }}
+                >
+                  {removing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" strokeWidth={2.2} />}
+                  {removing ? "Removing…" : "Remove"}
+                </motion.button>
+              </div>
+            </motion.div>
+          </motion.div>
         )}
       </AnimatePresence>
 
