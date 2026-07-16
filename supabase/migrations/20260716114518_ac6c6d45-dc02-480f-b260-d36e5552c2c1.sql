@@ -1,0 +1,1 @@
+ALTER TABLE public.activities ADD COLUMN IF NOT EXISTS duration_hours integer NOT NULL DEFAULT 2 CHECK (duration_hours > 0 AND duration_hours <= 24);
