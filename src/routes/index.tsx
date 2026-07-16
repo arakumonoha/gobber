@@ -245,10 +245,13 @@ function Nav() {
 function AuthButtons() {
   return (
     <div className="flex w-full max-w-md flex-col items-center gap-3 sm:flex-row sm:justify-center">
-      <button
+      <motion.button
         type="button"
         onClick={openAuth}
-        className="inline-flex w-full items-center justify-center gap-2 rounded-full px-6 py-4 text-[15px] font-medium transition hover:-translate-y-0.5 sm:w-auto"
+        whileHover={{ y: -2 }}
+        whileTap={{ scale: 0.97 }}
+        transition={{ type: "spring", stiffness: 400, damping: 22 }}
+        className="group inline-flex w-full items-center justify-center gap-2 rounded-full px-6 py-4 text-[15px] font-medium sm:w-auto"
         style={{
           background: "linear-gradient(180deg,#1c1815 0%,#0a0908 100%)",
           color: "#ffffff",
@@ -256,13 +259,16 @@ function AuthButtons() {
             "inset 0 1px 0 rgba(255,255,255,0.15), 0 18px 40px -18px rgba(20,18,16,0.6), 0 4px 10px rgba(20,18,16,0.18)",
         }}
       >
-        <AppleIcon className="h-[19px] w-[19px] text-white" />
+        <AppleIcon className="h-[19px] w-[19px] text-white transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:scale-110" />
         Sign in with Apple
-      </button>
-      <button
+      </motion.button>
+      <motion.button
         type="button"
         onClick={openAuth}
-        className="inline-flex w-full items-center justify-center gap-2.5 rounded-full px-6 py-4 text-[15px] font-medium transition hover:-translate-y-0.5 sm:w-auto"
+        whileHover={{ y: -2 }}
+        whileTap={{ scale: 0.97 }}
+        transition={{ type: "spring", stiffness: 400, damping: 22 }}
+        className="group inline-flex w-full items-center justify-center gap-2.5 rounded-full px-6 py-4 text-[15px] font-medium sm:w-auto"
         style={{
           background: "color-mix(in oklab, white 96%, transparent)",
           color: PALETTE.ink,
@@ -270,12 +276,13 @@ function AuthButtons() {
           boxShadow: "0 10px 22px -14px rgba(20,18,16,0.22)",
         }}
       >
-        <GoogleIcon className="h-[19px] w-[19px]" />
+        <GoogleIcon className="h-[19px] w-[19px] transition-transform duration-500 group-hover:rotate-[20deg]" />
         Sign in with Google
-      </button>
+      </motion.button>
     </div>
   );
 }
+
 
 /* ───────────────────────── HERO ───────────────────────── */
 
