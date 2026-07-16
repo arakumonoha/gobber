@@ -246,7 +246,7 @@ export const GoogleMap = forwardRef<GoogleMapHandle, Props>(function GoogleMap({
         minZoom: 3,
         maxZoom: 20,
         isFractionalZoomEnabled: true,
-        clickableIcons: false,
+        clickableIcons: true,
         keyboardShortcuts: false,
         rotateControl: false,
         scaleControl: false,
