@@ -627,7 +627,9 @@ function LiveMap({
               transition={{ duration: 0.6, ease: EASE }}
               className="absolute inset-0"
             >
-              <ArcgisGlobe basemap="satellite" spin className="absolute inset-0" />
+              <Suspense fallback={<div className="absolute inset-0" style={{ background: PALETTE.paper }} />}>
+                <ArcgisGlobe basemap="satellite" spin className="absolute inset-0" />
+              </Suspense>
             </motion.div>
           )}
 
@@ -640,13 +642,15 @@ function LiveMap({
               transition={{ duration: 0.5, ease: EASE }}
               className="absolute inset-0"
             >
-              <GoogleMap
-                ref={mapRef}
-                pins={pins}
-                mapTypeId={view}
-                zoom={2}
-                className="absolute inset-0"
-              />
+              <Suspense fallback={<div className="absolute inset-0" style={{ background: PALETTE.paper }} />}>
+                <GoogleMap
+                  ref={mapRef}
+                  pins={pins}
+                  mapTypeId={view}
+                  zoom={2}
+                  className="absolute inset-0"
+                />
+              </Suspense>
             </motion.div>
           )}
 
