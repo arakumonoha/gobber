@@ -361,7 +361,7 @@ export const GoogleMap = forwardRef<GoogleMapHandle, Props>(function GoogleMap({
         const overlay: any = new g.maps.OverlayView();
         overlay.onAdd = function () {
           const panes = this.getPanes();
-          this.div = pinElement(undefined, true);
+          this.div = pinElement(undefined, { ghost: true });
           this.div.style.position = "absolute";
           panes.floatPane.appendChild(this.div);
         };
