@@ -320,7 +320,9 @@ export const GoogleMap = forwardRef<GoogleMapHandle, Props>(function GoogleMap({
         center,
         zoom,
         mapTypeId: mapTypeId === "satellite" ? "hybrid" : mapTypeId,
-        tilt: 45,
+        // Google deprecated 45° raster tilt in Maps JS v3.65; keep flat for
+        // less GPU work, no deprecation warning, and no extra tile fetches.
+        tilt: 0,
         heading: 0,
         disableDefaultUI: true,
         zoomControl: false,
@@ -360,14 +362,14 @@ export const GoogleMap = forwardRef<GoogleMapHandle, Props>(function GoogleMap({
     const map = mapRef.current;
     const g = window.google;
     if (!map || !g) return;
-    // "satellite" → use hybrid internally for labeled context, feels more premium
     const effective = mapTypeId === "satellite" ? "hybrid" : mapTypeId;
     map.setMapTypeId(effective);
     map.setOptions({
       styles: mapTypeId === "roadmap" ? CLASSY_MAP_STYLES : undefined,
-      tilt: mapTypeId === "roadmap" ? 0 : 45,
+      tilt: 0,
     });
   }, [mapTypeId]);
+
 
   // Cursor + click handler
   useEffect(() => {
