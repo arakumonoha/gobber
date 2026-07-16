@@ -665,38 +665,46 @@ function LiveMap({
             <motion.button
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.5 }}
+              transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
               onClick={() => setInteractive(true)}
-              className="absolute inset-0 z-20 flex cursor-pointer flex-col items-center justify-center gap-3 text-white"
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.985 }}
+              className="absolute inset-0 z-20 flex cursor-pointer flex-col items-center justify-center gap-3 text-white transition-[background] duration-500"
               style={{
                 background:
-                  "linear-gradient(180deg, rgba(10,12,20,0.05) 0%, rgba(10,12,20,0.35) 55%, rgba(10,12,20,0.55) 100%)",
+                  "linear-gradient(180deg, rgba(10,12,20,0.02) 0%, rgba(10,12,20,0.22) 55%, rgba(10,12,20,0.42) 100%)",
               }}
               aria-label="Explore the map"
             >
               <motion.div
-                animate={{ y: [0, -6, 0] }}
-                transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+                animate={{ y: [0, -4, 0] }}
+                transition={{ duration: 3.6, repeat: Infinity, ease: [0.42, 0, 0.58, 1] }}
                 className="inline-flex items-center gap-2 rounded-full px-5 py-3 text-[14px] font-medium"
                 style={{
-                  background: "color-mix(in oklab, white 94%, transparent)",
+                  background: "color-mix(in oklab, white 88%, transparent)",
                   color: PALETTE.ink,
-                  backdropFilter: "blur(16px)",
-                  boxShadow: "0 18px 40px -14px rgba(0,0,0,0.45)",
-                  border: "1px solid rgba(255,255,255,0.5)",
+                  backdropFilter: "blur(22px) saturate(160%)",
+                  WebkitBackdropFilter: "blur(22px) saturate(160%)",
+                  boxShadow:
+                    "0 24px 60px -24px rgba(0,0,0,0.4), 0 2px 6px -2px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.55)",
+                  border: "1px solid rgba(255,255,255,0.45)",
                 }}
               >
                 <Hand className="h-4 w-4" style={{ color: PALETTE.blue }} strokeWidth={2.2} />
                 Tap to explore the map
               </motion.div>
-              <span
+              <motion.span
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.9, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
                 className="text-[11.5px] font-medium uppercase tracking-[0.12em]"
-                style={{ color: "rgba(255,255,255,0.85)", textShadow: "0 1px 6px rgba(0,0,0,0.35)" }}
+                style={{ color: "rgba(255,255,255,0.9)", textShadow: "0 1px 8px rgba(0,0,0,0.35)" }}
               >
                 {activities.length} gathering{activities.length === 1 ? "" : "s"} · worldwide
-              </span>
+              </motion.span>
             </motion.button>
           )}
+
 
           {interactive && (
             <>
