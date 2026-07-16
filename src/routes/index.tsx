@@ -106,34 +106,90 @@ function Nav() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+  const [active, setActive] = useState<string>("trips");
+  const links = [
+    { id: "trips", label: "trips", href: "#trips" },
+    { id: "live", label: "live map", href: "#live" },
+    { id: "how", label: "how it works", href: "#how" },
+  ];
   return (
-    <header
-      className="fixed inset-x-0 top-0 z-50 transition-all"
-      style={{
-        background: scrolled ? "color-mix(in oklab, #FAF3E1 82%, transparent)" : "transparent",
-        backdropFilter: scrolled ? "saturate(180%) blur(18px)" : "none",
-        WebkitBackdropFilter: scrolled ? "saturate(180%) blur(18px)" : "none",
-        borderBottom: scrolled ? "1px solid rgba(20,18,16,0.06)" : "1px solid transparent",
-      }}
-    >
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
+    <header className="fixed inset-x-0 top-0 z-50">
+      <div
+        className={`mx-auto mt-3 flex h-14 max-w-6xl items-center justify-between px-3 pl-5 pr-2 transition-all duration-500 ${
+          scrolled ? "sm:mt-4" : ""
+        }`}
+        style={{
+          borderRadius: 999,
+          marginLeft: "clamp(12px, 3vw, 24px)",
+          marginRight: "clamp(12px, 3vw, 24px)",
+          background:
+            "linear-gradient(180deg, color-mix(in oklab, #FAF3E1 60%, transparent) 0%, color-mix(in oklab, #FAF3E1 38%, transparent) 100%)",
+          backdropFilter: "saturate(180%) blur(22px)",
+          border: "1px solid rgba(255,255,255,0.55)",
+          boxShadow: scrolled
+            ? "inset 0 1px 0 rgba(255,255,255,0.7), inset 0 -1px 0 rgba(20,18,16,0.04), 0 20px 40px -20px rgba(20,18,16,0.22), 0 4px 12px -6px rgba(20,18,16,0.08)"
+            : "inset 0 1px 0 rgba(255,255,255,0.7), 0 12px 28px -18px rgba(20,18,16,0.18)",
+        }}
+      >
         <Link to="/" className="flex items-center gap-2">
-          <OwlMark size={30} />
-          <span className="text-[17px] font-semibold tracking-[-0.02em]" style={{ color: PALETTE.ink }}>
+          <OwlMark size={26} />
+          <span className="text-[16px] font-semibold tracking-[-0.02em]" style={{ color: PALETTE.ink }}>
             gobber
           </span>
         </Link>
-        <nav className="hidden items-center gap-8 text-[14px] md:flex" style={{ color: "#4a3f33" }}>
-          <a href="#trips" className="transition hover:text-[#141210]">trips</a>
-          <a href="#live" className="transition hover:text-[#141210]">live map</a>
-          <a href="#how" className="transition hover:text-[#141210]">how it works</a>
+
+        <nav
+          className="relative hidden items-center gap-1 rounded-full p-1 text-[13px] md:flex"
+          style={{
+            background:
+              "linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.25) 100%)",
+            border: "1px solid rgba(255,255,255,0.6)",
+            backdropFilter: "blur(14px) saturate(160%)",
+            boxShadow:
+              "inset 0 1px 0 rgba(255,255,255,0.9), inset 0 -1px 0 rgba(20,18,16,0.04), 0 4px 12px -6px rgba(20,18,16,0.12)",
+          }}
+        >
+          {links.map((l) => {
+            const isActive = active === l.id;
+            return (
+              <a
+                key={l.id}
+                href={l.href}
+                onClick={() => setActive(l.id)}
+                className="relative rounded-full px-4 py-1.5 transition"
+                style={{ color: isActive ? PALETTE.ink : "#5a4f43" }}
+              >
+                {isActive && (
+                  <motion.span
+                    layoutId="nav-glass-pill"
+                    className="absolute inset-0 rounded-full"
+                    transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                    style={{
+                      background:
+                        "linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.6) 100%)",
+                      border: "1px solid rgba(255,255,255,0.9)",
+                      boxShadow:
+                        "inset 0 1px 0 rgba(255,255,255,1), inset 0 -1px 0 rgba(20,18,16,0.06), 0 6px 14px -6px rgba(20,18,16,0.18)",
+                    }}
+                  />
+                )}
+                <span className="relative z-10 font-medium">{l.label}</span>
+              </a>
+            );
+          })}
         </nav>
+
         <Link
           to="/auth"
-          className="group inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[13.5px] font-medium text-white transition hover:-translate-y-0.5"
+          className="group relative inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[13px] font-medium transition hover:-translate-y-0.5"
           style={{
-            background: `linear-gradient(180deg,${PALETTE.blue},${PALETTE.blueDeep})`,
-            boxShadow: `inset 0 1px 0 rgba(255,255,255,0.28), 0 10px 22px -12px ${PALETTE.blue}88`,
+            color: PALETTE.ink,
+            background:
+              "linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.5) 100%)",
+            border: "1px solid rgba(255,255,255,0.85)",
+            backdropFilter: "blur(14px) saturate(180%)",
+            boxShadow:
+              "inset 0 1px 0 rgba(255,255,255,1), inset 0 -1px 0 rgba(20,18,16,0.05), 0 10px 22px -12px rgba(20,18,16,0.28)",
           }}
         >
           sign in
