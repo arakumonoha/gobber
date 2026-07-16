@@ -9,6 +9,7 @@ import { getLandingStats, type LandingStats } from "@/lib/landing-stats.function
 import { FloatingFlags } from "@/components/landing/floating-flags";
 import { JoinsTicker, TrendingStrip, twemojiUrl } from "@/components/landing/live-signals";
 import owlLogo from "@/assets/gobber-owl.png.asset.json";
+import { AuthOverlay, openAuth } from "@/components/auth/auth-overlay";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -179,8 +180,9 @@ function Nav() {
           })}
         </nav>
 
-        <Link
-          to="/auth"
+        <button
+          type="button"
+          onClick={openAuth}
           className="group relative inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[13px] font-medium transition hover:-translate-y-0.5"
           style={{
             color: "#ffffff",
@@ -194,7 +196,7 @@ function Nav() {
         >
           sign in
           <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-        </Link>
+        </button>
       </div>
     </header>
   );
@@ -205,8 +207,9 @@ function Nav() {
 function AuthButtons() {
   return (
     <div className="flex w-full max-w-md flex-col items-center gap-3 sm:flex-row sm:justify-center">
-      <Link
-        to="/auth"
+      <button
+        type="button"
+        onClick={openAuth}
         className="inline-flex w-full items-center justify-center gap-2 rounded-full px-6 py-4 text-[15px] font-medium transition hover:-translate-y-0.5 sm:w-auto"
         style={{
           background: "linear-gradient(180deg,#1c1815 0%,#0a0908 100%)",
@@ -217,9 +220,10 @@ function AuthButtons() {
       >
         <AppleIcon className="h-[19px] w-[19px] text-white" />
         Sign in with Apple
-      </Link>
-      <Link
-        to="/auth"
+      </button>
+      <button
+        type="button"
+        onClick={openAuth}
         className="inline-flex w-full items-center justify-center gap-2.5 rounded-full px-6 py-4 text-[15px] font-medium transition hover:-translate-y-0.5 sm:w-auto"
         style={{
           background: "color-mix(in oklab, white 96%, transparent)",
@@ -230,7 +234,7 @@ function AuthButtons() {
       >
         <GoogleIcon className="h-[19px] w-[19px]" />
         Sign in with Google
-      </Link>
+      </button>
     </div>
   );
 }
@@ -909,6 +913,7 @@ function Landing() {
       <How />
       <CTA />
       <Footer />
+      <AuthOverlay />
     </main>
   );
 }
