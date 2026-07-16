@@ -25,14 +25,14 @@ function Profile() {
   const qc = useQueryClient();
   const { data: rsvps = [] } = useMyRsvps(user?.id);
   const { data: activities = [] } = useActivities();
-  const [profile, setProfile] = useState<{ display_name: string; bio: string; home_city: string; avatar_url: string }>({ display_name: "", bio: "", home_city: "", avatar_url: "" });
+  const [profile, setProfile] = useState<{ display_name: string; bio: string; home_city: string; avatar_url: string; username: string }>({ display_name: "", bio: "", home_city: "", avatar_url: "", username: "" });
   const [loading, setLoading] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
 
   useEffect(() => {
     if (!user) return;
     supabase.from("profiles").select("*").eq("id", user.id).maybeSingle().then(({ data }) => {
-      if (data) setProfile({ display_name: data.display_name ?? "", bio: data.bio ?? "", home_city: data.home_city ?? "", avatar_url: data.avatar_url ?? "" });
+      if (data) setProfile({ display_name: data.display_name ?? "", bio: data.bio ?? "", home_city: data.home_city ?? "", avatar_url: data.avatar_url ?? "", username: (data as any).username ?? "" });
     });
   }, [user]);
 
