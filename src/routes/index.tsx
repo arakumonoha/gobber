@@ -83,20 +83,25 @@ function GoogleIcon({ className }: { className?: string }) {
 
 function OwlMark({ size = 32 }: { size?: number }) {
   return (
-    <img
+    <motion.img
       src={owlLogo.url}
       alt="Gobber"
       width={size}
       height={size}
+      whileHover={{ rotate: [-4, 4, -2, 2, 0], scale: 1.06 }}
+      whileTap={{ scale: 0.94 }}
+      transition={{ rotate: { duration: 0.6, ease: "easeInOut" }, scale: { type: "spring", stiffness: 380, damping: 18 } }}
       style={{
         width: size,
         height: size,
         objectFit: "contain",
         filter: "drop-shadow(0 6px 12px rgba(60,42,20,0.18))",
+        cursor: "pointer",
       }}
     />
   );
 }
+
 
 /* ───────────────────────── NAV ───────────────────────── */
 
