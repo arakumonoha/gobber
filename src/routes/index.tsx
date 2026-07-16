@@ -180,8 +180,9 @@ function Nav() {
           })}
         </nav>
 
-        <Link
-          to="/auth"
+        <button
+          type="button"
+          onClick={openAuth}
           className="group relative inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[13px] font-medium transition hover:-translate-y-0.5"
           style={{
             color: "#ffffff",
@@ -195,7 +196,7 @@ function Nav() {
         >
           sign in
           <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-        </Link>
+        </button>
       </div>
     </header>
   );
