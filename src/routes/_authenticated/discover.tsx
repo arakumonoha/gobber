@@ -428,17 +428,43 @@ function Discover() {
         }}
       >
         <div className="px-5 pt-1">
+          {/* Editorial sheet header */}
+          <div className="mb-3 flex items-end justify-between">
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#6b5230]">Gobber · Discover</p>
+              <h2 className="mt-1 font-serif text-[28px] italic leading-[1] tracking-[-0.025em] text-[#0f0d0b]">
+                Around you
+              </h2>
+            </div>
+            <div className="text-right tabular-nums">
+              <AnimatePresence mode="popLayout" initial={false}>
+                <motion.span
+                  key={isLoading ? "loading" : `${filtered.length}`}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+                  className="block font-serif text-[26px] italic leading-none text-[#0f0d0b]"
+                >
+                  {isLoading ? "…" : filtered.length}
+                </motion.span>
+              </AnimatePresence>
+              <p className="mt-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-[#6b5230]">
+                {filtered.length === 1 ? "Gathering" : "Gatherings"}
+              </p>
+            </div>
+          </div>
+
           {/* Search + categories live inside the sheet, beneath the handle */}
           <motion.form
             onSubmit={handleSearchSubmit}
             whileHover={{ y: -1 }}
             whileFocus={{ scale: 1.01 }}
             transition={{ type: "spring", stiffness: 400, damping: 26 }}
-            className="flex w-full items-center gap-2.5 rounded-full px-4 py-3 ring-1 ring-[#3a2a12]/[0.06] focus-within:ring-[#3a2a12]/[0.14] transition-shadow"
+            className="flex w-full items-center gap-2.5 rounded-full px-4 py-3.5 ring-1 ring-[#3a2a12]/[0.06] focus-within:ring-[#3a2a12]/[0.14] transition-shadow"
             style={{
               background: "color-mix(in oklab, #fffaf0 72%, transparent)",
               backdropFilter: "saturate(180%) blur(28px)",
-              WebkitBackdropFilter: "saturate(180%) blur(28px)",
               boxShadow:
                 "inset 0 1px 0 rgba(255,255,255,0.65), 0 1px 2px rgba(60,42,20,0.05), 0 18px 40px -20px rgba(60,42,20,0.22)",
             }}
@@ -451,16 +477,16 @@ function Discover() {
               className="flex items-center"
             >
               {searching ? (
-                <Loader2 className="h-4 w-4 animate-spin text-[#2a1c0c]" />
+                <Loader2 className="h-[18px] w-[18px] animate-spin text-[#2a1c0c]" />
               ) : (
-                <Search className="h-4 w-4 text-[#2a1c0c]" strokeWidth={2} />
+                <Search className="h-[18px] w-[18px] text-[#2a1c0c]" strokeWidth={2} />
               )}
             </motion.span>
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search a city or vibe — press enter to fly"
-              className="w-full bg-transparent text-[14px] tracking-[-0.01em] outline-none placeholder:text-[#6b5230] text-[#1a1614]"
+              placeholder="Search a city or a vibe"
+              className="w-full bg-transparent text-[15px] tracking-[-0.012em] outline-none placeholder:text-[#8a6d42]/80 text-[#1a1614]"
               enterKeyHint="search"
             />
             <AnimatePresence initial={false}>
@@ -484,12 +510,12 @@ function Discover() {
           </motion.form>
 
           <div
-            className="relative -mx-5 mt-3"
+            className="relative -mx-5 mt-4"
             style={{
               WebkitMaskImage:
-                "linear-gradient(to right, transparent 0, #000 28px, #000 calc(100% - 28px), transparent 100%)",
+                "linear-gradient(to right, transparent 0, #000 32px, #000 calc(100% - 32px), transparent 100%)",
               maskImage:
-                "linear-gradient(to right, transparent 0, #000 28px, #000 calc(100% - 28px), transparent 100%)",
+                "linear-gradient(to right, transparent 0, #000 32px, #000 calc(100% - 32px), transparent 100%)",
             }}
           >
             <div className="flex gap-2 overflow-x-auto px-5 py-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
@@ -506,26 +532,15 @@ function Discover() {
             </div>
           </div>
 
-          <div className="mb-3 mt-4 flex items-center justify-between">
-            <div>
-              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#2a1c0c]">Around you</p>
-              <h2 className="mt-0.5 text-[17px] font-semibold tracking-[-0.01em] text-[#0f0d0b] tabular-nums">
-                <AnimatePresence mode="popLayout" initial={false}>
-                  <motion.span
-                    key={isLoading ? "loading" : `${filtered.length}`}
-                    initial={{ opacity: 0, y: 8, filter: "blur(6px)" }}
-                    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                    exit={{ opacity: 0, y: -8, filter: "blur(6px)" }}
-                    transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-                    className="inline-block"
-                  >
-                    {isLoading ? "Loading…" : `${filtered.length} gathering${filtered.length === 1 ? "" : "s"}`}
-                  </motion.span>
-                </AnimatePresence>
-              </h2>
-            </div>
-            <span className="text-[11px] font-medium uppercase tracking-[0.16em] text-[#2a1c0c] lg:hidden">Swipe · Pull to refresh</span>
+          <div className="mb-2 mt-5 flex items-center justify-between">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#6b5230]">
+              {query ? "Matching your search" : category ? "Filtered gatherings" : "Nearby right now"}
+            </p>
+            <span className="hidden text-[10px] font-medium uppercase tracking-[0.2em] text-[#6b5230] sm:inline lg:hidden">
+              Swipe · Pull to refresh
+            </span>
           </div>
+
 
 
           <div
