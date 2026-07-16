@@ -38,7 +38,10 @@ function InlineField(props: {
 }) {
   const { type, placeholder, value, onChange, autoFocus, onSubmit, submitting, showSubmit, autoComplete } = props;
   return (
-    <div className="relative">
+    <motion.div
+      className="relative"
+      whileFocus={{ scale: 1.01 }}
+    >
       <input
         type={type}
         value={value}
@@ -47,7 +50,7 @@ function InlineField(props: {
         autoFocus={autoFocus}
         autoComplete={autoComplete}
         onKeyDown={(e) => { if (e.key === "Enter" && onSubmit) { e.preventDefault(); onSubmit(); } }}
-        className="h-[48px] w-full rounded-[12px] px-4 pr-12 text-[15px] tracking-[-0.01em] text-[#0f0d0b] placeholder:text-[#4a3d2a] outline-none transition focus:bg-white/40"
+        className="h-[48px] w-full rounded-[12px] px-4 pr-12 text-[15px] tracking-[-0.01em] text-[#0f0d0b] placeholder:text-[#4a3d2a] outline-none transition-all duration-300 focus:bg-white/45 focus:shadow-[0_0_0_3px_rgba(255,255,255,0.35),inset_0_1px_0_rgba(255,255,255,0.85)]"
         style={{
           background: "rgba(255,255,255,0.22)",
           border: "1px solid rgba(255,255,255,0.55)",
@@ -57,16 +60,19 @@ function InlineField(props: {
       />
       {showSubmit && (
         <motion.button
-          type="button" onClick={onSubmit} disabled={submitting || !value} whileTap={{ scale: 0.92 }}
+          type="button" onClick={onSubmit} disabled={submitting || !value}
+          whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.9 }}
+          transition={{ type: "spring", stiffness: 500, damping: 22 }}
           className="absolute right-1.5 top-1/2 flex h-[36px] w-[36px] -translate-y-1/2 items-center justify-center rounded-full bg-[#0f0d0b] text-white transition disabled:opacity-30"
           aria-label="Continue"
         >
           {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowRight className="h-4 w-4" strokeWidth={2.4} />}
         </motion.button>
       )}
-    </div>
+    </motion.div>
   );
 }
+
 
 function SocialButton({ children, onClick, loading, disabled, label }: {
   children: React.ReactNode; onClick: () => void; loading?: boolean; disabled?: boolean; label: string;
