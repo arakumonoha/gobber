@@ -161,6 +161,18 @@ function Discover() {
       const [city, country = ""] = placeLabel.split(",").map((s) => s.trim());
       const duration = Math.min(24, Math.max(1, form.duration_hours || 2));
       const startsAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
+
+      // Try Google Places for a real photo of this location; fall back per category.
+      let coverUrl: string | null = null;
+      try {
+        const photo = await getLocationPhoto({
+          data: { lat: ghostPin.lat, lng: ghostPin.lng, category: form.category },
+        });
+        coverUrl = photo.url;
+      } catch {
+        // non-fatal
+      }
+
       const { data, error } = await supabase
         .from("activities")
         .insert({
@@ -175,7 +187,7 @@ function Discover() {
           starts_at: startsAt,
           duration_hours: duration,
           max_spots: 6,
-          cover_url: null,
+          cover_url: coverUrl,
         })
         .select()
         .single();
