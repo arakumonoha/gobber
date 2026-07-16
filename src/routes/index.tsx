@@ -641,7 +641,7 @@ function TrendingMarquee({ trips }: { trips: Trip[] }) {
           transition={{ duration: 45, repeat: Infinity, ease: "linear" }}
         >
           {doubled.map((t, i) => (
-            <TripCard key={i} t={t} />
+            <TripCard key={i} t={t} idx={i} />
           ))}
         </motion.div>
       </div>
