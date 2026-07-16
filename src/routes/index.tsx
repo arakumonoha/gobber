@@ -546,7 +546,11 @@ function LiveMap({
         </motion.div>
 
 
-        <div
+        <motion.div
+          initial={{ opacity: 0, y: 40, scale: 0.97 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+          viewport={{ once: true, margin: "-10% 0px" }}
+          transition={{ duration: 1.1, ease: EASE, delay: 0.2 }}
           className="relative mx-auto mt-10 overflow-hidden rounded-[28px]"
           style={{
             border: "1px solid rgba(20,18,16,0.08)",
