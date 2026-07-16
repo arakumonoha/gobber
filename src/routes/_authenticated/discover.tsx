@@ -225,9 +225,14 @@ function Discover() {
         ghostPin={ghostPin}
         onMapClick={handleMapClick}
         onPinClick={(id: string) => {
+          if (myActivePin && id === myActivePin.id) {
+            confirmRemovePin();
+            return;
+          }
           const a = filtered.find((x) => x.id === id);
           if (a) focusActivity(a);
         }}
+
         onHeadingChange={setHeading}
       />
 
