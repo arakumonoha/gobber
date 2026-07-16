@@ -481,18 +481,43 @@ function Discover() {
 function CategoryChip({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
   return (
     <motion.button
+      layout
       whileTap={{ scale: 0.94 }}
       onClick={onClick}
-      className={`shrink-0 rounded-full px-4 py-1.5 text-[12px] font-medium tracking-[-0.005em] transition ring-1 ${
-        active
-          ? "bg-[#1a1614] text-white ring-transparent shadow-[0_8px_20px_-10px_rgba(20,18,16,0.5)]"
-          : "bg-white/70 text-[#3d3120] ring-black/[0.04] backdrop-blur-xl"
-      }`}
+      transition={{ type: "spring", stiffness: 420, damping: 32 }}
+      className="relative shrink-0 rounded-full px-4 py-1.5 text-[12.5px] font-medium tracking-[-0.005em]"
+      style={{
+        color: active ? "#fffaf0" : "#3d3120",
+      }}
     >
-      {children}
+      {active && (
+        <motion.span
+          layoutId="chipActive"
+          transition={{ type: "spring", stiffness: 380, damping: 34 }}
+          className="absolute inset-0 -z-10 rounded-full"
+          style={{
+            background: "linear-gradient(180deg,#221a12,#0f0b07)",
+            boxShadow:
+              "inset 0 1px 0 rgba(255,255,255,0.12), 0 10px 24px -12px rgba(20,14,8,0.55)",
+          }}
+        />
+      )}
+      {!active && (
+        <span
+          className="absolute inset-0 -z-10 rounded-full ring-1 ring-[#3a2a12]/[0.06]"
+          style={{
+            background: "color-mix(in oklab, #fffaf0 68%, transparent)",
+            backdropFilter: "saturate(180%) blur(20px)",
+            WebkitBackdropFilter: "saturate(180%) blur(20px)",
+            boxShadow: "inset 0 1px 0 rgba(255,255,255,0.6)",
+          }}
+        />
+      )}
+      <span className="relative">{children}</span>
     </motion.button>
   );
 }
+
 
 function ActivityCard({
   a,
