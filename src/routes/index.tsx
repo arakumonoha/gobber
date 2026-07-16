@@ -264,8 +264,10 @@ function Hero({ stats, nearYou }: { stats: LandingStats | undefined; nearYou: Ne
         background: `
           radial-gradient(80% 60% at 50% 0%, #FDF6DF 0%, transparent 55%),
           radial-gradient(70% 50% at 50% 110%, ${PALETTE.blueSoft} 0%, transparent 60%),
-          radial-gradient(60% 50% at 10% 40%, ${PALETTE.amberSoft} 0%, transparent 65%),
-          radial-gradient(60% 50% at 90% 60%, ${PALETTE.sageSoft} 0%, transparent 65%),
+          radial-gradient(45% 45% at 12% 50%, ${PALETTE.amberSoft} 0%, transparent 65%),
+          radial-gradient(45% 45% at 88% 50%, ${PALETTE.amberSoft} 0%, transparent 65%),
+          radial-gradient(35% 35% at 25% 85%, ${PALETTE.sageSoft} 0%, transparent 65%),
+          radial-gradient(35% 35% at 75% 85%, ${PALETTE.sageSoft} 0%, transparent 65%),
           linear-gradient(180deg, ${PALETTE.cream} 0%, ${PALETTE.paper} 55%, ${PALETTE.cream} 100%)
         `,
       }}
