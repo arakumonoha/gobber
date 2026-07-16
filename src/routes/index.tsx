@@ -913,6 +913,7 @@ function Landing() {
       <How />
       <CTA />
       <Footer />
+      <AuthOverlay />
     </main>
   );
 }
