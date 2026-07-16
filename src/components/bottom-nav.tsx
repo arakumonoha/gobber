@@ -1,13 +1,12 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Compass, Plus, CalendarHeart, User, Globe2 } from "lucide-react";
+import { Compass, Plus, User, Globe2 } from "lucide-react";
 import { motion } from "framer-motion";
 
-type NavItem = { to: "/discover" | "/explore" | "/trips" | "/host" | "/profile"; icon: typeof Compass; label: string; featured?: boolean };
+type NavItem = { to: "/discover" | "/explore" | "/host" | "/profile"; icon: typeof Compass; label: string; featured?: boolean };
 const items: NavItem[] = [
   { to: "/discover", icon: Compass, label: "Discover" },
   { to: "/explore", icon: Globe2, label: "Explore" },
   { to: "/host", icon: Plus, label: "Host", featured: true },
-  { to: "/trips", icon: CalendarHeart, label: "Trips" },
   { to: "/profile", icon: User, label: "Profile" },
 ];
 
