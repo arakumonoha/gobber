@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Link } from "@tanstack/react-router";
 import { Search, UserPlus, Loader2, AtSign, X, Users, Sparkles, Check, ChevronRight } from "lucide-react";
 import { useUser } from "@/hooks/use-user";
 import {
