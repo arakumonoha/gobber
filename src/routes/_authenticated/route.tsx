@@ -30,22 +30,25 @@ function AuthenticatedShell() {
   const idx = tabIndex(segment);
 
   return (
-    <AnimatePresence mode="sync" initial={false} custom={idx}>
-      <motion.div
-        key={segment}
-        custom={idx}
-        initial={{ opacity: 0, y: 8, filter: "blur(8px)", scale: 0.995 }}
-        animate={{ opacity: 1, y: 0, filter: "blur(0px)", scale: 1 }}
-        exit={{ opacity: 0, y: -6, filter: "blur(8px)", scale: 0.995 }}
-        transition={{
-          duration: 0.42,
-          ease: [0.22, 1, 0.36, 1],
-          filter: { duration: 0.3 },
-        }}
-        style={{ minHeight: "100dvh", willChange: "opacity, transform, filter" }}
-      >
-        <Outlet />
-      </motion.div>
-    </AnimatePresence>
+    <>
+      <AnimatePresence mode="sync" initial={false} custom={idx}>
+        <motion.div
+          key={segment}
+          custom={idx}
+          initial={{ opacity: 0, y: 8, filter: "blur(8px)", scale: 0.995 }}
+          animate={{ opacity: 1, y: 0, filter: "blur(0px)", scale: 1 }}
+          exit={{ opacity: 0, y: -6, filter: "blur(8px)", scale: 0.995 }}
+          transition={{
+            duration: 0.42,
+            ease: [0.22, 1, 0.36, 1],
+            filter: { duration: 0.3 },
+          }}
+          style={{ minHeight: "100dvh", willChange: "opacity, transform, filter" }}
+        >
+          <Outlet />
+        </motion.div>
+      </AnimatePresence>
+      <UsernameOnboarding />
+    </>
   );
 }
