@@ -107,6 +107,9 @@ function Discover() {
   function focusActivity(a: Activity) {
     setSelectedId(a.id);
     mapRef.current?.panTo(a.lat, a.lng, 12);
+    // Smoothly snap the corresponding card into center of the rail
+    const el = railRef.current?.querySelector<HTMLElement>(`[data-id="${a.id}"]`);
+    el?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
   }
 
   const [removing, setRemoving] = useState(false);
@@ -275,29 +278,34 @@ function Discover() {
     }
   }
 
+  const railRafRef = useRef<number | null>(null);
   function onRailScroll() {
-    const el = railRef.current;
-    if (!el) return;
-    const center = el.scrollLeft + el.clientWidth / 2;
-    const children = Array.from(el.children) as HTMLElement[];
-    let closest: HTMLElement | null = null;
-    let closestDist = Infinity;
-    for (const c of children) {
-      const cCenter = c.offsetLeft + c.clientWidth / 2;
-      const d = Math.abs(cCenter - center);
-      if (d < closestDist) {
-        closestDist = d;
-        closest = c;
+    if (railRafRef.current != null) return;
+    railRafRef.current = requestAnimationFrame(() => {
+      railRafRef.current = null;
+      const el = railRef.current;
+      if (!el) return;
+      const center = el.scrollLeft + el.clientWidth / 2;
+      const children = Array.from(el.children) as HTMLElement[];
+      let closest: HTMLElement | null = null;
+      let closestDist = Infinity;
+      for (const c of children) {
+        const cCenter = c.offsetLeft + c.clientWidth / 2;
+        const d = Math.abs(cCenter - center);
+        if (d < closestDist) {
+          closestDist = d;
+          closest = c;
+        }
       }
-    }
-    const id = closest?.dataset.id;
-    if (id && id !== selectedId) {
-      const a = filtered.find((x) => x.id === id);
-      if (a) {
-        setSelectedId(a.id);
-        mapRef.current?.panTo(a.lat, a.lng);
+      const id = closest?.dataset.id;
+      if (id && id !== selectedId) {
+        const a = filtered.find((x) => x.id === id);
+        if (a) {
+          setSelectedId(a.id);
+          mapRef.current?.panTo(a.lat, a.lng);
+        }
       }
-    }
+    });
   }
 
   return (
@@ -954,14 +962,25 @@ function ActivityCard({
       layout
       data-id={a.id}
       initial={{ opacity: 0, y: 18, filter: "blur(14px)", scale: 0.96 }}
-      animate={{ opacity: 1, y: 0, filter: "blur(0px)", scale: 1 }}
+      animate={{
+        opacity: 1,
+        y: active ? -4 : 0,
+        filter: "blur(0px)",
+        scale: active ? 1.02 : 0.97,
+      }}
       exit={{ opacity: 0, y: -8, filter: "blur(14px)", scale: 0.96 }}
-      transition={{ delay, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-      whileHover={{ y: -3 }}
-      whileTap={{ scale: 0.98 }}
+      transition={{
+        delay,
+        opacity: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
+        filter: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
+        y: { type: "spring", stiffness: 380, damping: 32, mass: 0.7 },
+        scale: { type: "spring", stiffness: 380, damping: 30, mass: 0.7 },
+      }}
+      whileHover={{ y: -6 }}
+      whileTap={{ scale: 0.96 }}
       onClick={onClick}
-      className={`group w-[260px] shrink-0 snap-center overflow-hidden rounded-[22px] text-left ring-1 ring-[#3a2a12]/[0.06] transition-shadow ${
-        active ? "shadow-[0_24px_54px_-24px_rgba(50,34,15,0.36)]" : "shadow-[0_10px_28px_-18px_rgba(50,34,15,0.18)]"
+      className={`group w-[260px] shrink-0 snap-center snap-always overflow-hidden rounded-[22px] text-left ring-1 ring-[#3a2a12]/[0.06] transition-shadow will-change-transform ${
+        active ? "shadow-[0_28px_60px_-24px_rgba(50,34,15,0.42)]" : "shadow-[0_10px_28px_-18px_rgba(50,34,15,0.18)]"
       }`}
       style={{
         background: "color-mix(in oklab, #fffaf0 88%, transparent)",
