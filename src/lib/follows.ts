@@ -129,6 +129,45 @@ export function useIsFollowing(followerId: string | undefined, followingId: stri
   });
 }
 
+// Does `otherId` follow `myId`? Used for "Follows you" pills.
+export function useFollowsMe(myId: string | undefined, otherId: string | undefined) {
+  return useQuery({
+    queryKey: ["follows", "followsMe", myId, otherId],
+    enabled: !!myId && !!otherId && myId !== otherId,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("follows")
+        .select("id")
+        .eq("follower_id", otherId!)
+        .eq("following_id", myId!)
+        .maybeSingle();
+      return !!data;
+    },
+  });
+}
+
+// Suggested profiles: people I don't follow yet (excluding me).
+export function useSuggestedProfiles(myId: string | undefined, limit = 8) {
+  return useQuery({
+    queryKey: ["profile", "suggested", myId, limit],
+    enabled: !!myId,
+    staleTime: 60_000,
+    queryFn: async () => {
+      const { data: myFollows } = await supabase
+        .from("follows")
+        .select("following_id")
+        .eq("follower_id", myId!);
+      const excludeIds = new Set<string>([myId!, ...(myFollows ?? []).map((r) => r.following_id)]);
+      const { data } = await supabase
+        .from("profiles")
+        .select("id, username, display_name, avatar_url, home_city")
+        .order("created_at", { ascending: false })
+        .limit(limit + excludeIds.size);
+      return ((data ?? []) as ProfileLite[]).filter((p) => !excludeIds.has(p.id)).slice(0, limit);
+    },
+  });
+}
+
 export function useFollowMutation(myId: string | undefined) {
   const qc = useQueryClient();
   return useMutation({
