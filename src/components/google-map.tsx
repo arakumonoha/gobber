@@ -252,6 +252,52 @@ export const GoogleMap = forwardRef<GoogleMapHandle, Props>(function GoogleMap({
       map.panTo(new g.maps.LatLng(lat, lng));
       if (typeof z === "number") map.setZoom(z);
     },
+    flyTo: (lat: number, lng: number, z?: number) => {
+      const map = mapRef.current;
+      const g = window.google;
+      if (!map || !g) return;
+      const target = new g.maps.LatLng(lat, lng);
+      const currentZoom = map.getZoom?.() ?? 3;
+      const finalZoom = typeof z === "number" ? z : Math.max(currentZoom, 11);
+      // Ease out: zoom out slightly, pan, then zoom in — feels cinematic
+      if (finalZoom > currentZoom + 4) {
+        map.setZoom(Math.max(currentZoom - 1, 3));
+      }
+      map.panTo(target);
+      setTimeout(() => {
+        map.panTo(target);
+        map.setZoom(finalZoom);
+      }, 380);
+    },
+    zoomIn: () => {
+      const map = mapRef.current;
+      if (!map) return;
+      map.setZoom((map.getZoom?.() ?? 3) + 1);
+    },
+    zoomOut: () => {
+      const map = mapRef.current;
+      if (!map) return;
+      map.setZoom((map.getZoom?.() ?? 3) - 1);
+    },
+    locate: () =>
+      new Promise((resolve) => {
+        if (typeof navigator === "undefined" || !navigator.geolocation) return resolve(null);
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            const map = mapRef.current;
+            const g = window.google;
+            const lat = pos.coords.latitude;
+            const lng = pos.coords.longitude;
+            if (map && g) {
+              map.panTo(new g.maps.LatLng(lat, lng));
+              map.setZoom(13);
+            }
+            resolve({ lat, lng });
+          },
+          () => resolve(null),
+          { enableHighAccuracy: true, timeout: 8000 },
+        );
+      }),
     resetHeading: () => {
       const map = mapRef.current;
       if (!map) return;
