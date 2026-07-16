@@ -416,9 +416,12 @@ function Discover() {
       >
         <div className="px-5 pt-1">
           {/* Search + categories live inside the sheet, beneath the handle */}
-          <form
+          <motion.form
             onSubmit={handleSearchSubmit}
-            className="flex w-full items-center gap-2.5 rounded-full px-4 py-3 ring-1 ring-[#3a2a12]/[0.06]"
+            whileHover={{ y: -1 }}
+            whileFocus={{ scale: 1.01 }}
+            transition={{ type: "spring", stiffness: 400, damping: 26 }}
+            className="flex w-full items-center gap-2.5 rounded-full px-4 py-3 ring-1 ring-[#3a2a12]/[0.06] focus-within:ring-[#3a2a12]/[0.14] transition-shadow"
             style={{
               background: "color-mix(in oklab, #fffaf0 72%, transparent)",
               backdropFilter: "saturate(180%) blur(28px)",
@@ -427,11 +430,19 @@ function Discover() {
                 "inset 0 1px 0 rgba(255,255,255,0.65), 0 1px 2px rgba(60,42,20,0.05), 0 18px 40px -20px rgba(60,42,20,0.22)",
             }}
           >
-            {searching ? (
-              <Loader2 className="h-4 w-4 animate-spin text-[#2a1c0c]" />
-            ) : (
-              <Search className="h-4 w-4 text-[#2a1c0c]" strokeWidth={2} />
-            )}
+            <motion.span
+              key={searching ? "loading" : "idle"}
+              initial={{ opacity: 0, scale: 0.6, rotate: -30 }}
+              animate={{ opacity: 1, scale: 1, rotate: 0 }}
+              transition={{ type: "spring", stiffness: 460, damping: 22 }}
+              className="flex items-center"
+            >
+              {searching ? (
+                <Loader2 className="h-4 w-4 animate-spin text-[#2a1c0c]" />
+              ) : (
+                <Search className="h-4 w-4 text-[#2a1c0c]" strokeWidth={2} />
+              )}
+            </motion.span>
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
@@ -439,17 +450,25 @@ function Discover() {
               className="w-full bg-transparent text-[14px] tracking-[-0.01em] outline-none placeholder:text-[#6b5230] text-[#1a1614]"
               enterKeyHint="search"
             />
-            {query && (
-              <button
-                type="button"
-                onClick={() => setQuery("")}
-                aria-label="Clear"
-                className="text-[#2a1c0c] transition hover:text-[#1a1614]"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            )}
-          </form>
+            <AnimatePresence initial={false}>
+              {query && (
+                <motion.button
+                  type="button"
+                  onClick={() => setQuery("")}
+                  aria-label="Clear"
+                  initial={{ opacity: 0, scale: 0.6, rotate: -60 }}
+                  animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                  exit={{ opacity: 0, scale: 0.6, rotate: 60 }}
+                  whileHover={{ rotate: 90, scale: 1.1 }}
+                  whileTap={{ scale: 0.85 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 22 }}
+                  className="text-[#2a1c0c] hover:text-[#1a1614]"
+                >
+                  <X className="h-4 w-4" />
+                </motion.button>
+              )}
+            </AnimatePresence>
+          </motion.form>
 
           <div
             className="relative -mx-5 mt-3"
@@ -477,8 +496,19 @@ function Discover() {
           <div className="mb-3 mt-4 flex items-center justify-between">
             <div>
               <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#2a1c0c]">Around you</p>
-              <h2 className="mt-0.5 text-[17px] font-semibold tracking-[-0.01em] text-[#0f0d0b]">
-                {isLoading ? "Loading…" : `${filtered.length} gathering${filtered.length === 1 ? "" : "s"}`}
+              <h2 className="mt-0.5 text-[17px] font-semibold tracking-[-0.01em] text-[#0f0d0b] tabular-nums">
+                <AnimatePresence mode="popLayout" initial={false}>
+                  <motion.span
+                    key={isLoading ? "loading" : `${filtered.length}`}
+                    initial={{ opacity: 0, y: 8, filter: "blur(6px)" }}
+                    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                    exit={{ opacity: 0, y: -8, filter: "blur(6px)" }}
+                    transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+                    className="inline-block"
+                  >
+                    {isLoading ? "Loading…" : `${filtered.length} gathering${filtered.length === 1 ? "" : "s"}`}
+                  </motion.span>
+                </AnimatePresence>
               </h2>
             </div>
             <span className="text-[11px] font-medium uppercase tracking-[0.16em] text-[#2a1c0c]"><span className="hidden lg:inline">Click to collapse</span><span className="lg:hidden">Swipe · Pull to refresh</span></span>
@@ -869,9 +899,11 @@ function CategoryChip({ active, onClick, children }: { active: boolean; onClick:
   return (
     <motion.button
       layout
-      whileTap={{ scale: 0.94 }}
+      whileHover={{ y: -2, scale: 1.03 }}
+      whileTap={{ scale: 0.92 }}
+      animate={active ? { scale: 1.04 } : { scale: 1 }}
       onClick={onClick}
-      transition={{ type: "spring", stiffness: 420, damping: 32 }}
+      transition={{ type: "spring", stiffness: 420, damping: 26 }}
       className="relative shrink-0 rounded-full px-4 py-1.5 text-[12.5px] font-medium tracking-[-0.005em]"
       style={{
         color: active ? "#fffaf0" : "#3d3120",
