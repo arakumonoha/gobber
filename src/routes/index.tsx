@@ -1,10 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { motion, useScroll, useTransform, type Variants } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowRight, Star, Coffee, Users, MapPin, Hand } from "lucide-react";
+import { ArrowRight, Star, Coffee, Users, MapPin, Hand, Radio, Compass } from "lucide-react";
 import { GoogleMap, type GoogleMapHandle } from "@/components/google-map";
 import { activitiesQuery } from "@/lib/activities";
+import { getLandingStats, type LandingStats } from "@/lib/landing-stats.functions";
+import { Floating3DMaps } from "@/components/landing/floating-3d-maps";
+import { JoinsTicker, TrendingStrip } from "@/components/landing/live-signals";
 import owlLogo from "@/assets/gobber-owl.png.asset.json";
 
 export const Route = createFileRoute("/")({
@@ -31,11 +34,29 @@ export const Route = createFileRoute("/")({
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
-/* Apple accent palette */
-const APPLE_BLUE = "#0071e3";
-const APPLE_BLUE_HOVER = "#0a84ff";
-const APPLE_BLUE_SOFT = "#e8f2ff";
-const APPLE_BLUE_DEEP = "#0058b8";
+/* Amber Clarity palette */
+const PALETTE = {
+  cream: "#FAF3E1",
+  paper: "#F4E9CA",
+  ink: "#1A1614",
+  blue: "#0A84FF",
+  blueDeep: "#0057D1",
+  blueSoft: "#E0F0FF",
+  amber: "#E8A93C",
+  amberDeep: "#B4801F",
+  amberSoft: "#FBF0D6",
+  sage: "#7DA88E",
+  sageSoft: "#EAF2E6",
+  muted: "#8b7355",
+};
+
+const COUNTRY_FLAGS: Record<string, string> = {
+  Portugal: "🇵🇹", Japan: "🇯🇵", Thailand: "🇹🇭", Spain: "🇪🇸", Brazil: "🇧🇷",
+  "United States": "🇺🇸", USA: "🇺🇸", Netherlands: "🇳🇱", "United Kingdom": "🇬🇧",
+  UK: "🇬🇧", Italy: "🇮🇹", France: "🇫🇷", Germany: "🇩🇪", Mexico: "🇲🇽",
+  Indonesia: "🇮🇩", Morocco: "🇲🇦", Greece: "🇬🇷", Korea: "🇰🇷", Iceland: "🇮🇸",
+  Earth: "🌍",
+};
 
 /* ───────────────────────── ICONS ───────────────────────── */
 
@@ -65,7 +86,12 @@ function OwlMark({ size = 32 }: { size?: number }) {
       alt="Gobber"
       width={size}
       height={size}
-      style={{ width: size, height: size, objectFit: "contain", filter: "drop-shadow(0 6px 12px rgba(60,42,20,0.18))" }}
+      style={{
+        width: size,
+        height: size,
+        objectFit: "contain",
+        filter: "drop-shadow(0 6px 12px rgba(60,42,20,0.18))",
+      }}
     />
   );
 }
@@ -84,7 +110,7 @@ function Nav() {
     <header
       className="fixed inset-x-0 top-0 z-50 transition-all"
       style={{
-        background: scrolled ? "color-mix(in oklab, #fbf5e8 82%, transparent)" : "transparent",
+        background: scrolled ? "color-mix(in oklab, #FAF3E1 82%, transparent)" : "transparent",
         backdropFilter: scrolled ? "saturate(180%) blur(18px)" : "none",
         WebkitBackdropFilter: scrolled ? "saturate(180%) blur(18px)" : "none",
         borderBottom: scrolled ? "1px solid rgba(20,18,16,0.06)" : "1px solid transparent",
@@ -93,9 +119,11 @@ function Nav() {
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
         <Link to="/" className="flex items-center gap-2">
           <OwlMark size={30} />
-          <span className="text-[17px] font-semibold tracking-[-0.02em] text-[#141210]">gobber</span>
+          <span className="text-[17px] font-semibold tracking-[-0.02em]" style={{ color: PALETTE.ink }}>
+            gobber
+          </span>
         </Link>
-        <nav className="hidden items-center gap-8 text-[14px] text-[#4a3f33] md:flex">
+        <nav className="hidden items-center gap-8 text-[14px] md:flex" style={{ color: "#4a3f33" }}>
           <a href="#trips" className="transition hover:text-[#141210]">trips</a>
           <a href="#live" className="transition hover:text-[#141210]">live map</a>
           <a href="#how" className="transition hover:text-[#141210]">how it works</a>
@@ -104,8 +132,8 @@ function Nav() {
           to="/auth"
           className="group inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[13.5px] font-medium text-white transition hover:-translate-y-0.5"
           style={{
-            background: `linear-gradient(180deg,${APPLE_BLUE_HOVER},${APPLE_BLUE})`,
-            boxShadow: `inset 0 1px 0 rgba(255,255,255,0.28), 0 10px 22px -12px ${APPLE_BLUE}88`,
+            background: `linear-gradient(180deg,${PALETTE.blue},${PALETTE.blueDeep})`,
+            boxShadow: `inset 0 1px 0 rgba(255,255,255,0.28), 0 10px 22px -12px ${PALETTE.blue}88`,
           }}
         >
           sign in
@@ -116,49 +144,7 @@ function Nav() {
   );
 }
 
-/* ───────────── FLOATING FLAG DECORATIONS ───────────── */
-
-const FLAGS = [
-  { emoji: "🇯🇵", x: "6%", y: "18%", size: 32, delay: 0.2, dur: 7 },
-  { emoji: "🇮🇹", x: "12%", y: "62%", size: 40, delay: 0.9, dur: 8 },
-  { emoji: "🇧🇷", x: "8%", y: "88%", size: 28, delay: 1.4, dur: 6.4 },
-  { emoji: "🇲🇦", x: "92%", y: "14%", size: 30, delay: 0.5, dur: 7.2 },
-  { emoji: "🇬🇷", x: "94%", y: "48%", size: 42, delay: 0.1, dur: 8.4 },
-  { emoji: "🇰🇷", x: "88%", y: "82%", size: 28, delay: 1.1, dur: 6.8 },
-  { emoji: "🇲🇽", x: "48%", y: "6%", size: 26, delay: 0.7, dur: 7.6 },
-  { emoji: "🇵🇹", x: "3%", y: "38%", size: 24, delay: 1.6, dur: 8.2 },
-];
-
-function FloatingFlags() {
-  return (
-    <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
-      {FLAGS.map((f, i) => (
-        <motion.div
-          key={i}
-          className="absolute select-none"
-          style={{
-            left: f.x,
-            top: f.y,
-            fontSize: f.size,
-            filter: "drop-shadow(0 8px 16px rgba(60,42,20,0.18))",
-          }}
-          initial={{ opacity: 0, y: 20, scale: 0.7, rotate: -8 }}
-          animate={{ opacity: 1, y: 0, scale: 1, rotate: 0 }}
-          transition={{ duration: 0.9, delay: 0.3 + i * 0.08, ease: EASE }}
-        >
-          <motion.div
-            animate={{ y: [0, -8, 0, 6, 0], rotate: [0, 4, 0, -3, 0] }}
-            transition={{ duration: f.dur, repeat: Infinity, ease: "easeInOut", delay: f.delay }}
-          >
-            {f.emoji}
-          </motion.div>
-        </motion.div>
-      ))}
-    </div>
-  );
-}
-
-/* ───────────── AUTH BUTTONS (Apple / Google) ───────────── */
+/* ───────────── AUTH BUTTONS ───────────── */
 
 function AuthButtons() {
   return (
@@ -181,7 +167,7 @@ function AuthButtons() {
         className="inline-flex w-full items-center justify-center gap-2.5 rounded-full px-6 py-4 text-[15px] font-medium transition hover:-translate-y-0.5 sm:w-auto"
         style={{
           background: "color-mix(in oklab, white 96%, transparent)",
-          color: "#141210",
+          color: PALETTE.ink,
           border: "1px solid rgba(20,18,16,0.08)",
           boxShadow: "0 10px 22px -14px rgba(20,18,16,0.22)",
         }}
@@ -195,12 +181,20 @@ function AuthButtons() {
 
 /* ───────────────────────── HERO ───────────────────────── */
 
-function Hero({ liveCount, cityCount }: { liveCount: number; cityCount: number }) {
+type NearYou = { city: string; country: string; countryName: string } | null;
+
+function Hero({ stats, nearYou }: { stats: LandingStats | undefined; nearYou: NearYou }) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const y = useTransform(scrollYProgress, [0, 1], [0, -40]);
 
-  const base = 91336 + liveCount * 3;
+  const live = stats?.liveCount ?? 0;
+  const totalCities = stats?.totalCities ?? 0;
+  const hosts = stats?.activeHosts ?? 0;
+  const nearbyCount = nearYou && stats ? stats.perCountry[nearYou.countryName] ?? 0 : 0;
+
+  // Live vibing count — animates upward for a sense of pulse
+  const base = 91336 + live * 47;
   const [count, setCount] = useState(base);
   useEffect(() => {
     setCount(base);
@@ -213,36 +207,41 @@ function Hero({ liveCount, cityCount }: { liveCount: number; cityCount: number }
       ref={ref}
       className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-6 pb-16 pt-32"
       style={{
-        background:
-          "radial-gradient(90% 60% at 50% 0%, #fff2d6 0%, transparent 55%), radial-gradient(80% 60% at 50% 110%, #d8ecff 0%, transparent 55%), linear-gradient(180deg, #fbf5e8 0%, #f0e2c4 100%)",
+        background: `
+          radial-gradient(80% 60% at 50% 0%, #FDF6DF 0%, transparent 55%),
+          radial-gradient(70% 50% at 50% 110%, ${PALETTE.blueSoft} 0%, transparent 60%),
+          radial-gradient(60% 50% at 10% 40%, ${PALETTE.amberSoft} 0%, transparent 65%),
+          radial-gradient(60% 50% at 90% 60%, ${PALETTE.sageSoft} 0%, transparent 65%),
+          linear-gradient(180deg, ${PALETTE.cream} 0%, ${PALETTE.paper} 100%)
+        `,
       }}
     >
-      <FloatingFlags />
+      <Floating3DMaps />
 
-      <motion.div style={{ y }} className="relative mx-auto flex w-full max-w-4xl flex-col items-center text-center">
-        {/* live counter pill */}
+      <motion.div style={{ y }} className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center text-center">
+        {/* Live counter pill */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: EASE }}
-          className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-[13px] text-[#3a2f24]"
+          className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-[13px]"
           style={{
             background: "color-mix(in oklab, white 80%, transparent)",
             border: "1px solid rgba(20,18,16,0.06)",
             boxShadow: "0 8px 20px -14px rgba(60,42,20,0.25)",
             backdropFilter: "blur(12px)",
+            color: "#3a2f24",
           }}
         >
           <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#2fbf5a] opacity-70" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-[#2fbf5a]" />
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#7DA88E] opacity-70" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-[#7DA88E]" />
           </span>
-          <span className="font-semibold text-[#141210]">{count.toLocaleString()}</span>
+          <span className="font-semibold" style={{ color: PALETTE.ink }}>{count.toLocaleString()}</span>
           <span>people vibing right now</span>
           <span className="text-base leading-none">🌍</span>
         </motion.div>
 
-        {/* Owl mark above headline */}
         <motion.div
           initial={{ opacity: 0, scale: 0.7, y: -6 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -256,8 +255,8 @@ function Hero({ liveCount, cityCount }: { liveCount: number; cityCount: number }
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.1, ease: EASE, delay: 0.15 }}
-          className="mt-6 font-display font-semibold leading-[0.95] tracking-[-0.04em] text-[#141210]"
-          style={{ fontSize: "clamp(56px, 10vw, 128px)" }}
+          className="mt-6 font-display font-semibold leading-[0.95] tracking-[-0.04em]"
+          style={{ fontSize: "clamp(56px, 10vw, 128px)", color: PALETTE.ink }}
         >
           Visit{" "}
           <span
@@ -265,71 +264,103 @@ function Hero({ liveCount, cityCount }: { liveCount: number; cityCount: number }
               fontFamily: "'Instrument Serif', serif",
               fontStyle: "italic",
               fontWeight: 400,
-              color: APPLE_BLUE,
+              color: PALETTE.blue,
               letterSpacing: "-0.02em",
             }}
           >
             n
           </span>{" "}
-          Vibe
+          <span
+            style={{
+              backgroundImage: `linear-gradient(180deg, ${PALETTE.ink} 0%, ${PALETTE.amberDeep} 100%)`,
+              WebkitBackgroundClip: "text",
+              backgroundClip: "text",
+              color: "transparent",
+            }}
+          >
+            Vibe
+          </span>
         </motion.h1>
 
         <motion.p
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: EASE, delay: 0.32 }}
-          className="mt-6 max-w-[54ch] text-[17.5px] leading-[1.55] text-[#4a3f33]"
+          className="mt-6 max-w-[54ch] text-[17.5px] leading-[1.55]"
+          style={{ color: "#4a3f33" }}
         >
           browse nearby tables, join one, and vibe with people around you.
           today, not someday <span className="inline-block">:)</span>
         </motion.p>
 
-        {/* trust pills — real data */}
+        {/* Live joins ticker */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: EASE, delay: 0.44 }}
-          className="mt-10 flex flex-wrap items-center justify-center gap-3"
+          transition={{ duration: 1, ease: EASE, delay: 0.4 }}
+          className="mt-6"
         >
+          <JoinsTicker joins={stats?.joins ?? []} />
+        </motion.div>
+
+        {/* Real-time trust pills */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, ease: EASE, delay: 0.5 }}
+          className="mt-6 flex flex-wrap items-center justify-center gap-2.5"
+        >
+          <LivePill
+            icon={<MapPin className="h-3.5 w-3.5" style={{ color: PALETTE.blue }} strokeWidth={2.4} />}
+            value={live}
+            label="live worldwide"
+            tint="blue"
+          />
+          {nearYou && (
+            <LivePill
+              icon={<Compass className="h-3.5 w-3.5" style={{ color: PALETTE.amberDeep }} strokeWidth={2.4} />}
+              value={nearbyCount}
+              label={`near ${nearYou.city}`}
+              tint="amber"
+            />
+          )}
+          <LivePill
+            icon={<Radio className="h-3.5 w-3.5" style={{ color: PALETTE.sage }} strokeWidth={2.4} />}
+            value={hosts}
+            label="hosts online now"
+            tint="sage"
+          />
           <div
-            className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-[13px] text-[#3a2f24]"
+            className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12.5px]"
             style={{
-              background: "color-mix(in oklab, white 75%, transparent)",
+              background: "color-mix(in oklab, white 78%, transparent)",
               border: "1px solid rgba(20,18,16,0.06)",
+              color: "#3a2f24",
             }}
           >
-            <MapPin className="h-3.5 w-3.5" style={{ color: APPLE_BLUE }} strokeWidth={2.4} />
-            <span className="font-semibold text-[#141210]">{liveCount}</span> live gatherings
+            🌍 <span className="font-semibold" style={{ color: PALETTE.ink }}>{totalCities}</span> cities
           </div>
           <div
-            className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-[13px] text-[#3a2f24]"
+            className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12.5px]"
             style={{
-              background: "color-mix(in oklab, white 75%, transparent)",
+              background: "color-mix(in oklab, white 78%, transparent)",
               border: "1px solid rgba(20,18,16,0.06)",
-            }}
-          >
-            🌍 <span className="font-semibold text-[#141210]">{cityCount}</span> cities
-          </div>
-          <div
-            className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-[13px] text-[#3a2f24]"
-            style={{
-              background: "color-mix(in oklab, white 75%, transparent)",
-              border: "1px solid rgba(20,18,16,0.06)",
+              color: "#3a2f24",
             }}
           >
             <span className="flex text-[#f5b301]">
               {[0, 1, 2, 3, 4].map((i) => (
-                <Star key={i} className="h-3.5 w-3.5 fill-current" />
+                <Star key={i} className="h-3 w-3 fill-current" />
               ))}
             </span>
-            <span className="font-semibold text-[#141210]">4.9</span>
+            <span className="font-semibold" style={{ color: PALETTE.ink }}>4.9</span>
           </div>
         </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: EASE, delay: 0.6 }}
+          transition={{ duration: 1, ease: EASE, delay: 0.62 }}
           className="mt-8"
         >
           <AuthButtons />
@@ -339,7 +370,8 @@ function Hero({ liveCount, cityCount }: { liveCount: number; cityCount: number }
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 0.75 }}
-          className="mt-4 text-[12px] text-[#8b7355]"
+          className="mt-4 text-[12px]"
+          style={{ color: PALETTE.muted }}
         >
           free forever · no ads · your seat takes 10 seconds
         </motion.p>
@@ -348,16 +380,40 @@ function Hero({ liveCount, cityCount }: { liveCount: number; cityCount: number }
   );
 }
 
+function LivePill({ icon, value, label, tint }: { icon: React.ReactNode; value: number; label: string; tint: "blue" | "amber" | "sage" }) {
+  const bg = tint === "blue" ? PALETTE.blueSoft : tint === "amber" ? PALETTE.amberSoft : PALETTE.sageSoft;
+  const border = tint === "blue" ? `${PALETTE.blue}22` : tint === "amber" ? `${PALETTE.amber}33` : `${PALETTE.sage}33`;
+  return (
+    <motion.div
+      key={`${label}-${value}`}
+      initial={{ scale: 0.94 }}
+      animate={{ scale: 1 }}
+      transition={{ type: "spring", stiffness: 300, damping: 22 }}
+      className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12.5px]"
+      style={{ background: bg, border: `1px solid ${border}`, color: "#3a2f24" }}
+    >
+      {icon}
+      <span className="font-semibold" style={{ color: PALETTE.ink }}>{value.toLocaleString()}</span>
+      <span>{label}</span>
+    </motion.div>
+  );
+}
+
 /* ───────────────── LIVE MAP SECTION ───────────────── */
 
-function LiveMap({ activities }: { activities: { id: string; lat: number; lng: number; category: string; title: string; city: string; country: string }[] }) {
+function LiveMap({
+  activities,
+  stats,
+}: {
+  activities: { id: string; lat: number; lng: number; category: string; title: string; city: string; country: string }[];
+  stats: LandingStats | undefined;
+}) {
   const [mounted, setMounted] = useState(false);
   const [view, setView] = useState<"satellite" | "roadmap">("roadmap");
   const [interactive, setInteractive] = useState(false);
   const mapRef = useRef<GoogleMapHandle>(null);
   useEffect(() => setMounted(true), []);
 
-  // Stable pins reference to avoid re-init flickers
   const pins = useMemo(
     () =>
       activities.map((a) => ({
@@ -376,24 +432,34 @@ function LiveMap({ activities }: { activities: { id: string; lat: number; lng: n
         <div className="mx-auto max-w-2xl text-center">
           <div
             className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-[11px] font-medium uppercase tracking-[0.16em]"
-            style={{ background: APPLE_BLUE_SOFT, color: APPLE_BLUE_DEEP, border: `1px solid ${APPLE_BLUE}22` }}
+            style={{ background: PALETTE.blueSoft, color: PALETTE.blueDeep, border: `1px solid ${PALETTE.blue}22` }}
           >
             <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-70" style={{ background: APPLE_BLUE }} />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full" style={{ background: APPLE_BLUE }} />
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-70" style={{ background: PALETTE.blue }} />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full" style={{ background: PALETTE.blue }} />
             </span>
             live map
           </div>
-          <h2 className="mt-4 font-display text-[clamp(32px,5vw,56px)] font-semibold leading-[1.02] tracking-[-0.03em] text-[#141210]">
+          <h2
+            className="mt-4 font-display font-semibold leading-[1.02] tracking-[-0.03em]"
+            style={{ fontSize: "clamp(32px,5vw,56px)", color: PALETTE.ink }}
+          >
             every pin is a{" "}
-            <span style={{ color: APPLE_BLUE, fontFamily: "'Instrument Serif', serif", fontStyle: "italic", fontWeight: 400 }}>
+            <span style={{ color: PALETTE.blue, fontFamily: "'Instrument Serif', serif", fontStyle: "italic", fontWeight: 400 }}>
               real
             </span>{" "}
             gathering, right now
           </h2>
-          <p className="mt-4 text-[15.5px] leading-[1.55] text-[#4a3f33]">
+          <p className="mt-4 text-[15.5px] leading-[1.55]" style={{ color: "#4a3f33" }}>
             no algorithm, no feed — just an actual world map of tables you can sit at tonight.
           </p>
+
+          {/* Trending strip pulled from live data */}
+          {stats && (
+            <div className="mt-6 flex justify-center">
+              <TrendingStrip trending={stats.trending} fallbackFlags={COUNTRY_FLAGS} />
+            </div>
+          )}
         </div>
 
         <div
@@ -413,10 +479,9 @@ function LiveMap({ activities }: { activities: { id: string; lat: number; lng: n
               className="absolute inset-0"
             />
           ) : (
-            <div className="absolute inset-0 bg-[#f0e2c4]" />
+            <div className="absolute inset-0" style={{ background: PALETTE.paper }} />
           )}
 
-          {/* Idle overlay — blocks all map interaction until the user opts in */}
           {!interactive && (
             <motion.button
               initial={{ opacity: 0 }}
@@ -427,26 +492,26 @@ function LiveMap({ activities }: { activities: { id: string; lat: number; lng: n
               style={{
                 background:
                   "linear-gradient(180deg, rgba(10,12,20,0.05) 0%, rgba(10,12,20,0.35) 55%, rgba(10,12,20,0.55) 100%)",
-                backdropFilter: "blur(0.5px)",
               }}
               aria-label="Explore the map"
             >
               <motion.div
                 animate={{ y: [0, -6, 0] }}
                 transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
-                className="inline-flex items-center gap-2 rounded-full px-5 py-3 text-[14px] font-medium text-[#141210]"
+                className="inline-flex items-center gap-2 rounded-full px-5 py-3 text-[14px] font-medium"
                 style={{
                   background: "color-mix(in oklab, white 94%, transparent)",
+                  color: PALETTE.ink,
                   backdropFilter: "blur(16px)",
                   boxShadow: "0 18px 40px -14px rgba(0,0,0,0.45)",
                   border: "1px solid rgba(255,255,255,0.5)",
                 }}
               >
-                <Hand className="h-4 w-4" style={{ color: APPLE_BLUE }} strokeWidth={2.2} />
+                <Hand className="h-4 w-4" style={{ color: PALETTE.blue }} strokeWidth={2.2} />
                 Tap to explore the map
               </motion.div>
               <span
-                className="text-[11.5px] font-medium tracking-[0.12em] uppercase"
+                className="text-[11.5px] font-medium uppercase tracking-[0.12em]"
                 style={{ color: "rgba(255,255,255,0.85)", textShadow: "0 1px 6px rgba(0,0,0,0.35)" }}
               >
                 {activities.length} gathering{activities.length === 1 ? "" : "s"} · worldwide
@@ -454,7 +519,6 @@ function LiveMap({ activities }: { activities: { id: string; lat: number; lng: n
             </motion.button>
           )}
 
-          {/* Controls — only after activation */}
           {interactive && (
             <>
               <div
@@ -473,7 +537,7 @@ function LiveMap({ activities }: { activities: { id: string; lat: number; lng: n
                     className={`rounded-full px-3 py-1.5 text-[11.5px] font-medium transition ${
                       view === v ? "text-white" : "text-[#4a3f33] hover:text-[#141210]"
                     }`}
-                    style={view === v ? { background: APPLE_BLUE } : undefined}
+                    style={view === v ? { background: PALETTE.blue } : undefined}
                   >
                     {v === "satellite" ? "Satellite" : "Street"}
                   </button>
@@ -481,18 +545,19 @@ function LiveMap({ activities }: { activities: { id: string; lat: number; lng: n
               </div>
 
               <div
-                className="absolute right-4 top-4 z-10 inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[12px] text-[#141210]"
+                className="absolute right-4 top-4 z-10 inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[12px]"
                 style={{
                   background: "color-mix(in oklab, white 82%, transparent)",
                   backdropFilter: "blur(14px)",
                   border: "1px solid rgba(20,18,16,0.06)",
+                  color: PALETTE.ink,
                 }}
               >
                 <span className="relative flex h-1.5 w-1.5">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#2fbf5a] opacity-75" />
-                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#2fbf5a]" />
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-75" style={{ background: PALETTE.sage }} />
+                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full" style={{ background: PALETTE.sage }} />
                 </span>
-                <span className="font-semibold">{activities.length}</span> gathering{activities.length === 1 ? "" : "s"} live
+                <span className="font-semibold">{activities.length}</span> live
               </div>
 
               <div
@@ -501,9 +566,10 @@ function LiveMap({ activities }: { activities: { id: string; lat: number; lng: n
               >
                 <Link
                   to="/discover"
-                  className="pointer-events-auto inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-[13.5px] font-medium text-[#141210] transition hover:-translate-y-0.5"
+                  className="pointer-events-auto inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-[13.5px] font-medium transition hover:-translate-y-0.5"
                   style={{
                     background: "color-mix(in oklab, white 92%, transparent)",
+                    color: PALETTE.ink,
                     backdropFilter: "blur(14px)",
                     boxShadow: "0 14px 28px -16px rgba(0,0,0,0.5)",
                     border: "1px solid rgba(255,255,255,0.6)",
@@ -520,25 +586,14 @@ function LiveMap({ activities }: { activities: { id: string; lat: number; lng: n
   );
 }
 
-/* ───────────────── TRENDING TRIPS ───────────────── */
+/* ───────────────── TRENDING TRIPS MARQUEE ───────────────── */
 
-type Trip = { flag: string; city: string; dates: string; going: string };
-
-const FALLBACK_TRIPS: Trip[] = [
-  { flag: "🇹🇭", city: "Bangkok", dates: "Jul 15 – Jul 21", going: "20,435" },
-  { flag: "🇪🇸", city: "Barcelona", dates: "Jul 12 – Jul 18", going: "19,464" },
-  { flag: "🇧🇷", city: "Rio de Janeiro", dates: "Jul 13 – Jul 19", going: "13,884" },
-  { flag: "🇺🇸", city: "New York", dates: "Jul 16 – Jul 22", going: "6,833" },
-  { flag: "🇳🇱", city: "Amsterdam", dates: "Jul 16 – Jul 22", going: "6,549" },
-  { flag: "🇬🇧", city: "London", dates: "Jul 9 – Jul 15", going: "13,950" },
-  { flag: "🇯🇵", city: "Tokyo", dates: "Jul 14 – Jul 20", going: "11,204" },
-  { flag: "🇵🇹", city: "Lisbon", dates: "Jul 11 – Jul 17", going: "8,712" },
-];
+type Trip = { flag: string; city: string; count: number };
 
 function TripCard({ t }: { t: Trip }) {
   return (
     <div
-      className="flex min-w-[280px] items-center gap-3 rounded-2xl px-4 py-3"
+      className="flex min-w-[260px] items-center gap-3 rounded-2xl px-4 py-3"
       style={{
         background: "color-mix(in oklab, white 85%, transparent)",
         border: "1px solid rgba(20,18,16,0.06)",
@@ -547,29 +602,30 @@ function TripCard({ t }: { t: Trip }) {
     >
       <span className="text-[28px] leading-none">{t.flag}</span>
       <div className="min-w-0 flex-1">
-        <div className="text-[14.5px] font-semibold tracking-[-0.01em] text-[#141210]">{t.city}</div>
-        <div className="text-[11.5px] text-[#6b5c48]">{t.dates}</div>
+        <div className="text-[14.5px] font-semibold tracking-[-0.01em]" style={{ color: PALETTE.ink }}>{t.city}</div>
+        <div className="text-[11.5px]" style={{ color: "#6b5c48" }}>gathering, this week</div>
       </div>
       <span
         className="shrink-0 rounded-full px-2.5 py-1 text-[11.5px] font-medium"
-        style={{ background: APPLE_BLUE_SOFT, color: APPLE_BLUE_DEEP }}
+        style={{ background: PALETTE.amberSoft, color: PALETTE.amberDeep }}
       >
-        {t.going}+ going
+        {t.count} live
       </span>
     </div>
   );
 }
 
-function TrendingTrips({ trips }: { trips: Trip[] }) {
+function TrendingMarquee({ trips }: { trips: Trip[] }) {
+  if (trips.length === 0) return null;
   const doubled = [...trips, ...trips];
   return (
     <section id="trips" className="relative overflow-hidden py-10">
-      <div className="mx-auto mb-6 flex max-w-6xl items-center justify-center gap-2 px-6 text-[15px] font-semibold text-[#141210]">
+      <div className="mx-auto mb-6 flex max-w-6xl items-center justify-center gap-2 px-6 text-[15px] font-semibold" style={{ color: PALETTE.ink }}>
         <span className="text-lg">✈️</span> trending trips
       </div>
       <div className="relative">
-        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-24" style={{ background: "linear-gradient(90deg,#f0e2c4,transparent)" }} />
-        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24" style={{ background: "linear-gradient(-90deg,#f0e2c4,transparent)" }} />
+        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-24" style={{ background: `linear-gradient(90deg,${PALETTE.paper},transparent)` }} />
+        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24" style={{ background: `linear-gradient(-90deg,${PALETTE.paper},transparent)` }} />
         <motion.div
           className="flex gap-3"
           animate={{ x: ["0%", "-50%"] }}
@@ -588,17 +644,20 @@ function TrendingTrips({ trips }: { trips: Trip[] }) {
 
 function How() {
   const steps = [
-    { n: "01", icon: MapPin, title: "open the map", body: "every pin is a real gathering nearby — tonight, this weekend, or next city over." },
-    { n: "02", icon: Coffee, title: "tap what excites you", body: "see the host, the vibe, who's coming. reserve one of the few spots with a single tap." },
-    { n: "03", icon: Users, title: "show up. belong.", body: "meet strangers over dinner, at a trailhead, at a corner café. leave with new group chats." },
+    { n: "01", icon: MapPin, tint: PALETTE.blue, title: "open the map", body: "every pin is a real gathering nearby — tonight, this weekend, or next city over." },
+    { n: "02", icon: Coffee, tint: PALETTE.amberDeep, title: "tap what excites you", body: "see the host, the vibe, who's coming. reserve one of the few spots with a single tap." },
+    { n: "03", icon: Users, tint: PALETTE.sage, title: "show up. belong.", body: "meet strangers over dinner, at a trailhead, at a corner café. leave with new group chats." },
   ];
   return (
     <section id="how" className="relative px-6 py-24">
       <div className="mx-auto max-w-6xl">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="font-display text-[clamp(32px,5vw,56px)] font-semibold leading-[1.02] tracking-[-0.03em] text-[#141210]">
+          <h2
+            className="font-display font-semibold leading-[1.02] tracking-[-0.03em]"
+            style={{ fontSize: "clamp(32px,5vw,56px)", color: PALETTE.ink }}
+          >
             three taps.{" "}
-            <span style={{ color: APPLE_BLUE, fontFamily: "'Instrument Serif', serif", fontStyle: "italic", fontWeight: 400 }}>
+            <span style={{ color: PALETTE.blue, fontFamily: "'Instrument Serif', serif", fontStyle: "italic", fontWeight: 400 }}>
               one
             </span>{" "}
             unforgettable night.
@@ -614,26 +673,26 @@ function How() {
               transition={{ duration: 0.8, ease: EASE, delay: i * 0.1 }}
               className="relative overflow-hidden rounded-3xl p-7"
               style={{
-                background: "linear-gradient(180deg,#fef7e5 0%,#eaf3ff 100%)",
+                background: `linear-gradient(180deg,${PALETTE.cream} 0%,${PALETTE.paper} 100%)`,
                 border: "1px solid rgba(20,18,16,0.06)",
                 boxShadow: "0 20px 40px -28px rgba(60,42,20,0.22)",
               }}
             >
               <div className="flex items-center justify-between">
-                <span className="font-display text-[13px] font-medium tracking-[0.14em]" style={{ color: APPLE_BLUE_DEEP }}>{s.n}</span>
+                <span className="font-display text-[13px] font-medium tracking-[0.14em]" style={{ color: s.tint }}>{s.n}</span>
                 <span
                   className="grid h-10 w-10 place-items-center rounded-full"
                   style={{
                     background: "color-mix(in oklab, white 70%, transparent)",
                     border: "1px solid rgba(20,18,16,0.06)",
-                    color: APPLE_BLUE,
+                    color: s.tint,
                   }}
                 >
                   <s.icon className="h-4 w-4" strokeWidth={2} />
                 </span>
               </div>
-              <div className="mt-14 font-display text-[22px] font-semibold tracking-[-0.02em] text-[#141210]">{s.title}</div>
-              <p className="mt-2 text-[14px] leading-[1.55] text-[#4a3f33]">{s.body}</p>
+              <div className="mt-14 font-display text-[22px] font-semibold tracking-[-0.02em]" style={{ color: PALETTE.ink }}>{s.title}</div>
+              <p className="mt-2 text-[14px] leading-[1.55]" style={{ color: "#4a3f33" }}>{s.body}</p>
             </motion.div>
           ))}
         </div>
@@ -650,8 +709,11 @@ function CTA() {
       <div
         className="relative mx-auto max-w-4xl overflow-hidden rounded-[36px] px-8 py-16 text-center"
         style={{
-          background:
-            `radial-gradient(80% 100% at 50% 0%, ${APPLE_BLUE_HOVER}66 0%, transparent 55%), linear-gradient(180deg,#1c1815 0%,#0a0908 100%)`,
+          background: `
+            radial-gradient(70% 90% at 20% 0%, ${PALETTE.blue}55 0%, transparent 55%),
+            radial-gradient(60% 80% at 100% 100%, ${PALETTE.amber}66 0%, transparent 55%),
+            linear-gradient(180deg,#1c1815 0%,#0a0908 100%)
+          `,
           boxShadow: "0 60px 120px -40px rgba(20,18,16,0.55), inset 0 1px 0 rgba(255,255,255,0.06)",
         }}
       >
@@ -661,14 +723,14 @@ function CTA() {
         <div className="text-[11.5px] font-medium uppercase tracking-[0.2em]" style={{ color: "#a8c7ff" }}>
           your seat is waiting
         </div>
-        <h2 className="mt-4 font-display text-[clamp(34px,5.5vw,60px)] font-semibold leading-[1.02] tracking-[-0.03em] text-white">
+        <h2 className="mt-4 font-display font-semibold leading-[1.02] tracking-[-0.03em] text-white" style={{ fontSize: "clamp(34px,5.5vw,60px)" }}>
           today is a{" "}
-          <span style={{ color: "#a8c7ff", fontFamily: "'Instrument Serif', serif", fontStyle: "italic", fontWeight: 400 }}>
+          <span style={{ color: "#F4C97A", fontFamily: "'Instrument Serif', serif", fontStyle: "italic", fontWeight: 400 }}>
             good day
           </span>{" "}
           to meet someone.
         </h2>
-        <p className="mx-auto mt-5 max-w-[48ch] text-[15.5px] leading-[1.55] text-[#e4d6c6]">
+        <p className="mx-auto mt-5 max-w-[48ch] text-[15.5px] leading-[1.55]" style={{ color: "#e4d6c6" }}>
           gobber is free. joining a table takes ten seconds. the memory lasts a lot longer.
         </p>
         <div className="mt-9 flex justify-center">
@@ -684,10 +746,10 @@ function CTA() {
 function Footer() {
   return (
     <footer className="px-6 pb-10">
-      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 border-t border-[#1a161410] pt-8 text-[12.5px] text-[#6b5c48] sm:flex-row">
+      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 border-t pt-8 text-[12.5px] sm:flex-row" style={{ borderColor: "#1a161410", color: "#6b5c48" }}>
         <div className="flex items-center gap-2">
           <OwlMark size={22} />
-          <span className="font-semibold text-[#141210]">gobber</span>
+          <span className="font-semibold" style={{ color: PALETTE.ink }}>gobber</span>
           <span>· visit n vibe, made for meeting people in real life.</span>
         </div>
         <div className="flex items-center gap-5">
@@ -704,38 +766,44 @@ function Footer() {
 
 function Landing() {
   const { data: activities = [] } = useQuery(activitiesQuery());
-  const cityCount = useMemo(() => new Set(activities.map((a) => a.city)).size, [activities]);
+  const { data: stats } = useQuery({
+    queryKey: ["landing-stats"],
+    queryFn: () => getLandingStats(),
+    refetchInterval: 12_000,
+    refetchIntervalInBackground: false,
+    staleTime: 8_000,
+  });
+
+  const [nearYou, setNearYou] = useState<NearYou>(null);
+  useEffect(() => {
+    let cancelled = false;
+    fetch("https://ipapi.co/json/")
+      .then((r) => r.json())
+      .then((d) => {
+        if (cancelled) return;
+        if (d?.city) setNearYou({ city: d.city, country: d.country_code, countryName: d.country_name });
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const trips = useMemo<Trip[]>(() => {
-    if (activities.length === 0) return FALLBACK_TRIPS;
-    const grouped = new Map<string, { count: number; country: string; date: string }>();
-    for (const a of activities) {
-      const key = a.city;
-      const g = grouped.get(key) ?? { count: 0, country: a.country, date: a.starts_at };
-      g.count += 1;
-      grouped.set(key, g);
-    }
-    const flags: Record<string, string> = {
-      Portugal: "🇵🇹", Japan: "🇯🇵", Thailand: "🇹🇭", Spain: "🇪🇸", Brazil: "🇧🇷",
-      "United States": "🇺🇸", USA: "🇺🇸", Netherlands: "🇳🇱", "United Kingdom": "🇬🇧",
-      UK: "🇬🇧", Italy: "🇮🇹", France: "🇫🇷", Germany: "🇩🇪", Mexico: "🇲🇽",
-      Indonesia: "🇮🇩", Morocco: "🇲🇦", Greece: "🇬🇷", Korea: "🇰🇷",
-    };
-    const real: Trip[] = [...grouped.entries()].slice(0, 8).map(([city, g]) => ({
-      flag: flags[g.country] ?? "🌍",
-      city,
-      dates: new Date(g.date).toLocaleDateString("en", { month: "short", day: "numeric" }),
-      going: (g.count * 137 + 42).toLocaleString(),
+    if (!stats || stats.trending.length === 0) return [];
+    return stats.trending.map((t) => ({
+      flag: COUNTRY_FLAGS[t.country] ?? "🌍",
+      city: t.city,
+      count: t.count,
     }));
-    return real.length >= 4 ? real : [...real, ...FALLBACK_TRIPS].slice(0, 8);
-  }, [activities]);
+  }, [stats]);
 
   return (
-    <main className="relative min-h-screen" style={{ background: "#f0e2c4" }}>
+    <main className="relative min-h-screen" style={{ background: PALETTE.paper }}>
       <Nav />
-      <Hero liveCount={activities.length} cityCount={cityCount} />
-      <LiveMap activities={activities} />
-      <TrendingTrips trips={trips} />
+      <Hero stats={stats} nearYou={nearYou} />
+      <LiveMap activities={activities} stats={stats} />
+      <TrendingMarquee trips={trips} />
       <How />
       <CTA />
       <Footer />
