@@ -610,7 +610,75 @@ function Discover() {
                   </div>
                 </div>
 
-                <div className="mt-5 space-y-2.5">
+                <div className="mt-5 space-y-3.5">
+                  {/* Category picker — top of form, all tags visible */}
+                  <div>
+                    <label className="mb-1.5 block px-1 text-[10.5px] font-semibold uppercase tracking-[0.2em] text-[#4a3820]">
+                      Vibe
+                    </label>
+                    <div
+                      className="relative -mx-1"
+                      style={{
+                        WebkitMaskImage:
+                          "linear-gradient(to right, transparent 0, #000 20px, #000 calc(100% - 20px), transparent 100%)",
+                        maskImage:
+                          "linear-gradient(to right, transparent 0, #000 20px, #000 calc(100% - 20px), transparent 100%)",
+                      }}
+                    >
+                      <div
+                        className="flex gap-1.5 overflow-x-auto px-1 py-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                        role="radiogroup"
+                        aria-label="Pin category"
+                      >
+                        {CATEGORIES.map((c) => {
+                          const active = form.category === c.id;
+                          return (
+                            <motion.button
+                              key={c.id}
+                              type="button"
+                              role="radio"
+                              aria-checked={active}
+                              onClick={() => setForm({ ...form, category: c.id })}
+                              whileTap={{ scale: 0.92 }}
+                              whileHover={{ y: -1 }}
+                              transition={{ type: "spring", stiffness: 420, damping: 26 }}
+                              className="relative shrink-0 rounded-full px-3 py-1.5 text-[12px] font-medium"
+                              style={{ color: active ? "#fffaf0" : "#2b1d0f" }}
+                            >
+                              {active && (
+                                <motion.span
+                                  layoutId="createChipActive"
+                                  transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                                  className="absolute inset-0 -z-10 rounded-full"
+                                  style={{
+                                    background: `linear-gradient(180deg, ${c.tint}, color-mix(in oklab, ${c.tint} 78%, #0f0d0b))`,
+                                    boxShadow: `inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 22px -12px ${c.tint}80`,
+                                  }}
+                                />
+                              )}
+                              {!active && (
+                                <span
+                                  className="absolute inset-0 -z-10 rounded-full ring-1 ring-white/60"
+                                  style={{ background: "rgba(255,255,255,0.45)" }}
+                                />
+                              )}
+                              <span className="relative flex items-center gap-1">
+                                <motion.span
+                                  animate={active ? { rotate: [0, -8, 8, 0], scale: [1, 1.15, 1] } : { rotate: 0, scale: 1 }}
+                                  transition={{ duration: 0.5 }}
+                                  aria-hidden="true"
+                                >
+                                  {c.icon}
+                                </motion.span>
+                                {c.label}
+                              </span>
+                            </motion.button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+
                   <GlassInput
                     autoFocus
                     value={form.title}
@@ -622,36 +690,6 @@ function Discover() {
                     onChange={(v) => setForm({ ...form, description: v })}
                     placeholder="What's the vibe? (optional)"
                   />
-
-                  <div
-                    className="relative -mx-1 mt-1"
-                    style={{
-                      WebkitMaskImage:
-                        "linear-gradient(to right, transparent 0, #000 20px, #000 calc(100% - 20px), transparent 100%)",
-                      maskImage:
-                        "linear-gradient(to right, transparent 0, #000 20px, #000 calc(100% - 20px), transparent 100%)",
-                    }}
-                  >
-                    <div className="flex gap-1.5 overflow-x-auto px-1 py-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                      {CATEGORIES.map((c) => {
-                        const active = form.category === c.id;
-                        return (
-                          <button
-                            key={c.id}
-                            type="button"
-                            onClick={() => setForm({ ...form, category: c.id })}
-                            className={`shrink-0 rounded-full px-3 py-1.5 text-[12px] font-medium transition ${
-                              active
-                                ? "bg-[#0f0d0b] text-white shadow-[0_10px_24px_-12px_rgba(20,14,8,0.5)]"
-                                : "bg-white/45 text-[#2b1d0f] ring-1 ring-white/60"
-                            }`}
-                          >
-                            {c.icon} {c.label}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
 
                   <div className="pt-1">
                     <label className="mb-1 block px-1 text-[10.5px] font-semibold uppercase tracking-[0.2em] text-[#4a3820]">
@@ -669,7 +707,7 @@ function Discover() {
                       suffix="hrs"
                     />
                     <p className="mt-2 px-1 text-[11px] text-[#5a4530]">
-                      Starts automatically 10 min after you drop the pin. Fine-tune schedule and spots later from Manage.
+                      Starts 10 min after you drop the pin. We'll pull a photo of the spot from Google Maps — or hand-pick one if there isn't one.
                     </p>
                   </div>
                 </div>
