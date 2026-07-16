@@ -177,36 +177,38 @@ function Nav() {
               "inset 0 1px 0 rgba(255,255,255,0.08), inset 0 -1px 0 rgba(0,0,0,0.2), 0 4px 12px -6px rgba(0,0,0,0.3)",
           }}
         >
-
           {links.map((l) => {
             const isActive = active === l.id;
             return (
-              <a
+              <motion.a
                 key={l.id}
                 href={l.href}
                 onClick={() => setActive(l.id)}
-                className="relative rounded-full px-4 py-1.5 transition"
-              style={{ color: isActive ? "#FAF3E1" : "rgba(250,243,225,0.65)" }}
-            >
-              {isActive && (
-                <motion.span
-                  layoutId="nav-glass-pill"
-                  className="absolute inset-0 rounded-full"
-                  transition={{ type: "spring", stiffness: 380, damping: 32 }}
-                  style={{
-                    background:
-                      "linear-gradient(180deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.08) 100%)",
-                    border: "1px solid rgba(255,255,255,0.2)",
-                    boxShadow:
-                      "inset 0 1px 0 rgba(255,255,255,0.25), inset 0 -1px 0 rgba(0,0,0,0.15), 0 6px 14px -6px rgba(0,0,0,0.35)",
-                  }}
-                />
-
+                whileHover={{ y: -1 }}
+                whileTap={{ scale: 0.94 }}
+                transition={{ type: "spring", stiffness: 500, damping: 26 }}
+                className="relative rounded-full px-4 py-1.5"
+                style={{ color: isActive ? "#FAF3E1" : "rgba(250,243,225,0.65)" }}
+              >
+                {isActive && (
+                  <motion.span
+                    layoutId="nav-glass-pill"
+                    className="absolute inset-0 rounded-full"
+                    transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                    style={{
+                      background:
+                        "linear-gradient(180deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.08) 100%)",
+                      border: "1px solid rgba(255,255,255,0.2)",
+                      boxShadow:
+                        "inset 0 1px 0 rgba(255,255,255,0.25), inset 0 -1px 0 rgba(0,0,0,0.15), 0 6px 14px -6px rgba(0,0,0,0.35)",
+                    }}
+                  />
                 )}
                 <span className="relative z-10 font-medium">{l.label}</span>
-              </a>
+              </motion.a>
             );
           })}
+
         </nav>
 
         <motion.button
