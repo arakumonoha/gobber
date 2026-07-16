@@ -1,39 +1,22 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { motion, useScroll, useTransform, useMotionValue, useSpring, type Variants } from "framer-motion";
-import { useRef, useState, useEffect } from "react";
-import {
-  ArrowRight,
-  ArrowUpRight,
-  MapPin,
-  Sparkles,
-  Users,
-  Compass,
-  Globe2,
-  Coffee,
-  Mountain,
-  Utensils,
-  Star,
-  Wifi,
-  Zap,
-  Check,
-} from "lucide-react";
-
-
+import { motion, useScroll, useTransform, type Variants } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { ArrowRight, Apple, Play, Star, Coffee, Users, MapPin, Sparkles } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Gobber — Meet strangers. Leave with friends." },
+      { title: "Gobber — meet strangers, leave as friends" },
       {
         name: "description",
         content:
-          "Gobber turns cities into gathering places. Discover intimate dinners, spontaneous hikes and small adventures hosted by people nearby — and become the reason someone remembers a city.",
+          "Gobber turns cities into gathering places. Browse nearby tables, join one, and make real friendships with people around you. Today, not someday.",
       },
-      { property: "og:title", content: "Gobber — Meet strangers. Leave with friends." },
+      { property: "og:title", content: "Gobber — meet strangers, leave as friends" },
       {
         property: "og:description",
         content:
-          "Gobber turns cities into gathering places. Discover intimate dinners, spontaneous hikes and small adventures hosted by people nearby — and become the reason someone remembers a city.",
+          "Browse nearby tables, join one, and make real friendships with people around you. Today, not someday.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -45,7 +28,7 @@ export const Route = createFileRoute("/")({
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 24 },
+  hidden: { opacity: 0, y: 20 },
   show: { opacity: 1, y: 0, transition: { duration: 0.9, ease: EASE } },
 };
 
@@ -54,1144 +37,571 @@ const fadeUp: Variants = {
 function Nav() {
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 12);
+    const onScroll = () => setScrolled(window.scrollY > 8);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
   return (
-    <motion.header
-      initial={{ y: -24, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.9, ease: EASE }}
-      className="fixed inset-x-0 top-0 z-50 px-4 pt-4"
+    <header
+      className="fixed inset-x-0 top-0 z-50 transition-all"
+      style={{
+        background: scrolled ? "color-mix(in oklab, #fbf5e8 82%, transparent)" : "transparent",
+        backdropFilter: scrolled ? "saturate(180%) blur(18px)" : "none",
+        WebkitBackdropFilter: scrolled ? "saturate(180%) blur(18px)" : "none",
+        borderBottom: scrolled ? "1px solid rgba(20,18,16,0.06)" : "1px solid transparent",
+      }}
     >
-      <div
-        className="mx-auto flex h-14 max-w-6xl items-center justify-between rounded-full px-5 transition-all"
-        style={{
-          background: scrolled
-            ? "color-mix(in oklab, white 74%, transparent)"
-            : "color-mix(in oklab, white 22%, transparent)",
-          backdropFilter: "saturate(180%) blur(24px)",
-          WebkitBackdropFilter: "saturate(180%) blur(24px)",
-          boxShadow: scrolled
-            ? "0 1px 2px rgba(50,34,15,0.05), 0 20px 50px -30px rgba(50,34,15,0.22)"
-            : "none",
-          border: "1px solid rgba(20,18,16,0.05)",
-        }}
-      >
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
         <Link to="/" className="flex items-center gap-2">
           <span
-            className="grid h-7 w-7 place-items-center rounded-full text-white"
+            className="grid h-8 w-8 place-items-center rounded-full text-white"
             style={{
-              background: "linear-gradient(180deg, #1c1815 0%, #0a0908 100%)",
-              boxShadow: "inset 0 1px 0 rgba(255,255,255,0.12)",
+              background: "linear-gradient(135deg,#ff8a6b,#e85a3c)",
+              boxShadow: "0 6px 14px -6px rgba(232,90,60,0.55), inset 0 1px 0 rgba(255,255,255,0.28)",
             }}
           >
-            <Globe2 className="h-3.5 w-3.5" strokeWidth={2.4} />
+            <Sparkles className="h-4 w-4" strokeWidth={2.4} />
           </span>
-          <span className="text-[15px] font-semibold tracking-[-0.02em] text-[#141210]">
-            Gobber
-          </span>
+          <span className="text-[17px] font-semibold tracking-[-0.02em] text-[#141210]">gobber</span>
         </Link>
-        <nav className="hidden items-center gap-7 text-[13.5px] text-[#4a3f33] md:flex">
-          <a href="#story" className="transition hover:text-[#141210]">Story</a>
-          <a href="#how" className="transition hover:text-[#141210]">How it works</a>
-          <a href="#features" className="transition hover:text-[#141210]">Features</a>
-          <a href="#voices" className="transition hover:text-[#141210]">Voices</a>
+        <nav className="hidden items-center gap-8 text-[14px] text-[#4a3f33] md:flex">
+          <a href="#trips" className="transition hover:text-[#141210]">trips</a>
+          <a href="#how" className="transition hover:text-[#141210]">how it works</a>
+          <a href="#guidelines" className="transition hover:text-[#141210]">guidelines</a>
         </nav>
-        <div className="flex items-center gap-2">
-          <Link
-            to="/auth"
-            className="hidden rounded-full px-4 py-1.5 text-[13.5px] text-[#4a3f33] transition hover:text-[#141210] sm:inline-flex"
-          >
-            Sign in
-          </Link>
-          <Link
-            to="/auth"
-            className="group inline-flex items-center gap-1 rounded-full px-4 py-1.5 text-[13.5px] font-medium text-white transition"
-            style={{
-              background: "linear-gradient(180deg, #1c1815 0%, #0a0908 100%)",
-              boxShadow:
-                "0 1px 0 rgba(255,255,255,0.08) inset, 0 10px 24px -14px rgba(20,18,16,0.6)",
-            }}
-          >
-            Get started
-            <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-          </Link>
-        </div>
+        <Link
+          to="/auth"
+          className="group inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[13.5px] font-medium text-white transition hover:-translate-y-0.5"
+          style={{
+            background: "linear-gradient(180deg,#ff7a5c,#e85a3c)",
+            boxShadow:
+              "inset 0 1px 0 rgba(255,255,255,0.28), 0 10px 22px -12px rgba(232,90,60,0.6)",
+          }}
+        >
+          get the app
+          <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+        </Link>
       </div>
-    </motion.header>
+    </header>
   );
 }
 
-/* ─────────── AMBIENT BACKGROUND (orbs + grid + noise) ─────────── */
+/* ───────────── FLOATING FLAG DECORATIONS ───────────── */
 
-function HeroBackdrop() {
+const FLAGS = [
+  { emoji: "🇯🇵", x: "6%", y: "18%", size: 32, delay: 0.2, dur: 7 },
+  { emoji: "🇮🇹", x: "12%", y: "62%", size: 40, delay: 0.9, dur: 8 },
+  { emoji: "🇧🇷", x: "8%", y: "88%", size: 28, delay: 1.4, dur: 6.4 },
+  { emoji: "🇲🇦", x: "92%", y: "14%", size: 30, delay: 0.5, dur: 7.2 },
+  { emoji: "🇬🇷", x: "94%", y: "48%", size: 42, delay: 0.1, dur: 8.4 },
+  { emoji: "🇰🇷", x: "88%", y: "82%", size: 28, delay: 1.1, dur: 6.8 },
+  { emoji: "🇲🇽", x: "48%", y: "6%", size: 26, delay: 0.7, dur: 7.6 },
+  { emoji: "🇵🇹", x: "3%", y: "38%", size: 24, delay: 1.6, dur: 8.2 },
+];
+
+function FloatingFlags() {
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
-      {/* base warm gradient */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(120% 80% at 85% -10%, #ffe9c4 0%, transparent 55%), radial-gradient(90% 70% at -10% 110%, #ffd7b0 0%, transparent 55%), linear-gradient(180deg, #fbf5e8 0%, #f4e8cf 100%)",
-        }}
-      />
-      {/* colored orbs */}
-      <motion.div
-        aria-hidden
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1.4 }}
-        className="absolute -left-32 top-24 h-[420px] w-[420px] rounded-full"
-        style={{
-          background: "radial-gradient(closest-side, rgba(255,151,102,0.55), transparent 70%)",
-          filter: "blur(60px)",
-        }}
-      />
-      <motion.div
-        aria-hidden
-        animate={{ y: [0, -24, 0] }}
-        transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute -right-24 top-10 h-[520px] w-[520px] rounded-full"
-        style={{
-          background: "radial-gradient(closest-side, rgba(139,111,63,0.35), transparent 70%)",
-          filter: "blur(80px)",
-        }}
-      />
-      <motion.div
-        aria-hidden
-        animate={{ y: [0, 18, 0] }}
-        transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute bottom-[-200px] left-1/3 h-[520px] w-[520px] rounded-full"
-        style={{
-          background: "radial-gradient(closest-side, rgba(232,161,122,0.4), transparent 70%)",
-          filter: "blur(90px)",
-        }}
-      />
-      {/* faint grid */}
-      <svg className="absolute inset-0 h-full w-full opacity-[0.05]" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <pattern id="hero-grid" width="64" height="64" patternUnits="userSpaceOnUse">
-            <path d="M 64 0 L 0 0 0 64" fill="none" stroke="#1a1614" strokeWidth="0.5" />
-          </pattern>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#hero-grid)" />
-      </svg>
-      {/* subtle grain */}
-      <div
-        className="absolute inset-0 opacity-[0.08] mix-blend-multiply"
-        style={{
-          backgroundImage:
-            "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0 0.05 0 0 0 0.55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\")",
-        }}
-      />
+      {FLAGS.map((f, i) => (
+        <motion.div
+          key={i}
+          className="absolute select-none"
+          style={{
+            left: f.x,
+            top: f.y,
+            fontSize: f.size,
+            filter: "drop-shadow(0 8px 16px rgba(60,42,20,0.18))",
+          }}
+          initial={{ opacity: 0, y: 20, scale: 0.7, rotate: -8 }}
+          animate={{ opacity: 1, y: 0, scale: 1, rotate: 0 }}
+          transition={{ duration: 0.9, delay: 0.3 + i * 0.08, ease: EASE }}
+        >
+          <motion.div
+            animate={{ y: [0, -8, 0, 6, 0], rotate: [0, 4, 0, -3, 0] }}
+            transition={{ duration: f.dur, repeat: Infinity, ease: "easeInOut", delay: f.delay }}
+          >
+            {f.emoji}
+          </motion.div>
+        </motion.div>
+      ))}
     </div>
   );
 }
 
-/* ─────────── PRODUCT MOCKUP (interactive map card) ─────────── */
-
-function HeroMock() {
-  const ref = useRef<HTMLDivElement>(null);
-  const rx = useMotionValue(0);
-  const ry = useMotionValue(0);
-  const sx = useSpring(rx, { stiffness: 120, damping: 18 });
-  const sy = useSpring(ry, { stiffness: 120, damping: 18 });
-
-  const onMove = (e: React.MouseEvent) => {
-    const r = ref.current?.getBoundingClientRect();
-    if (!r) return;
-    const px = (e.clientX - r.left) / r.width - 0.5;
-    const py = (e.clientY - r.top) / r.height - 0.5;
-    ry.set(px * 8);
-    rx.set(-py * 8);
-  };
-  const onLeave = () => { rx.set(0); ry.set(0); };
-
-  const pins = [
-    { x: "22%", y: "34%", name: "Fabrique", tag: "Coffee", tone: "#8b6f3f", live: 6 },
-    { x: "48%", y: "48%", name: "Ozone Lab", tag: "Focus", tone: "#c96a3a", live: 12 },
-    { x: "70%", y: "30%", name: "Casa Verde", tag: "Terrace", tone: "#5a7d5a", live: 4 },
-    { x: "60%", y: "68%", name: "Kōhī Bar", tag: "Quiet", tone: "#3a5a7d", live: 9 },
-  ];
-
-  const avatars = ["#c9a97a","#e3a17a","#8b6f3f","#c96a3a","#6b5c48"];
-
-  return (
-    <motion.div
-      ref={ref}
-      onMouseMove={onMove}
-      onMouseLeave={onLeave}
-      initial={{ opacity: 0, y: 40 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 1, ease: EASE, delay: 0.5 }}
-      style={{ perspective: 1400 }}
-      className="relative w-full"
-    >
-      <motion.div
-        style={{ rotateX: sx, rotateY: sy, transformStyle: "preserve-3d" }}
-        className="relative overflow-hidden rounded-[28px]"
-      >
-        <div
-          className="relative aspect-[4/5] w-full"
-          style={{
-            background: "linear-gradient(180deg, #fdf6e6 0%, #f0dfb7 100%)",
-            boxShadow:
-              "0 60px 120px -40px rgba(50,34,15,0.45), 0 12px 40px -20px rgba(50,34,15,0.2), inset 0 1px 0 rgba(255,255,255,0.7)",
-            border: "1px solid rgba(20,18,16,0.06)",
-          }}
-        >
-          {/* map surface */}
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                "radial-gradient(60% 90% at 30% 30%, #ecd7a8 0%, transparent 60%), radial-gradient(50% 70% at 78% 72%, #d9c290 0%, transparent 60%), linear-gradient(180deg, #efe0bd 0%, #e3cf9e 100%)",
-            }}
-          />
-          {/* roads */}
-          <svg className="absolute inset-0 h-full w-full" viewBox="0 0 400 500" fill="none">
-            {[
-              "M 0 120 C 100 90, 220 160, 400 130",
-              "M 0 260 C 140 220, 260 300, 400 260",
-              "M 0 380 C 120 340, 280 420, 400 380",
-              "M 80 0 C 60 140, 180 260, 140 500",
-              "M 260 0 C 300 140, 220 320, 300 500",
-            ].map((d, i) => (
-              <path key={i} d={d} stroke="#8b6f3f" strokeOpacity="0.28" strokeWidth="1" />
-            ))}
-          </svg>
-
-          {/* connection lines between pins */}
-          <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-            <motion.path
-              d="M 22 34 Q 35 42 48 48"
-              stroke="#1a1614" strokeOpacity="0.35" strokeWidth="0.25" fill="none" strokeDasharray="1 1.5"
-              initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.4, delay: 1 }}
-            />
-            <motion.path
-              d="M 48 48 Q 60 40 70 30"
-              stroke="#1a1614" strokeOpacity="0.35" strokeWidth="0.25" fill="none" strokeDasharray="1 1.5"
-              initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.4, delay: 1.3 }}
-            />
-            <motion.path
-              d="M 48 48 Q 56 58 60 68"
-              stroke="#1a1614" strokeOpacity="0.35" strokeWidth="0.25" fill="none" strokeDasharray="1 1.5"
-              initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.4, delay: 1.6 }}
-            />
-          </svg>
-
-          {/* animated pins */}
-          {pins.map((p, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: -10, scale: 0.8 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ delay: 0.9 + i * 0.15, duration: 0.7, ease: EASE }}
-              style={{ left: p.x, top: p.y }}
-              className="absolute -translate-x-1/2 -translate-y-full"
-            >
-              <div className="relative">
-                <motion.span
-                  className="absolute left-1/2 top-full h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full"
-                  style={{ background: p.tone }}
-                  animate={{ boxShadow: [`0 0 0 0 ${p.tone}55`, `0 0 0 14px ${p.tone}00`] }}
-                  transition={{ duration: 2.2, repeat: Infinity, delay: i * 0.4 }}
-                />
-                <div
-                  className="flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10.5px] font-medium text-[#1a1614]"
-                  style={{
-                    background: "color-mix(in oklab, white 85%, transparent)",
-                    backdropFilter: "blur(12px)",
-                    boxShadow: "0 10px 24px -8px rgba(50,34,15,0.35)",
-                    border: "1px solid rgba(20,18,16,0.06)",
-                  }}
-                >
-                  <span className="h-1.5 w-1.5 rounded-full" style={{ background: p.tone }} />
-                  {p.name}
-                  <span className="text-[9.5px] text-[#8b6f3f]">· {p.live}</span>
-                </div>
-                <div
-                  className="mx-auto mt-1 h-2.5 w-2.5 rounded-full"
-                  style={{
-                    background: "linear-gradient(180deg, #1c1815, #0a0908)",
-                    boxShadow: "0 3px 8px rgba(20,18,16,0.5)",
-                  }}
-                />
-              </div>
-            </motion.div>
-          ))}
-
-          {/* Floating profile card - top right */}
-          <motion.div
-            initial={{ opacity: 0, x: 30, y: -10 }}
-            animate={{ opacity: 1, x: 0, y: 0 }}
-            transition={{ delay: 1.4, duration: 0.8, ease: EASE }}
-            className="absolute right-3 top-3 flex items-center gap-2.5 rounded-2xl px-3 py-2"
-            style={{
-              background: "color-mix(in oklab, white 88%, transparent)",
-              backdropFilter: "blur(18px)",
-              border: "1px solid rgba(20,18,16,0.06)",
-              boxShadow: "0 14px 30px -14px rgba(50,34,15,0.3)",
-            }}
-          >
-            <div className="relative h-8 w-8 rounded-full" style={{ background: "linear-gradient(135deg,#e3a17a,#8b6f3f)" }}>
-              <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-white bg-[#5a9d5a]" />
-            </div>
-            <div className="pr-1">
-              <div className="text-[11px] font-semibold tracking-[-0.01em] text-[#141210]">Mira joined</div>
-              <div className="text-[10px] text-[#6b5c48]">Ozone Lab · now</div>
-            </div>
-          </motion.div>
-
-          {/* Availability chip */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.7, duration: 0.7, ease: EASE }}
-            className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10.5px] font-medium text-[#1a1614]"
-            style={{
-              background: "color-mix(in oklab, white 85%, transparent)",
-              backdropFilter: "blur(12px)",
-              border: "1px solid rgba(20,18,16,0.06)",
-              boxShadow: "0 8px 20px -8px rgba(50,34,15,0.25)",
-            }}
-          >
-            <motion.span
-              className="h-1.5 w-1.5 rounded-full bg-[#5a9d5a]"
-              animate={{ opacity: [1, 0.3, 1] }}
-              transition={{ duration: 1.8, repeat: Infinity }}
-            />
-            Live · 214 nearby
-          </motion.div>
-
-          {/* Bottom café card */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.2, duration: 0.8, ease: EASE }}
-            className="absolute inset-x-3 bottom-3 rounded-2xl p-4"
-            style={{
-              background: "color-mix(in oklab, white 90%, transparent)",
-              backdropFilter: "blur(22px)",
-              border: "1px solid rgba(20,18,16,0.06)",
-              boxShadow: "0 24px 50px -20px rgba(50,34,15,0.35)",
-            }}
-          >
-            <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0">
-                <div className="flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-[0.14em] text-[#c96a3a]">
-                  <Zap className="h-3 w-3" strokeWidth={2.6} /> Table forming
-                </div>
-                <div className="mt-1 font-display text-[16px] font-semibold tracking-[-0.02em] text-[#141210]">
-                  Deep-work morning at Ozone Lab
-                </div>
-                <div className="mt-1 flex items-center gap-3 text-[11px] text-[#6b5c48]">
-                  <span className="inline-flex items-center gap-1"><Wifi className="h-3 w-3" /> 320 Mb</span>
-                  <span className="inline-flex items-center gap-1"><Coffee className="h-3 w-3" /> Specialty</span>
-                  <span className="inline-flex items-center gap-1"><Users className="h-3 w-3" /> 4 seats</span>
-                </div>
-              </div>
-              <button
-                className="shrink-0 rounded-full px-3 py-1.5 text-[11px] font-medium text-white"
-                style={{
-                  background: "linear-gradient(180deg,#c96a3a,#a3512a)",
-                  boxShadow: "0 8px 18px -8px rgba(201,106,58,0.6)",
-                }}
-              >
-                Join
-              </button>
-            </div>
-            <div className="mt-3 flex items-center justify-between">
-              <div className="flex -space-x-2">
-                {avatars.map((c, i) => (
-                  <div key={i} className="h-6 w-6 rounded-full border-2 border-white" style={{ background: c }} />
-                ))}
-                <div className="grid h-6 w-6 place-items-center rounded-full border-2 border-white bg-[#1c1815] text-[9px] font-semibold text-white">
-                  +3
-                </div>
-              </div>
-              <span className="text-[10.5px] text-[#6b5c48]">Starts in 12 min</span>
-            </div>
-          </motion.div>
-        </div>
-      </motion.div>
-
-      {/* Floating notification card */}
-      <motion.div
-        initial={{ opacity: 0, x: 40, y: 20 }}
-        animate={{ opacity: 1, x: 0, y: 0 }}
-        transition={{ delay: 1.9, duration: 0.9, ease: EASE }}
-        className="absolute -right-6 top-1/3 hidden w-[220px] rounded-2xl p-3 md:block"
-        style={{
-          background: "color-mix(in oklab, white 92%, transparent)",
-          backdropFilter: "blur(22px)",
-          border: "1px solid rgba(20,18,16,0.06)",
-          boxShadow: "0 30px 60px -20px rgba(50,34,15,0.4)",
-        }}
-      >
-        <div className="flex items-center gap-2">
-          <div className="grid h-8 w-8 place-items-center rounded-xl" style={{ background: "linear-gradient(135deg,#5a9d5a,#3d7b3d)" }}>
-            <Check className="h-4 w-4 text-white" strokeWidth={3} />
-          </div>
-          <div className="min-w-0">
-            <div className="text-[11px] font-semibold text-[#141210]">You&rsquo;re in</div>
-            <div className="truncate text-[10.5px] text-[#6b5c48]">Casa Verde · 3:00 PM</div>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* Floating stat card */}
-      <motion.div
-        initial={{ opacity: 0, x: -30, y: 20 }}
-        animate={{ opacity: 1, x: 0, y: 0 }}
-        transition={{ delay: 2.1, duration: 0.9, ease: EASE }}
-        className="absolute -left-6 bottom-24 hidden w-[200px] rounded-2xl p-3 md:block"
-        style={{
-          background: "color-mix(in oklab, white 92%, transparent)",
-          backdropFilter: "blur(22px)",
-          border: "1px solid rgba(20,18,16,0.06)",
-          boxShadow: "0 30px 60px -20px rgba(50,34,15,0.4)",
-        }}
-      >
-        <div className="text-[10px] font-medium uppercase tracking-[0.14em] text-[#8b6f3f]">This week</div>
-        <div className="mt-1 font-display text-[22px] font-semibold tracking-[-0.02em] text-[#141210]">
-          38 new tables
-        </div>
-        <div className="mt-2 flex h-1.5 overflow-hidden rounded-full bg-[#1a161410]">
-          <motion.div
-            initial={{ width: 0 }}
-            animate={{ width: "72%" }}
-            transition={{ delay: 2.4, duration: 1.2, ease: EASE }}
-            className="h-full rounded-full"
-            style={{ background: "linear-gradient(90deg,#c96a3a,#e3a17a)" }}
-          />
-        </div>
-      </motion.div>
-    </motion.div>
-  );
-}
-
-/* ────────────────────────── HERO ────────────────────────── */
+/* ───────────────────────── HERO ───────────────────────── */
 
 function Hero() {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const y = useTransform(scrollYProgress, [0, 1], [0, -60]);
+  const y = useTransform(scrollYProgress, [0, 1], [0, -40]);
+
+  const [count, setCount] = useState(91336);
+  useEffect(() => {
+    const t = setInterval(() => setCount((c) => c + Math.floor(Math.random() * 5) + 1), 2200);
+    return () => clearInterval(t);
+  }, []);
 
   return (
     <section
       ref={ref}
-      className="relative flex min-h-[100svh] items-center overflow-hidden px-6 pb-24 pt-32 lg:pt-36"
+      className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-6 pb-16 pt-32"
+      style={{
+        background:
+          "radial-gradient(90% 60% at 50% 0%, #fff2d6 0%, transparent 55%), radial-gradient(80% 60% at 50% 110%, #ffd9c0 0%, transparent 55%), linear-gradient(180deg, #fbf5e8 0%, #f5e6c9 100%)",
+      }}
     >
-      <HeroBackdrop />
+      <FloatingFlags />
 
-      <motion.div
-        style={{ y }}
-        className="relative mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-16 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10"
-      >
-        {/* LEFT — copy */}
-        <div className="relative max-w-2xl">
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: EASE }}
-            className="inline-flex items-center gap-2 rounded-full border border-[rgba(20,18,16,0.08)] bg-white/55 px-3 py-1 text-[11.5px] font-medium uppercase tracking-[0.14em] text-[#4a3f33] backdrop-blur"
+      <motion.div style={{ y }} className="relative mx-auto flex w-full max-w-4xl flex-col items-center text-center">
+        {/* live counter pill */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: EASE }}
+          className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-[13px] text-[#3a2f24]"
+          style={{
+            background: "color-mix(in oklab, white 80%, transparent)",
+            border: "1px solid rgba(20,18,16,0.06)",
+            boxShadow: "0 8px 20px -14px rgba(60,42,20,0.25)",
+            backdropFilter: "blur(12px)",
+          }}
+        >
+          <span className="relative flex h-2 w-2">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#2fbf5a] opacity-70" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-[#2fbf5a]" />
+          </span>
+          <span className="font-semibold text-[#141210]">{count.toLocaleString()}</span>
+          <span>people gathering right now</span>
+          <span className="text-base leading-none">🌍</span>
+        </motion.div>
+
+        {/* headline */}
+        <motion.h1
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.1, ease: EASE, delay: 0.12 }}
+          className="mt-8 font-display text-[clamp(48px,8vw,104px)] font-semibold leading-[0.98] tracking-[-0.035em] text-[#141210]"
+        >
+          meet{" "}
+          <span
+            className="serif-hero"
+            style={{
+              color: "#e85a3c",
+              fontFamily: "'Instrument Serif', serif",
+              fontStyle: "italic",
+              fontWeight: 400,
+            }}
           >
-            <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#c96a3a] opacity-75" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#c96a3a]" />
+            strangers
+          </span>
+          <br />
+          leave as friends
+        </motion.h1>
+
+        {/* subtitle */}
+        <motion.p
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, ease: EASE, delay: 0.28 }}
+          className="mt-6 max-w-[54ch] text-[17.5px] leading-[1.55] text-[#4a3f33]"
+        >
+          browse nearby tables, join one, and make real friendships with people around you.
+          today, not someday <span className="inline-block">:)</span>
+        </motion.p>
+
+        {/* trust pills */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, ease: EASE, delay: 0.42 }}
+          className="mt-10 flex flex-wrap items-center justify-center gap-3"
+        >
+          <div
+            className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-[13px] text-[#3a2f24]"
+            style={{
+              background: "color-mix(in oklab, white 75%, transparent)",
+              border: "1px solid rgba(20,18,16,0.06)",
+            }}
+          >
+            📲 <span className="font-semibold text-[#141210]">1M+</span> users
+          </div>
+          <div
+            className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-[13px] text-[#3a2f24]"
+            style={{
+              background: "color-mix(in oklab, white 75%, transparent)",
+              border: "1px solid rgba(20,18,16,0.06)",
+            }}
+          >
+            <span className="flex text-[#f5b301]">
+              {[0, 1, 2, 3, 4].map((i) => (
+                <Star key={i} className="h-3.5 w-3.5 fill-current" />
+              ))}
             </span>
-            Live in 42 cities · 1,280 cafés
-          </motion.div>
+            <span className="font-semibold text-[#141210]">4.7</span> on the App Store
+          </div>
+        </motion.div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.1, ease: EASE, delay: 0.12 }}
-            className="serif-hero mt-6 text-[clamp(44px,6.4vw,84px)] leading-[0.98] tracking-[-0.035em] text-[#141210]"
+        {/* CTAs */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, ease: EASE, delay: 0.58 }}
+          className="mt-8 flex w-full max-w-md flex-col items-center gap-3 sm:flex-row sm:justify-center"
+        >
+          <Link
+            to="/auth"
+            className="group inline-flex w-full items-center justify-center gap-2 rounded-full px-6 py-4 text-[15px] font-medium text-white transition hover:-translate-y-0.5 sm:w-auto"
+            style={{
+              background: "linear-gradient(180deg,#ff7a5c,#e85a3c)",
+              boxShadow:
+                "inset 0 1px 0 rgba(255,255,255,0.3), 0 20px 40px -18px rgba(232,90,60,0.65), 0 4px 10px rgba(232,90,60,0.2)",
+            }}
           >
-            Work anywhere.
-            <br />
-            <span style={{ color: "#c96a3a" }}>Connect</span>{" "}
-            <em style={{ fontStyle: "italic", fontFamily: "'Instrument Serif', serif", fontWeight: 400 }}>
-              everywhere.
-            </em>
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: EASE, delay: 0.28 }}
-            className="mt-6 max-w-[52ch] text-[17px] leading-[1.6] text-[#4a3f33]"
-            style={{ fontFamily: "'SF Pro Text', -apple-system, 'Figtree', sans-serif" }}
+            <Apple className="h-4 w-4 fill-current" strokeWidth={0} />
+            download for iOS
+          </Link>
+          <Link
+            to="/auth"
+            className="group inline-flex w-full items-center justify-center gap-2 rounded-full px-6 py-4 text-[15px] font-medium text-[#141210] transition hover:-translate-y-0.5 sm:w-auto"
+            style={{
+              background: "color-mix(in oklab, white 92%, transparent)",
+              border: "1px solid rgba(20,18,16,0.08)",
+              boxShadow: "0 10px 22px -14px rgba(20,18,16,0.18)",
+            }}
           >
-            Gobber is where remote workers find their next café, their next focus table, and the people
-            worth sharing it with. Discover coworking-ready spots nearby — join a live table in one tap.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: EASE, delay: 0.42 }}
-            className="mt-9 flex flex-wrap items-center gap-3"
-          >
-            <Link
-              to="/auth"
-              className="group inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-[15px] font-medium text-white transition hover:-translate-y-0.5"
-              style={{
-                background: "linear-gradient(180deg, #1c1815 0%, #0a0908 100%)",
-                boxShadow:
-                  "0 1px 0 rgba(255,255,255,0.08) inset, 0 24px 40px -18px rgba(20,18,16,0.55), 0 6px 12px rgba(20,18,16,0.15)",
-              }}
-            >
-              Get started — it&rsquo;s free
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-            </Link>
-            <Link
-              to="/auth"
-              className="group inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-[15px] font-medium text-[#141210] transition hover:-translate-y-0.5"
-              style={{
-                background: "color-mix(in oklab, white 70%, transparent)",
-                backdropFilter: "blur(14px)",
-                border: "1px solid rgba(20,18,16,0.09)",
-                boxShadow: "0 10px 22px -14px rgba(20,18,16,0.25)",
-              }}
-            >
-              <Compass className="h-4 w-4 text-[#8b6f3f]" strokeWidth={2.4} />
-              Explore spaces
-              <ArrowUpRight className="h-3.5 w-3.5 opacity-60 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-            </Link>
-          </motion.div>
-
-          {/* trust row */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: EASE, delay: 0.6 }}
-            className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4"
-          >
-            <div className="flex items-center gap-3">
-              <div className="flex -space-x-2">
-                {["#c9a97a","#e3a17a","#8b6f3f","#c96a3a","#6b5c48"].map((c, i) => (
-                  <div key={i} className="h-8 w-8 rounded-full border-2 border-[#fbf5e8]" style={{ background: c }} />
-                ))}
-              </div>
-              <div className="text-[12.5px] leading-tight text-[#4a3f33]">
-                <div className="font-semibold text-[#141210]">62,000+ members</div>
-                <div className="text-[#6b5c48]">joined this year</div>
-              </div>
-            </div>
-            <div className="h-8 w-px bg-[#1a161418]" />
-            <TrustStat value="4.9" label="App Store" icon={<Star className="h-3 w-3 fill-current" />} />
-            <div className="h-8 w-px bg-[#1a161418]" />
-            <TrustStat value="1,280" label="Cafés listed" icon={<Coffee className="h-3 w-3" />} />
-            <div className="h-8 w-px bg-[#1a161418]" />
-            <TrustStat value="42" label="Cities" icon={<Globe2 className="h-3 w-3" />} />
-          </motion.div>
-        </div>
-
-        {/* RIGHT — product mock */}
-        <div className="relative">
-          <HeroMock />
-        </div>
+            <Play className="h-4 w-4 fill-current" strokeWidth={0} />
+            download for Android
+          </Link>
+        </motion.div>
       </motion.div>
     </section>
   );
 }
 
-function TrustStat({ value, label, icon }: { value: string; label: string; icon: React.ReactNode }) {
+/* ───────────────── TRENDING TRIPS MARQUEE ───────────────── */
+
+type Trip = { flag: string; city: string; dates: string; going: string };
+
+const TRIPS: Trip[] = [
+  { flag: "🇹🇭", city: "Bangkok", dates: "Jul 15 – Jul 21", going: "20,435" },
+  { flag: "🇪🇸", city: "Barcelona", dates: "Jul 12 – Jul 18", going: "19,464" },
+  { flag: "🇧🇷", city: "Rio de Janeiro", dates: "Jul 13 – Jul 19", going: "13,884" },
+  { flag: "🇺🇸", city: "New York", dates: "Jul 16 – Jul 22", going: "6,833" },
+  { flag: "🇳🇱", city: "Amsterdam", dates: "Jul 16 – Jul 22", going: "6,549" },
+  { flag: "🇬🇧", city: "London", dates: "Jul 9 – Jul 15", going: "13,950" },
+  { flag: "🇯🇵", city: "Tokyo", dates: "Jul 14 – Jul 20", going: "11,204" },
+  { flag: "🇵🇹", city: "Lisbon", dates: "Jul 11 – Jul 17", going: "8,712" },
+];
+
+function TripCard({ t }: { t: Trip }) {
   return (
-    <div className="flex items-center gap-2">
-      <span className="grid h-7 w-7 place-items-center rounded-full bg-white/60 text-[#8b6f3f] backdrop-blur" style={{ border: "1px solid rgba(20,18,16,0.06)" }}>
-        {icon}
-      </span>
-      <div className="text-[12.5px] leading-tight">
-        <div className="font-semibold text-[#141210]">{value}</div>
-        <div className="text-[#6b5c48]">{label}</div>
+    <div
+      className="flex min-w-[280px] items-center gap-3 rounded-2xl px-4 py-3"
+      style={{
+        background: "color-mix(in oklab, white 85%, transparent)",
+        border: "1px solid rgba(20,18,16,0.06)",
+        boxShadow: "0 12px 28px -18px rgba(60,42,20,0.22)",
+      }}
+    >
+      <span className="text-[28px] leading-none">{t.flag}</span>
+      <div className="min-w-0 flex-1">
+        <div className="text-[14.5px] font-semibold tracking-[-0.01em] text-[#141210]">{t.city}</div>
+        <div className="text-[11.5px] text-[#6b5c48]">{t.dates}</div>
       </div>
+      <span
+        className="shrink-0 rounded-full px-2.5 py-1 text-[11.5px] font-medium"
+        style={{ background: "#ffe4d8", color: "#c94a2a" }}
+      >
+        {t.going}+ going
+      </span>
     </div>
   );
 }
 
-
-/* ─────────────────────── SECTION SHELL ─────────────────────── */
-
-function Section({
-  id,
-  eyebrow,
-  title,
-  subtitle,
-  children,
-  className = "",
-}: {
-  id?: string;
-  eyebrow?: string;
-  title: React.ReactNode;
-  subtitle?: string;
-  children?: React.ReactNode;
-  className?: string;
-}) {
+function TrendingTrips() {
+  const doubled = [...TRIPS, ...TRIPS];
   return (
-    <section id={id} className={`relative px-6 py-32 ${className}`}>
+    <section id="trips" className="relative overflow-hidden py-10">
+      <div className="mx-auto mb-6 flex max-w-6xl items-center justify-center gap-2 px-6 text-[15px] font-semibold text-[#141210]">
+        <span className="text-lg">✈️</span> trending trips
+      </div>
+      <div className="relative">
+        <div
+          className="pointer-events-none absolute inset-y-0 left-0 z-10 w-24"
+          style={{ background: "linear-gradient(90deg,#f5e6c9,transparent)" }}
+        />
+        <div
+          className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24"
+          style={{ background: "linear-gradient(-90deg,#f5e6c9,transparent)" }}
+        />
+        <motion.div
+          className="flex gap-3"
+          animate={{ x: ["0%", "-50%"] }}
+          transition={{ duration: 45, repeat: Infinity, ease: "linear" }}
+        >
+          {doubled.map((t, i) => (
+            <TripCard key={i} t={t} />
+          ))}
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+/* ───────────────── ACTIVITIES TODAY ───────────────── */
+
+type Activity = {
+  emoji: string;
+  title: string;
+  place: string;
+  when: string;
+  host: string;
+  spots: string;
+  tone: string;
+};
+
+const ACTIVITIES: Activity[] = [
+  { emoji: "🍜", title: "ramen crawl, shibuya", place: "Tokyo", when: "tonight · 7:30 pm", host: "Aiko", spots: "3 seats", tone: "#ffe4d8" },
+  { emoji: "🌅", title: "sunrise hike, camelback", place: "Phoenix", when: "sat · 5:15 am", host: "Marco", spots: "5 seats", tone: "#fde7c1" },
+  { emoji: "☕", title: "focus morning at ozone", place: "Lisbon", when: "tomorrow · 9 am", host: "Sofia", spots: "4 seats", tone: "#e6ddc4" },
+  { emoji: "🎨", title: "gallery walk + wine", place: "Barcelona", when: "fri · 6 pm", host: "Nadia", spots: "6 seats", tone: "#ffd8d0" },
+  { emoji: "🏄", title: "beginners surf lesson", place: "Bali", when: "sun · 7 am", host: "Kai", spots: "2 seats", tone: "#d6e8dc" },
+  { emoji: "🍕", title: "pizza + pasta night", place: "Rome", when: "tonight · 8 pm", host: "Luca", spots: "4 seats", tone: "#ffe0b0" },
+];
+
+function Activities() {
+  return (
+    <section className="relative px-6 py-24">
       <div className="mx-auto max-w-6xl">
         <motion.div
           initial="hidden"
           whileInView="show"
-          viewport={{ once: true, margin: "-100px" }}
+          viewport={{ once: true, margin: "-80px" }}
           variants={{ show: { transition: { staggerChildren: 0.08 } } }}
-          className="max-w-3xl"
+          className="mx-auto max-w-2xl text-center"
         >
-          {eyebrow && (
-            <motion.div
-              variants={fadeUp}
-              className="mb-4 inline-flex items-center gap-2 text-[11.5px] font-medium uppercase tracking-[0.16em] text-[#8b6f3f]"
-            >
-              <span className="h-px w-6 bg-[#c9a97a]" />
-              {eyebrow}
-            </motion.div>
-          )}
           <motion.h2
             variants={fadeUp}
-            className="serif-hero text-[clamp(36px,5.5vw,64px)] text-[#141210]"
+            className="font-display text-[clamp(32px,5vw,56px)] font-semibold leading-[1.02] tracking-[-0.03em] text-[#141210]"
           >
-            {title}
-          </motion.h2>
-          {subtitle && (
-            <motion.p
-              variants={fadeUp}
-              className="mt-5 max-w-[54ch] text-[17px] leading-[1.55] text-[#4a3f33]"
+            join{" "}
+            <span
+              className="serif-hero"
+              style={{ color: "#e85a3c", fontFamily: "'Instrument Serif', serif", fontStyle: "italic", fontWeight: 400 }}
             >
-              {subtitle}
-            </motion.p>
-          )}
+              activities
+            </span>{" "}
+            happening today
+          </motion.h2>
+          <motion.p variants={fadeUp} className="mt-4 text-[15.5px] leading-[1.55] text-[#4a3f33]">
+            real plans by real people. no group chats, no maybe's — just a table with your seat on it.
+          </motion.p>
         </motion.div>
-        {children && <div className="mt-16">{children}</div>}
+
+        <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {ACTIVITIES.map((a, i) => (
+            <motion.div
+              key={a.title}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ duration: 0.7, ease: EASE, delay: i * 0.05 }}
+              className="group relative overflow-hidden rounded-3xl p-5 transition-transform hover:-translate-y-1"
+              style={{
+                background: "color-mix(in oklab, white 90%, transparent)",
+                border: "1px solid rgba(20,18,16,0.06)",
+                boxShadow: "0 20px 40px -24px rgba(60,42,20,0.22)",
+              }}
+            >
+              <div
+                className="grid h-14 w-14 place-items-center rounded-2xl text-[28px]"
+                style={{ background: a.tone }}
+              >
+                {a.emoji}
+              </div>
+              <div className="mt-4 font-display text-[17px] font-semibold tracking-[-0.015em] text-[#141210]">
+                {a.title}
+              </div>
+              <div className="mt-1 flex items-center gap-1.5 text-[12.5px] text-[#6b5c48]">
+                <MapPin className="h-3 w-3" strokeWidth={2.4} /> {a.place} · {a.when}
+              </div>
+              <div className="mt-4 flex items-center justify-between border-t border-[#1a161410] pt-3">
+                <div className="flex items-center gap-2">
+                  <div
+                    className="h-6 w-6 rounded-full"
+                    style={{ background: "linear-gradient(135deg,#e3a17a,#8b6f3f)" }}
+                  />
+                  <span className="text-[12px] text-[#4a3f33]">
+                    hosted by <span className="font-semibold text-[#141210]">{a.host}</span>
+                  </span>
+                </div>
+                <span
+                  className="rounded-full px-2.5 py-1 text-[11px] font-medium"
+                  style={{ background: "#f0e6cc", color: "#8b6f3f" }}
+                >
+                  {a.spots}
+                </span>
+              </div>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </section>
   );
 }
 
-/* ─────────────────────── STORY: PROBLEM ─────────────────────── */
-
-function Story() {
-  return (
-    <Section
-      id="story"
-      eyebrow="The problem"
-      title={
-        <>
-          You landed somewhere new.{" "}
-          <span style={{ color: "#8b6f3f" }}>Now what?</span>
-        </>
-      }
-      subtitle="The best trips aren't measured in landmarks — they're measured in the strangers who become stories. But finding them is the part every app skips."
-    >
-      <motion.div
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, margin: "-80px" }}
-        variants={{ show: { transition: { staggerChildren: 0.1 } } }}
-        className="grid gap-6 md:grid-cols-3"
-      >
-        {[
-          {
-            title: "Hotels are lonely.",
-            body: "You booked the trip of a lifetime. You've eaten alone every night this week.",
-          },
-          {
-            title: "Group chats are noise.",
-            body: "500 messages, zero plans. Nobody actually commits to showing up.",
-          },
-          {
-            title: "Dating apps aren't it.",
-            body: "You wanted a friend, a hike, a proper conversation — not another swipe.",
-          },
-        ].map((c) => (
-          <motion.div
-            key={c.title}
-            variants={fadeUp}
-            className="rounded-3xl p-7"
-            style={{
-              background: "color-mix(in oklab, white 60%, transparent)",
-              border: "1px solid rgba(20,18,16,0.06)",
-              boxShadow: "0 1px 2px rgba(60,42,20,0.04), 0 6px 20px -12px rgba(60,42,20,0.10)",
-            }}
-          >
-            <div className="font-display text-[20px] font-semibold tracking-[-0.02em] text-[#141210]">
-              {c.title}
-            </div>
-            <p className="mt-2 text-[14.5px] leading-[1.55] text-[#4a3f33]">{c.body}</p>
-          </motion.div>
-        ))}
-      </motion.div>
-    </Section>
-  );
-}
-
-/* ─────────────────── HOW IT WORKS ─────────────────── */
+/* ───────────────── HOW IT WORKS ───────────────── */
 
 function How() {
   const steps = [
-    {
-      n: "01",
-      title: "Open the map.",
-      body: "Every warm pin is a real gathering happening near you — tonight, this weekend, or next city over.",
-      icon: Compass,
-    },
-    {
-      n: "02",
-      title: "Tap what excites you.",
-      body: "See the host, the vibe, who's coming. Reserve one of the few spots with a single tap.",
-      icon: MapPin,
-    },
-    {
-      n: "03",
-      title: "Show up. Belong.",
-      body: "Meet six strangers over dinner, at a trailhead, in a corner café. Leave with new group chats.",
-      icon: Users,
-    },
+    { n: "01", icon: MapPin, title: "open the map", body: "every warm pin is a real gathering nearby — tonight, this weekend, or next city over." },
+    { n: "02", icon: Coffee, title: "tap what excites you", body: "see the host, the vibe, who's coming. reserve one of the few spots with a single tap." },
+    { n: "03", icon: Users, title: "show up. belong.", body: "meet a handful of strangers over dinner, at a trailhead, at a corner café. leave with new group chats." },
   ];
   return (
-    <Section
-      id="how"
-      eyebrow="How it works"
-      title={
-        <>
-          Three taps.{" "}
-          <span style={{ color: "#8b6f3f" }}>One unforgettable night.</span>
-        </>
-      }
-    >
-      <div className="grid gap-6 md:grid-cols-3">
-        {steps.map((s, i) => (
-          <motion.div
-            key={s.n}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.8, ease: EASE, delay: i * 0.1 }}
-            className="relative overflow-hidden rounded-3xl p-8"
-            style={{
-              background: "linear-gradient(180deg, #fdf6e6 0%, #f3e6ca 100%)",
-              border: "1px solid rgba(20,18,16,0.06)",
-              boxShadow: "0 20px 50px -30px rgba(60,42,20,0.25)",
-            }}
-          >
-            <div className="flex items-center justify-between">
-              <span className="font-display text-[13px] font-medium tracking-[0.14em] text-[#8b6f3f]">
-                {s.n}
-              </span>
-              <span
-                className="grid h-10 w-10 place-items-center rounded-full text-[#1a1614]"
-                style={{
-                  background: "color-mix(in oklab, white 70%, transparent)",
-                  border: "1px solid rgba(20,18,16,0.06)",
-                }}
-              >
-                <s.icon className="h-4 w-4" strokeWidth={2} />
-              </span>
-            </div>
-            <div className="mt-16 font-display text-[24px] font-semibold tracking-[-0.02em] text-[#141210]">
-              {s.title}
-            </div>
-            <p className="mt-3 text-[14.5px] leading-[1.55] text-[#4a3f33]">{s.body}</p>
-          </motion.div>
-        ))}
-      </div>
-    </Section>
-  );
-}
-
-/* ─────────────────── FEATURES ─────────────────── */
-
-function Features() {
-  return (
-    <Section
-      id="features"
-      eyebrow="Features"
-      title={
-        <>
-          Crafted for people who{" "}
-          <span style={{ color: "#8b6f3f" }}>actually show up.</span>
-        </>
-      }
-    >
-      <div className="grid gap-6 md:grid-cols-6">
-        <FeatureCard
-          className="md:col-span-4"
-          title="A world map, not a feed."
-          body="Zoom into any city. Every pin is a real plan by a real host — no algorithmic noise."
-          visual={
-            <div className="relative h-52 w-full overflow-hidden rounded-2xl">
-              <div
-                className="absolute inset-0"
-                style={{
-                  background:
-                    "radial-gradient(60% 90% at 30% 40%, #e8d4a8 0%, transparent 60%), radial-gradient(50% 80% at 80% 70%, #d9c290 0%, transparent 60%), linear-gradient(180deg, #efe0bd 0%, #e3cf9e 100%)",
-                }}
-              />
-              {[["18%", "35%"], ["45%", "55%"], ["72%", "30%"], ["60%", "72%"]].map(
-                ([x, y], i) => (
-                  <motion.div
-                    key={i}
-                    className="absolute h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full"
-                    style={{
-                      left: x,
-                      top: y,
-                      background: "linear-gradient(180deg, #1c1815, #0a0908)",
-                      boxShadow: "0 0 0 6px rgba(28,24,21,0.12), 0 4px 10px rgba(0,0,0,0.3)",
-                    }}
-                    animate={{ scale: [1, 1.15, 1] }}
-                    transition={{ duration: 2.4, delay: i * 0.4, repeat: Infinity, ease: EASE }}
-                  />
-                ),
-              )}
-            </div>
-          }
-        />
-        <FeatureCard
-          className="md:col-span-2"
-          title="Small groups only."
-          body="4–8 humans per gathering. Enough to spark. Small enough to actually connect."
-          visual={
-            <div className="flex h-52 items-center justify-center">
-              <div className="flex -space-x-3">
-                {["#c9a97a", "#8b6f3f", "#e3a17a", "#6b5c48", "#a68856"].map((c, i) => (
-                  <motion.div
-                    key={i}
-                    className="h-12 w-12 rounded-full border-4 border-[#fbf3e2]"
-                    style={{ background: c }}
-                    animate={{ y: [0, -4, 0] }}
-                    transition={{ duration: 3, delay: i * 0.25, repeat: Infinity, ease: EASE }}
-                  />
-                ))}
-              </div>
-            </div>
-          }
-        />
-        <FeatureCard
-          className="md:col-span-2"
-          title="Verified faces."
-          body="Every profile is real. Every host is reviewed. Show up with zero social anxiety."
-          visual={
-            <div className="grid h-52 place-items-center">
-              <div
-                className="grid h-24 w-24 place-items-center rounded-full"
-                style={{
-                  background: "linear-gradient(180deg, #1c1815, #0a0908)",
-                  boxShadow: "0 20px 40px -20px rgba(20,18,16,0.6)",
-                }}
-              >
-                <Sparkles className="h-8 w-8 text-[#f3e6ca]" strokeWidth={1.6} />
-              </div>
-            </div>
-          }
-        />
-        <FeatureCard
-          className="md:col-span-4"
-          title="Host anything. In minutes."
-          body="Pick a spot on the map, name your gathering, set a time. Your city just got warmer."
-          visual={
-            <div
-              className="flex h-52 items-center justify-between rounded-2xl p-5"
-              style={{
-                background: "color-mix(in oklab, white 65%, transparent)",
-                border: "1px solid rgba(20,18,16,0.06)",
-              }}
-            >
-              <div className="space-y-2">
-                <div className="h-3 w-32 rounded-full bg-[#e8dcc0]" />
-                <div className="h-3 w-24 rounded-full bg-[#e8dcc0]" />
-                <div className="h-3 w-40 rounded-full bg-[#e8dcc0]" />
-              </div>
-              <div
-                className="rounded-full px-5 py-2.5 text-[13px] font-medium text-white"
-                style={{ background: "linear-gradient(180deg, #1c1815, #0a0908)" }}
-              >
-                Publish
-              </div>
-            </div>
-          }
-        />
-      </div>
-    </Section>
-  );
-}
-
-function FeatureCard({
-  title,
-  body,
-  visual,
-  className = "",
-}: {
-  title: string;
-  body: string;
-  visual: React.ReactNode;
-  className?: string;
-}) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: 0.9, ease: EASE }}
-      className={`overflow-hidden rounded-3xl p-6 ${className}`}
-      style={{
-        background: "color-mix(in oklab, white 60%, transparent)",
-        border: "1px solid rgba(20,18,16,0.06)",
-        boxShadow: "0 1px 2px rgba(60,42,20,0.04), 0 20px 40px -24px rgba(60,42,20,0.18)",
-      }}
-    >
-      <div>{visual}</div>
-      <div className="mt-6">
-        <div className="font-display text-[19px] font-semibold tracking-[-0.02em] text-[#141210]">
-          {title}
+    <section id="how" className="relative px-6 py-24">
+      <div className="mx-auto max-w-6xl">
+        <div className="mx-auto max-w-2xl text-center">
+          <h2 className="font-display text-[clamp(32px,5vw,56px)] font-semibold leading-[1.02] tracking-[-0.03em] text-[#141210]">
+            three taps.{" "}
+            <span className="serif-hero" style={{ color: "#e85a3c", fontFamily: "'Instrument Serif', serif", fontStyle: "italic", fontWeight: 400 }}>
+              one
+            </span>{" "}
+            unforgettable night.
+          </h2>
         </div>
-        <p className="mt-1.5 text-[14px] leading-[1.55] text-[#4a3f33]">{body}</p>
-      </div>
-    </motion.div>
-  );
-}
-
-/* ─────────────────── USE CASES ─────────────────── */
-
-function UseCases() {
-  const cases = [
-    { icon: Utensils, title: "Sunset dinner in Barcelona", tag: "Dinner · 6 spots" },
-    { icon: Mountain, title: "Sunrise hike above Kyoto", tag: "Hike · 4 spots" },
-    { icon: Coffee, title: "Third-wave coffee crawl, CDMX", tag: "Coffee · 8 spots" },
-    { icon: Sparkles, title: "Rooftop jazz in Lisbon", tag: "Nightlife · 10 spots" },
-  ];
-  return (
-    <Section
-      eyebrow="In the wild"
-      title={
-        <>
-          A thousand small nights,{" "}
-          <span style={{ color: "#8b6f3f" }}>happening right now.</span>
-        </>
-      }
-    >
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {cases.map((c, i) => (
-          <motion.div
-            key={c.title}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.7, ease: EASE, delay: i * 0.06 }}
-            whileHover={{ y: -4 }}
-            className="rounded-2xl p-5"
-            style={{
-              background: "linear-gradient(180deg, #fdf6e6 0%, #f3e6ca 100%)",
-              border: "1px solid rgba(20,18,16,0.06)",
-              boxShadow: "0 10px 30px -20px rgba(60,42,20,0.2)",
-            }}
-          >
-            <span
-              className="mb-6 inline-grid h-9 w-9 place-items-center rounded-full text-[#1a1614]"
+        <div className="mt-14 grid gap-5 md:grid-cols-3">
+          {steps.map((s, i) => (
+            <motion.div
+              key={s.n}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.8, ease: EASE, delay: i * 0.1 }}
+              className="relative overflow-hidden rounded-3xl p-7"
               style={{
-                background: "color-mix(in oklab, white 70%, transparent)",
+                background: "linear-gradient(180deg,#fef7e5 0%,#f4e5c4 100%)",
                 border: "1px solid rgba(20,18,16,0.06)",
+                boxShadow: "0 20px 40px -28px rgba(60,42,20,0.22)",
               }}
             >
-              <c.icon className="h-4 w-4" strokeWidth={2} />
-            </span>
-            <div className="font-display text-[15.5px] font-semibold tracking-[-0.015em] text-[#141210]">
-              {c.title}
-            </div>
-            <div className="mt-1 text-[12px] uppercase tracking-[0.1em] text-[#8b6f3f]">
-              {c.tag}
-            </div>
-          </motion.div>
-        ))}
-      </div>
-    </Section>
-  );
-}
-
-/* ─────────────────── VOICES ─────────────────── */
-
-function Voices() {
-  const quotes = [
-    {
-      body: "Went to Lisbon alone. Left with six friends and a group chat that still won't shut up.",
-      name: "Amelia R.",
-      loc: "Designer · London",
-    },
-    {
-      body: "It's the first app that made me actually leave the hotel. The pins are the internet's best-kept secret.",
-      name: "Kenji T.",
-      loc: "Founder · Tokyo",
-    },
-    {
-      body: "Hosted a dinner in my apartment. Eight strangers, one paella, zero awkwardness. Doing it every Sunday now.",
-      name: "Marta B.",
-      loc: "Chef · Barcelona",
-    },
-  ];
-  return (
-    <Section
-      id="voices"
-      eyebrow="Voices"
-      title={
-        <>
-          The proof isn't the app.{" "}
-          <span style={{ color: "#8b6f3f" }}>It's the group photos after.</span>
-        </>
-      }
-    >
-      <div className="grid gap-6 md:grid-cols-3">
-        {quotes.map((q, i) => (
-          <motion.figure
-            key={q.name}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.9, ease: EASE, delay: i * 0.08 }}
-            className="flex h-full flex-col justify-between rounded-3xl p-7"
-            style={{
-              background: "color-mix(in oklab, white 65%, transparent)",
-              border: "1px solid rgba(20,18,16,0.06)",
-              boxShadow: "0 20px 50px -30px rgba(60,42,20,0.22)",
-            }}
-          >
-            <div className="flex gap-0.5 text-[#c9a97a]">
-              {Array.from({ length: 5 }).map((_, k) => (
-                <Star key={k} className="h-3.5 w-3.5 fill-current" strokeWidth={0} />
-              ))}
-            </div>
-            <blockquote className="mt-4 text-[17px] leading-[1.5] tracking-[-0.01em] text-[#1a1614]">
-              "{q.body}"
-            </blockquote>
-            <figcaption className="mt-6 text-[12.5px] text-[#6b5c48]">
-              <span className="font-medium text-[#141210]">{q.name}</span> · {q.loc}
-            </figcaption>
-          </motion.figure>
-        ))}
-      </div>
-    </Section>
-  );
-}
-
-/* ─────────────────── FINAL CTA ─────────────────── */
-
-function FinalCTA() {
-  return (
-    <section className="relative px-6 py-32">
-      <div className="mx-auto max-w-5xl">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 1, ease: EASE }}
-          className="relative overflow-hidden rounded-[36px] px-8 py-20 text-center"
-          style={{
-            background:
-              "radial-gradient(120% 120% at 50% 0%, #2a2320 0%, #0a0908 65%)",
-            boxShadow:
-              "0 40px 100px -40px rgba(20,18,16,0.7), inset 0 1px 0 rgba(255,255,255,0.06)",
-          }}
-        >
-          {/* soft warm glow */}
-          <div
-            className="pointer-events-none absolute inset-x-0 -bottom-40 h-[500px]"
-            style={{
-              background:
-                "radial-gradient(closest-side, rgba(255,200,140,0.35), rgba(255,200,140,0) 70%)",
-              filter: "blur(20px)",
-            }}
-          />
-          <div className="relative">
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11.5px] font-medium uppercase tracking-[0.16em] text-[#e8dcc0] backdrop-blur">
-              <Sparkles className="h-3 w-3" strokeWidth={2.4} />
-              Your city is waiting
-            </div>
-            <h2 className="serif-hero mx-auto mt-6 max-w-[16ch] text-[clamp(40px,6vw,80px)] text-white">
-              Say yes to a night{" "}
-              <span style={{ color: "#e3c88f" }}>you didn't plan.</span>
-            </h2>
-            <p className="mx-auto mt-6 max-w-[46ch] text-[16px] leading-[1.55] text-[#c9bfab]">
-              Create your profile in under a minute. Discover gatherings tonight.
-              Become the reason someone remembers your city.
-            </p>
-            <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
-              <Link
-                to="/auth"
-                className="group inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-[15px] font-medium text-[#141210]"
-                style={{
-                  background: "linear-gradient(180deg, #ffffff 0%, #f3e6ca 100%)",
-                  boxShadow:
-                    "0 1px 0 rgba(255,255,255,0.9) inset, 0 20px 40px -18px rgba(0,0,0,0.6)",
-                }}
-              >
-                Create your account
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-              </Link>
-              <Link
-                to="/auth"
-                className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-6 py-3.5 text-[15px] font-medium text-white backdrop-blur"
-              >
-                I already have one
-              </Link>
-            </div>
-            <div className="mt-6 text-[12px] text-[#8f8676]">
-              Free to join · No cards, no algorithms, no noise.
-            </div>
-          </div>
-        </motion.div>
+              <div className="flex items-center justify-between">
+                <span className="font-display text-[13px] font-medium tracking-[0.14em] text-[#8b6f3f]">{s.n}</span>
+                <span
+                  className="grid h-10 w-10 place-items-center rounded-full text-[#1a1614]"
+                  style={{ background: "color-mix(in oklab, white 70%, transparent)", border: "1px solid rgba(20,18,16,0.06)" }}
+                >
+                  <s.icon className="h-4 w-4" strokeWidth={2} />
+                </span>
+              </div>
+              <div className="mt-14 font-display text-[22px] font-semibold tracking-[-0.02em] text-[#141210]">{s.title}</div>
+              <p className="mt-2 text-[14px] leading-[1.55] text-[#4a3f33]">{s.body}</p>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </section>
   );
 }
 
-/* ─────────────────── FOOTER ─────────────────── */
+/* ───────────────── FINAL CTA ───────────────── */
+
+function CTA() {
+  return (
+    <section className="relative px-6 py-28">
+      <div
+        className="relative mx-auto max-w-4xl overflow-hidden rounded-[36px] px-8 py-16 text-center"
+        style={{
+          background:
+            "radial-gradient(80% 100% at 50% 0%, #ff9575 0%, transparent 55%), linear-gradient(180deg,#1c1815 0%,#0a0908 100%)",
+          boxShadow: "0 60px 120px -40px rgba(20,18,16,0.55), inset 0 1px 0 rgba(255,255,255,0.06)",
+        }}
+      >
+        <div className="text-[11.5px] font-medium uppercase tracking-[0.2em] text-[#ffcbb5]">
+          your seat is waiting
+        </div>
+        <h2 className="mt-4 font-display text-[clamp(34px,5.5vw,60px)] font-semibold leading-[1.02] tracking-[-0.03em] text-white">
+          today is a{" "}
+          <span
+            className="serif-hero"
+            style={{ color: "#ffb094", fontFamily: "'Instrument Serif', serif", fontStyle: "italic", fontWeight: 400 }}
+          >
+            good day
+          </span>{" "}
+          to meet someone.
+        </h2>
+        <p className="mx-auto mt-5 max-w-[48ch] text-[15.5px] leading-[1.55] text-[#e4d6c6]">
+          gobber is free. joining a table takes ten seconds. the memory lasts a lot longer.
+        </p>
+        <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <Link
+            to="/auth"
+            className="inline-flex items-center justify-center gap-2 rounded-full px-6 py-4 text-[15px] font-medium text-[#141210] transition hover:-translate-y-0.5"
+            style={{
+              background: "linear-gradient(180deg,#ffffff,#f5ead6)",
+              boxShadow: "inset 0 1px 0 rgba(255,255,255,0.7), 0 20px 40px -18px rgba(0,0,0,0.5)",
+            }}
+          >
+            <Apple className="h-4 w-4 fill-current" strokeWidth={0} />
+            download for iOS
+          </Link>
+          <Link
+            to="/auth"
+            className="inline-flex items-center justify-center gap-2 rounded-full px-6 py-4 text-[15px] font-medium text-white transition hover:-translate-y-0.5"
+            style={{
+              background: "rgba(255,255,255,0.08)",
+              border: "1px solid rgba(255,255,255,0.14)",
+              backdropFilter: "blur(12px)",
+            }}
+          >
+            <Play className="h-4 w-4 fill-current" strokeWidth={0} />
+            download for Android
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ───────────────── FOOTER ───────────────── */
 
 function Footer() {
   return (
-    <footer className="relative px-6 pb-12 pt-8">
-      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 border-t border-[rgba(20,18,16,0.08)] pt-8 text-[12.5px] text-[#6b5c48] sm:flex-row">
+    <footer className="px-6 pb-10">
+      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 border-t border-[#1a161410] pt-8 text-[12.5px] text-[#6b5c48] sm:flex-row">
         <div className="flex items-center gap-2">
           <span
             className="grid h-6 w-6 place-items-center rounded-full text-white"
-            style={{ background: "linear-gradient(180deg, #1c1815, #0a0908)" }}
+            style={{ background: "linear-gradient(135deg,#ff8a6b,#e85a3c)" }}
           >
-            <Globe2 className="h-3 w-3" strokeWidth={2.4} />
+            <Sparkles className="h-3 w-3" strokeWidth={2.4} />
           </span>
-          <span className="font-medium text-[#141210]">Gobber</span>
-          <span className="opacity-60">© {new Date().getFullYear()}</span>
+          <span className="font-semibold text-[#141210]">gobber</span>
+          <span>· made for meeting people, in real life.</span>
         </div>
-        <div className="flex items-center gap-6">
-          <a href="#story" className="transition hover:text-[#141210]">Story</a>
-          <a href="#features" className="transition hover:text-[#141210]">Features</a>
-          <Link to="/auth" className="transition hover:text-[#141210]">Sign in</Link>
+        <div className="flex items-center gap-5">
+          <a href="#" className="transition hover:text-[#141210]">privacy</a>
+          <a href="#" className="transition hover:text-[#141210]">terms</a>
+          <a href="#" className="transition hover:text-[#141210]">contact</a>
         </div>
       </div>
     </footer>
   );
 }
 
-/* ─────────────────── PAGE ─────────────────── */
+/* ───────────────── PAGE ───────────────── */
 
 function Landing() {
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-[#f5eddc] text-[#141210]">
+    <main className="relative min-h-screen" style={{ background: "#f5e6c9" }}>
       <Nav />
-      <main>
-        <Hero />
-        {/* spacing to clear absolute hero mock */}
-        <div className="h-[42vw] max-h-[560px]" aria-hidden />
-        <Story />
-        <How />
-        <Features />
-        <UseCases />
-        <Voices />
-        <FinalCTA />
-      </main>
+      <Hero />
+      <TrendingTrips />
+      <Activities />
+      <How />
+      <CTA />
       <Footer />
-    </div>
+    </main>
   );
 }
