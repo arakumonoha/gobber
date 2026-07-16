@@ -473,16 +473,6 @@ function Hero({ stats, nearYou }: { stats: LandingStats | undefined; nearYou: Ne
         >
           <AuthButtons />
         </motion.div>
-
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 0.75 }}
-          className="mt-4 text-[12px]"
-          style={{ color: PALETTE.muted }}
-        >
-          free forever · no ads · your seat takes 10 seconds
-        </motion.p>
       </motion.div>
 
       {/* smooth dissolve into next section */}
