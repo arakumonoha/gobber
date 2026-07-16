@@ -6,7 +6,7 @@ import { ArrowRight, Star, Coffee, Users, MapPin, Hand, Radio, Compass } from "l
 import { GoogleMap, type GoogleMapHandle } from "@/components/google-map";
 import { activitiesQuery } from "@/lib/activities";
 import { getLandingStats, type LandingStats } from "@/lib/landing-stats.functions";
-import { Floating3DMaps } from "@/components/landing/floating-3d-maps";
+import { FloatingFlags } from "@/components/landing/floating-flags";
 import { JoinsTicker, TrendingStrip } from "@/components/landing/live-signals";
 import owlLogo from "@/assets/gobber-owl.png.asset.json";
 
@@ -216,7 +216,7 @@ function Hero({ stats, nearYou }: { stats: LandingStats | undefined; nearYou: Ne
         `,
       }}
     >
-      <Floating3DMaps />
+      <FloatingFlags />
 
       <motion.div style={{ y }} className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center text-center">
         {/* Live counter pill */}
@@ -255,8 +255,12 @@ function Hero({ stats, nearYou }: { stats: LandingStats | undefined; nearYou: Ne
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.1, ease: EASE, delay: 0.15 }}
-          className="mt-6 font-display font-semibold leading-[0.95] tracking-[-0.04em]"
-          style={{ fontSize: "clamp(56px, 10vw, 128px)", color: PALETTE.ink }}
+          className="mt-6 font-display font-semibold leading-[1.05] tracking-[-0.035em]"
+          style={{
+            fontSize: "clamp(52px, 9vw, 120px)",
+            color: PALETTE.ink,
+            paddingBottom: "0.12em",
+          }}
         >
           Visit{" "}
           <span
@@ -270,16 +274,7 @@ function Hero({ stats, nearYou }: { stats: LandingStats | undefined; nearYou: Ne
           >
             n
           </span>{" "}
-          <span
-            style={{
-              backgroundImage: `linear-gradient(180deg, ${PALETTE.ink} 0%, ${PALETTE.amberDeep} 100%)`,
-              WebkitBackgroundClip: "text",
-              backgroundClip: "text",
-              color: "transparent",
-            }}
-          >
-            Vibe
-          </span>
+          Vibe
         </motion.h1>
 
         <motion.p
