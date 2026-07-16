@@ -276,17 +276,17 @@ function AuthPage() {
         </div>
       )}
 
-      <AnimatePresence mode="wait" initial={false}>
-      {view === "welcome" ? (
-        /* Goldfish-inspired minimal welcome — tight sans wordmark, restrained CTAs */
-        <motion.div
-          key="welcome"
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.985, filter: "blur(6px)" }}
-          transition={{ duration: 0.7, ease: EASE }}
-          className="relative z-10 flex w-full max-w-[440px] flex-col items-center text-center"
-        >
+      {/* Welcome layer — always mounted; blurs & dims when auth overlay opens */}
+      <motion.div
+        animate={
+          view === "auth"
+            ? { filter: "blur(18px)", scale: 0.97, opacity: 0.55 }
+            : { filter: "blur(0px)", scale: 1, opacity: 1 }
+        }
+        transition={{ duration: 0.7, ease: EASE }}
+        className="relative z-10 flex w-full max-w-[440px] flex-col items-center text-center"
+        style={{ pointerEvents: view === "auth" ? "none" : "auto" }}
+      >
           {/* Micro mark */}
           <motion.div
             initial={{ opacity: 0, scale: 0.6 }}
@@ -398,9 +398,22 @@ function AuthPage() {
             <span className="mx-2 opacity-50">/</span>
             <span>© Gobber</span>
           </motion.p>
-        </motion.div>
+      </motion.div>
 
-      ) : (
+      {/* Auth overlay — minimal card, front & center */}
+      <AnimatePresence>
+        {view === "auth" && (
+          <motion.div
+            key="auth-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.4, ease: EASE }}
+            className="absolute inset-0 z-20 flex items-center justify-center px-5"
+            style={{ background: "rgba(30,22,14,0.14)" }}
+            onClick={() => setView("welcome")}
+          >
+
       /* iCloud-style centered card */
       <motion.div
         key="auth"
