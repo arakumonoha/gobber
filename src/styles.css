@@ -59,30 +59,33 @@
 
 :root {
   --radius: 1.25rem;
-  /* Warm cream — matches auth screen */
-  --background: oklch(0.965 0.014 85);     /* #f5eddc-ish */
-  --foreground: oklch(0.22 0.02 55);       /* #0f0d0b ink */
-  --card: oklch(0.995 0.006 85);
+  /* Amber Clarity — Apple x Goldfish */
+  --background: oklch(0.965 0.028 88);      /* #FAF3E1 cream */
+  --foreground: oklch(0.18 0.012 55);       /* #1A1614 ink */
+  --card: oklch(0.985 0.018 88);
   --card-foreground: var(--foreground);
-  --popover: oklch(0.995 0.006 85);
+  --popover: oklch(0.985 0.018 88);
   --popover-foreground: var(--foreground);
-  --primary: oklch(0.32 0.035 55);         /* near-black ink for buttons */
-  --primary-foreground: oklch(0.98 0.01 85);
-  --secondary: oklch(0.935 0.018 82);      /* warm surface */
+  --primary: oklch(0.62 0.20 255);          /* #0A84FF apple blue */
+  --primary-foreground: oklch(0.99 0.005 88);
+  --secondary: oklch(0.93 0.045 88);        /* #F4E9CA paper */
   --secondary-foreground: var(--foreground);
-  --muted: oklch(0.94 0.018 82);
-  --muted-foreground: oklch(0.55 0.025 60);
-  --accent: oklch(0.55 0.055 55);          /* warm clay accent */
-  --accent-foreground: oklch(0.98 0.01 85);
+  --muted: oklch(0.93 0.035 85);
+  --muted-foreground: oklch(0.52 0.03 60);
+  --accent: oklch(0.77 0.135 78);           /* #E8A93C amber */
+  --accent-foreground: oklch(0.18 0.012 55);
   --destructive: oklch(0.58 0.19 25);
   --destructive-foreground: oklch(0.98 0 0);
-  --border: oklch(0.9 0.014 80 / 0.6);
-  --input: oklch(0.9 0.014 80);
-  --ring: oklch(0.55 0.055 55);
-  --sand: oklch(0.94 0.018 82);
-  --clay: oklch(0.5 0.055 55);
-  --ink: oklch(0.18 0.02 55);
+  --border: oklch(0.88 0.03 82 / 0.6);
+  --input: oklch(0.88 0.03 82);
+  --ring: oklch(0.62 0.20 255);
+  --sand: oklch(0.93 0.045 88);
+  --clay: oklch(0.66 0.115 72);             /* amber deep */
+  --ink: oklch(0.18 0.012 55);
+  --sage: oklch(0.72 0.055 155);            /* #7DA88E */
+  --apple-blue: oklch(0.62 0.20 255);
 }
+
 
 .dark {
   --background: oklch(0.18 0.015 60);
