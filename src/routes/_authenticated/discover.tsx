@@ -13,6 +13,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useUser } from "@/hooks/use-user";
 import { toast } from "sonner";
+import { getLocationPhoto } from "@/lib/place-photo.functions";
 
 export const Route = createFileRoute("/_authenticated/discover")({
   head: () => ({
@@ -160,6 +161,18 @@ function Discover() {
       const [city, country = ""] = placeLabel.split(",").map((s) => s.trim());
       const duration = Math.min(24, Math.max(1, form.duration_hours || 2));
       const startsAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
+
+      // Try Google Places for a real photo of this location; fall back per category.
+      let coverUrl: string | null = null;
+      try {
+        const photo = await getLocationPhoto({
+          data: { lat: ghostPin.lat, lng: ghostPin.lng, category: form.category },
+        });
+        coverUrl = photo.url;
+      } catch {
+        // non-fatal
+      }
+
       const { data, error } = await supabase
         .from("activities")
         .insert({
@@ -174,7 +187,7 @@ function Discover() {
           starts_at: startsAt,
           duration_hours: duration,
           max_spots: 6,
-          cover_url: null,
+          cover_url: coverUrl,
         })
         .select()
         .single();
@@ -337,8 +350,19 @@ function Discover() {
           }
           setAddMode((v) => !v);
         }}
-        whileTap={{ scale: 0.92 }}
-        className="absolute bottom-28 right-5 z-30 flex h-14 w-14 items-center justify-center rounded-full text-white shadow-[0_18px_36px_-14px_rgba(232,90,60,0.7)] transition sm:right-7"
+        whileTap={{ scale: 0.9 }}
+        whileHover={{ scale: 1.06, y: -2 }}
+        animate={
+          addMode || myActivePin
+            ? { scale: 1 }
+            : { scale: [1, 1.04, 1] }
+        }
+        transition={
+          addMode || myActivePin
+            ? { type: "spring", stiffness: 380, damping: 22 }
+            : { duration: 2.4, repeat: Infinity, ease: "easeInOut" }
+        }
+        className="absolute bottom-28 right-5 z-30 flex h-14 w-14 items-center justify-center rounded-full text-white shadow-[0_18px_36px_-14px_rgba(232,90,60,0.7)] sm:right-7"
         style={{
           background: myActivePin
             ? "linear-gradient(180deg,#f0a020,#c67a10)"
@@ -348,7 +372,18 @@ function Discover() {
         }}
         aria-label={myActivePin ? "Remove your pin" : addMode ? "Cancel add pin" : "Add pin"}
       >
-        {myActivePin ? <Trash2 className="h-5 w-5" strokeWidth={2.2} /> : addMode ? <X className="h-6 w-6" strokeWidth={2.4} /> : <Plus className="h-6 w-6" strokeWidth={2.4} />}
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.span
+            key={myActivePin ? "trash" : addMode ? "cancel" : "plus"}
+            initial={{ opacity: 0, scale: 0.6, rotate: -90 }}
+            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+            exit={{ opacity: 0, scale: 0.6, rotate: 90 }}
+            transition={{ type: "spring", stiffness: 420, damping: 22 }}
+            className="flex items-center justify-center"
+          >
+            {myActivePin ? <Trash2 className="h-5 w-5" strokeWidth={2.2} /> : addMode ? <X className="h-6 w-6" strokeWidth={2.4} /> : <Plus className="h-6 w-6" strokeWidth={2.4} />}
+          </motion.span>
+        </AnimatePresence>
       </motion.button>
 
 
@@ -597,7 +632,75 @@ function Discover() {
                   </div>
                 </div>
 
-                <div className="mt-5 space-y-2.5">
+                <div className="mt-5 space-y-3.5">
+                  {/* Category picker — top of form, all tags visible */}
+                  <div>
+                    <label className="mb-1.5 block px-1 text-[10.5px] font-semibold uppercase tracking-[0.2em] text-[#4a3820]">
+                      Vibe
+                    </label>
+                    <div
+                      className="relative -mx-1"
+                      style={{
+                        WebkitMaskImage:
+                          "linear-gradient(to right, transparent 0, #000 20px, #000 calc(100% - 20px), transparent 100%)",
+                        maskImage:
+                          "linear-gradient(to right, transparent 0, #000 20px, #000 calc(100% - 20px), transparent 100%)",
+                      }}
+                    >
+                      <div
+                        className="flex gap-1.5 overflow-x-auto px-1 py-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                        role="radiogroup"
+                        aria-label="Pin category"
+                      >
+                        {CATEGORIES.map((c) => {
+                          const active = form.category === c.id;
+                          return (
+                            <motion.button
+                              key={c.id}
+                              type="button"
+                              role="radio"
+                              aria-checked={active}
+                              onClick={() => setForm({ ...form, category: c.id })}
+                              whileTap={{ scale: 0.92 }}
+                              whileHover={{ y: -1 }}
+                              transition={{ type: "spring", stiffness: 420, damping: 26 }}
+                              className="relative shrink-0 rounded-full px-3 py-1.5 text-[12px] font-medium"
+                              style={{ color: active ? "#fffaf0" : "#2b1d0f" }}
+                            >
+                              {active && (
+                                <motion.span
+                                  layoutId="createChipActive"
+                                  transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                                  className="absolute inset-0 -z-10 rounded-full"
+                                  style={{
+                                    background: `linear-gradient(180deg, ${c.tint}, color-mix(in oklab, ${c.tint} 78%, #0f0d0b))`,
+                                    boxShadow: `inset 0 1px 0 rgba(255,255,255,0.18), 0 10px 22px -12px ${c.tint}80`,
+                                  }}
+                                />
+                              )}
+                              {!active && (
+                                <span
+                                  className="absolute inset-0 -z-10 rounded-full ring-1 ring-white/60"
+                                  style={{ background: "rgba(255,255,255,0.45)" }}
+                                />
+                              )}
+                              <span className="relative flex items-center gap-1">
+                                <motion.span
+                                  animate={active ? { rotate: [0, -8, 8, 0], scale: [1, 1.15, 1] } : { rotate: 0, scale: 1 }}
+                                  transition={{ duration: 0.5 }}
+                                  aria-hidden="true"
+                                >
+                                  {c.icon}
+                                </motion.span>
+                                {c.label}
+                              </span>
+                            </motion.button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+
                   <GlassInput
                     autoFocus
                     value={form.title}
@@ -609,36 +712,6 @@ function Discover() {
                     onChange={(v) => setForm({ ...form, description: v })}
                     placeholder="What's the vibe? (optional)"
                   />
-
-                  <div
-                    className="relative -mx-1 mt-1"
-                    style={{
-                      WebkitMaskImage:
-                        "linear-gradient(to right, transparent 0, #000 20px, #000 calc(100% - 20px), transparent 100%)",
-                      maskImage:
-                        "linear-gradient(to right, transparent 0, #000 20px, #000 calc(100% - 20px), transparent 100%)",
-                    }}
-                  >
-                    <div className="flex gap-1.5 overflow-x-auto px-1 py-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                      {CATEGORIES.map((c) => {
-                        const active = form.category === c.id;
-                        return (
-                          <button
-                            key={c.id}
-                            type="button"
-                            onClick={() => setForm({ ...form, category: c.id })}
-                            className={`shrink-0 rounded-full px-3 py-1.5 text-[12px] font-medium transition ${
-                              active
-                                ? "bg-[#0f0d0b] text-white shadow-[0_10px_24px_-12px_rgba(20,14,8,0.5)]"
-                                : "bg-white/45 text-[#2b1d0f] ring-1 ring-white/60"
-                            }`}
-                          >
-                            {c.icon} {c.label}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
 
                   <div className="pt-1">
                     <label className="mb-1 block px-1 text-[10.5px] font-semibold uppercase tracking-[0.2em] text-[#4a3820]">
@@ -656,7 +729,7 @@ function Discover() {
                       suffix="hrs"
                     />
                     <p className="mt-2 px-1 text-[11px] text-[#5a4530]">
-                      Starts automatically 10 min after you drop the pin. Fine-tune schedule and spots later from Manage.
+                      Starts 10 min after you drop the pin. We'll pull a photo of the spot from Google Maps — or hand-pick one if there isn't one.
                     </p>
                   </div>
                 </div>
