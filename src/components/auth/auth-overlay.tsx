@@ -47,7 +47,13 @@ function InlineField(props: {
         autoFocus={autoFocus}
         autoComplete={autoComplete}
         onKeyDown={(e) => { if (e.key === "Enter" && onSubmit) { e.preventDefault(); onSubmit(); } }}
-        className="h-[46px] w-full rounded-[10px] border border-[#1a1614]/12 bg-white/85 px-4 pr-12 text-[15px] tracking-[-0.01em] text-[#0f0d0b] placeholder:text-[#a89676] outline-none transition focus:border-[#8a6b45]/50 focus:bg-white"
+        className="h-[48px] w-full rounded-[12px] px-4 pr-12 text-[15px] tracking-[-0.01em] text-[#0f0d0b] placeholder:text-[#8a7a5f] outline-none transition focus:bg-white/40"
+        style={{
+          background: "rgba(255,255,255,0.22)",
+          border: "1px solid rgba(255,255,255,0.55)",
+          backdropFilter: "blur(18px) saturate(180%)",
+          boxShadow: "inset 0 1px 0 rgba(255,255,255,0.7), inset 0 -1px 0 rgba(20,18,16,0.05), 0 4px 12px -8px rgba(60,42,20,0.15)",
+        }}
       />
       {showSubmit && (
         <motion.button
@@ -71,8 +77,13 @@ function SocialButton({ children, onClick, loading, disabled, label }: {
       whileHover={{ y: -1 }} whileTap={{ scale: 0.96 }}
       transition={{ type: "spring", stiffness: 420, damping: 26 }}
       aria-label={label}
-      className="flex h-[46px] w-[64px] items-center justify-center rounded-[12px] border border-[#1a1614]/10 bg-white/80 transition hover:bg-white disabled:opacity-60"
-      style={{ boxShadow: "0 1px 0 rgba(255,255,255,0.9) inset, 0 6px 16px -12px rgba(60,42,20,0.2)" }}
+      className="flex h-[48px] flex-1 items-center justify-center rounded-[12px] transition disabled:opacity-60"
+      style={{
+        background: "rgba(255,255,255,0.22)",
+        border: "1px solid rgba(255,255,255,0.55)",
+        backdropFilter: "blur(18px) saturate(180%)",
+        boxShadow: "inset 0 1px 0 rgba(255,255,255,0.75), 0 6px 18px -12px rgba(60,42,20,0.25)",
+      }}
     >
       {loading ? <Loader2 className="h-4 w-4 animate-spin text-[#0f0d0b]" /> : children}
     </motion.button>
@@ -131,10 +142,10 @@ function AuthCard({ onClose }: { onClose: () => void }) {
       transition={{ duration: 0.45, ease: EASE }}
       className="relative z-10 w-full max-w-[380px] overflow-hidden rounded-[26px]"
       style={{
-        background: "rgba(255,253,247,0.92)",
-        backdropFilter: "saturate(180%) blur(40px)",
-        border: "1px solid rgba(255,255,255,0.75)",
-        boxShadow: "0 1px 0 rgba(255,255,255,0.9) inset, 0 40px 90px -30px rgba(60,42,20,0.4), 0 10px 30px -18px rgba(60,42,20,0.18)",
+        background: "linear-gradient(180deg, rgba(255,253,247,0.35) 0%, rgba(255,247,230,0.22) 100%)",
+        backdropFilter: "saturate(180%) blur(48px)",
+        border: "1px solid rgba(255,255,255,0.55)",
+        boxShadow: "0 1px 0 rgba(255,255,255,0.75) inset, 0 40px 90px -30px rgba(60,42,20,0.4), 0 10px 30px -18px rgba(60,42,20,0.18)",
       }}
     >
       <button
