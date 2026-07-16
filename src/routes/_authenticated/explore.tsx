@@ -338,10 +338,11 @@ function Explore() {
           transition={{ delay: 0.2, type: "spring", stiffness: 220, damping: 26 }}
           className="absolute inset-x-0 bottom-24 z-10 px-4 sm:px-6"
         >
-          <div className="mb-2 flex items-baseline justify-between px-1">
-            <p className="text-[11px] font-medium uppercase tracking-widest text-muted-foreground">Recently pinned</p>
-            <span className="text-[11px] text-muted-foreground">Tap a pin to preview</span>
+          <div className="mb-2.5 flex items-baseline justify-between px-1">
+            <p className="text-[10.5px] font-bold uppercase tracking-[0.28em] text-[#2a1c0c] drop-shadow-[0_1px_0_rgba(255,255,255,0.5)]">Recently pinned</p>
+            <span className="text-[10.5px] font-medium tracking-wide text-[#5c4527] drop-shadow-[0_1px_0_rgba(255,255,255,0.5)]">Tap a pin to preview</span>
           </div>
+
           <div className="flex gap-3 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {filtered.slice(0, 10).map((a) => (
               <MiniCard key={a.id} a={a} onClick={() => setSelectedId(a.id)} />
