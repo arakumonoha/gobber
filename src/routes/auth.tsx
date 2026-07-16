@@ -412,7 +412,6 @@ function AuthPage() {
         style={{
           background: "rgba(255,253,247,0.72)",
           backdropFilter: "saturate(180%) blur(30px)",
-          WebkitBackdropFilter: "saturate(180%) blur(30px)",
           border: "1px solid rgba(255,255,255,0.7)",
           boxShadow:
             "0 1px 0 rgba(255,255,255,0.9) inset, 0 30px 70px -25px rgba(60,42,20,0.28), 0 8px 24px -14px rgba(60,42,20,0.14)",
