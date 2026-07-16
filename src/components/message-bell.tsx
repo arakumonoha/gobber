@@ -329,13 +329,41 @@ function ChatView({ convId, onBack }: { convId: string; onBack: () => void }) {
                         {sender?.profile?.display_name || sender?.profile?.username || "Member"}
                       </p>
                     )}
-                    <div
-                      className={`whitespace-pre-wrap break-words rounded-2xl px-3.5 py-2 text-[14px] leading-snug ${
-                        mine ? "bg-primary text-primary-foreground" : "bg-black/[0.06] text-ink"
-                      }`}
-                    >
-                      {m.body}
-                    </div>
+                    {m.media_url && m.signed_url && (
+                      <div
+                        className={`mb-1 overflow-hidden rounded-2xl border border-black/5 bg-black/[0.04] ${
+                          mine ? "ml-auto" : ""
+                        }`}
+                        style={{ maxWidth: 260 }}
+                      >
+                        {m.media_type === "video" ? (
+                          <video
+                            src={m.signed_url}
+                            controls
+                            playsInline
+                            className="block max-h-80 w-full bg-black object-contain"
+                          />
+                        ) : (
+                          <a href={m.signed_url} target="_blank" rel="noreferrer">
+                            <img
+                              src={m.signed_url}
+                              alt="attachment"
+                              className="block max-h-80 w-full object-cover"
+                              loading="lazy"
+                            />
+                          </a>
+                        )}
+                      </div>
+                    )}
+                    {m.body && (
+                      <div
+                        className={`whitespace-pre-wrap break-words rounded-2xl px-3.5 py-2 text-[14px] leading-snug ${
+                          mine ? "bg-primary text-primary-foreground" : "bg-black/[0.06] text-ink"
+                        }`}
+                      >
+                        {m.body}
+                      </div>
+                    )}
                   </div>
                 </li>
               );
@@ -345,7 +373,56 @@ function ChatView({ convId, onBack }: { convId: string; onBack: () => void }) {
       </div>
 
       <div className="border-t border-black/5 bg-white/50 p-3 backdrop-blur-xl">
-        <div className="flex items-end gap-2 rounded-full border border-black/10 bg-white px-3 py-1.5 shadow-sm">
+        <AnimatePresence>
+          {file && filePreview && (
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 8 }}
+              className="mb-2 flex items-center gap-2 rounded-2xl border border-black/10 bg-white/70 p-2 shadow-sm"
+            >
+              <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-black/5">
+                {file.type.startsWith("video/") ? (
+                  <video src={filePreview} className="h-full w-full object-cover" muted playsInline />
+                ) : (
+                  <img src={filePreview} alt="preview" className="h-full w-full object-cover" />
+                )}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-[12.5px] font-medium text-ink">{file.name}</p>
+                <p className="text-[11px] text-muted-foreground">
+                  {file.type.startsWith("video/") ? "Video" : "Photo"} · {(file.size / 1024 / 1024).toFixed(1)} MB
+                </p>
+              </div>
+              <button
+                onClick={() => setFile(null)}
+                className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-black/5"
+                aria-label="Remove attachment"
+              >
+                <X className="h-4 w-4 text-ink" />
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+        <div className="flex items-end gap-2 rounded-full border border-black/10 bg-white px-2 py-1.5 shadow-sm">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*,video/*"
+            className="hidden"
+            onChange={(e) => {
+              pickFile(e.target.files?.[0] ?? null);
+              e.target.value = "";
+            }}
+          />
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            disabled={send.isPending}
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-ink/70 transition hover:bg-black/5 active:scale-95 disabled:opacity-40"
+            aria-label="Attach photo or video"
+          >
+            <Paperclip className="h-4 w-4" />
+          </button>
           <textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
@@ -356,18 +433,19 @@ function ChatView({ convId, onBack }: { convId: string; onBack: () => void }) {
               }
             }}
             rows={1}
-            placeholder="Message"
+            placeholder={file ? "Add a caption…" : "Message"}
             className="max-h-32 flex-1 resize-none bg-transparent py-1.5 text-[14px] outline-none placeholder:text-muted-foreground"
           />
           <button
             onClick={handleSend}
-            disabled={!text.trim() || send.isPending}
+            disabled={(!text.trim() && !file) || send.isPending}
             className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition active:scale-95 disabled:opacity-40"
           >
             <Send className="h-4 w-4" />
           </button>
         </div>
       </div>
+
 
       <MembersSheet
         open={membersOpen}
