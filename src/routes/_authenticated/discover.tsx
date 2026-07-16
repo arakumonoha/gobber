@@ -532,24 +532,30 @@ function ActivityCard({
 }) {
   return (
     <motion.button
+      layout
       data-id={a.id}
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 8 }}
-      transition={{ delay, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      initial={{ opacity: 0, y: 18, filter: "blur(14px)", scale: 0.96 }}
+      animate={{ opacity: 1, y: 0, filter: "blur(0px)", scale: 1 }}
+      exit={{ opacity: 0, y: -8, filter: "blur(14px)", scale: 0.96 }}
+      transition={{ delay, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
       whileHover={{ y: -3 }}
       whileTap={{ scale: 0.98 }}
       onClick={onClick}
-      className={`group w-[260px] shrink-0 snap-center overflow-hidden rounded-[22px] bg-white text-left ring-1 ring-black/[0.04] transition-shadow ${
-        active ? "shadow-[0_20px_50px_-24px_rgba(50,34,15,0.32)]" : "shadow-[0_10px_28px_-18px_rgba(50,34,15,0.18)]"
+      className={`group w-[260px] shrink-0 snap-center overflow-hidden rounded-[22px] text-left ring-1 ring-[#3a2a12]/[0.06] transition-shadow ${
+        active ? "shadow-[0_24px_54px_-24px_rgba(50,34,15,0.36)]" : "shadow-[0_10px_28px_-18px_rgba(50,34,15,0.18)]"
       }`}
+      style={{
+        background: "color-mix(in oklab, #fffaf0 88%, transparent)",
+        backdropFilter: "saturate(180%) blur(20px)",
+        WebkitBackdropFilter: "saturate(180%) blur(20px)",
+      }}
     >
       <div
         className="h-36 w-full bg-cover bg-center transition-transform duration-[900ms] group-hover:scale-[1.04]"
         style={{ backgroundImage: `url(${a.cover_url ?? "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=1200&q=80"})` }}
       />
       <div className="p-4">
-        <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-[#5a4a35]">{a.category}</p>
+        <p className="text-[9.5px] font-semibold uppercase tracking-[0.22em] text-[#8a6b45]">{a.category}</p>
         <h3 className="mt-1 line-clamp-1 font-serif italic text-[19px] leading-tight tracking-[-0.02em] text-[#0f0d0b]">{a.title}</h3>
         <div className="mt-2 flex items-center gap-1.5 text-[11.5px] text-[#6b5540]">
           <MapPin className="h-3 w-3" strokeWidth={2} />
@@ -559,5 +565,6 @@ function ActivityCard({
         </div>
       </div>
     </motion.button>
+
   );
 }
