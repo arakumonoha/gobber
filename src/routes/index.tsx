@@ -371,6 +371,15 @@ function Hero({ stats, nearYou }: { stats: LandingStats | undefined; nearYou: Ne
           free forever · no ads · your seat takes 10 seconds
         </motion.p>
       </motion.div>
+
+      {/* smooth dissolve into next section */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-32"
+        style={{
+          background: `linear-gradient(180deg, transparent 0%, ${PALETTE.cream} 100%)`,
+        }}
+      />
     </section>
   );
 }
