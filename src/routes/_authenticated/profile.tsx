@@ -29,6 +29,7 @@ function Profile() {
   const [profile, setProfile] = useState<{ display_name: string; bio: string; home_city: string; avatar_url: string; username: string }>({ display_name: "", bio: "", home_city: "", avatar_url: "", username: "" });
   const [loading, setLoading] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
 
   useEffect(() => {
     if (!user) return;
