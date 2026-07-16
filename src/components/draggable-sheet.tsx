@@ -46,6 +46,7 @@ export function DraggableSheet({
   // sheet's "top" y position from viewport top
   const topFor = (idx: number) => vh - snapPoints[idx];
   const y = useMotionValue(topFor(initialSnap));
+  const [snapIdx, setSnapIdx] = useState(initialSnap);
   const snapIndex = useRef(initialSnap);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const [refreshing, setRefreshing] = useState(false);
@@ -61,6 +62,7 @@ export function DraggableSheet({
   function snapTo(idx: number) {
     const clamped = Math.max(0, Math.min(snapPoints.length - 1, idx));
     snapIndex.current = clamped;
+    setSnapIdx(clamped);
     animate(y, topFor(clamped), SPRING);
     onSnapChange?.(clamped);
   }
@@ -105,6 +107,8 @@ export function DraggableSheet({
     snapTo(target);
   }
 
+  const isExpanded = snapIdx === snapPoints.length - 1;
+
   return (
     <motion.div
       drag={isDesktop ? false : "y"}
@@ -120,20 +124,17 @@ export function DraggableSheet({
         <button
           type="button"
           onClick={toggleDesktop}
-          aria-label={snapIndex.current === snapPoints.length - 1 ? "Collapse gatherings" : "Expand gatherings"}
+          aria-label={isExpanded ? "Collapse gatherings" : "Expand gatherings"}
+          aria-expanded={isExpanded}
           className={`group flex w-full flex-col items-center pt-2.5 pb-1 select-none ${headerClassName ?? ""}`}
         >
           <motion.div
             className="flex h-6 items-center justify-center rounded-full px-2 text-[#3d3120]/70 transition-colors group-hover:text-[#0f0d0b]"
             whileTap={{ scale: 0.92 }}
+            animate={{ rotate: isExpanded ? 0 : 180 }}
+            transition={SPRING}
           >
-            <ChevronDown
-              className="h-4 w-4 transition-transform"
-              style={{
-                transform: snapIndex.current === snapPoints.length - 1 ? "rotate(0deg)" : "rotate(180deg)",
-              }}
-              strokeWidth={2.4}
-            />
+            <ChevronDown className="h-4 w-4" strokeWidth={2.4} />
           </motion.div>
         </button>
       ) : (
