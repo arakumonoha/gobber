@@ -47,7 +47,7 @@ function InlineField(props: {
         autoFocus={autoFocus}
         autoComplete={autoComplete}
         onKeyDown={(e) => { if (e.key === "Enter" && onSubmit) { e.preventDefault(); onSubmit(); } }}
-        className="h-[48px] w-full rounded-[12px] px-4 pr-12 text-[15px] tracking-[-0.01em] text-[#0f0d0b] placeholder:text-[#8a7a5f] outline-none transition focus:bg-white/40"
+        className="h-[48px] w-full rounded-[12px] px-4 pr-12 text-[15px] tracking-[-0.01em] text-[#0f0d0b] placeholder:text-[#4a3d2a] outline-none transition focus:bg-white/40"
         style={{
           background: "rgba(255,255,255,0.22)",
           border: "1px solid rgba(255,255,255,0.55)",
@@ -151,7 +151,7 @@ function AuthCard({ onClose }: { onClose: () => void }) {
       <button
         onClick={onClose}
         aria-label="Close"
-        className="absolute right-3 top-3 z-20 flex h-8 w-8 items-center justify-center rounded-full text-[#5a4f43] transition hover:bg-black/5"
+        className="absolute right-3 top-3 z-20 flex h-8 w-8 items-center justify-center rounded-full text-[#2b1d0f] transition hover:bg-black/5"
       >
         <X className="h-4 w-4" />
       </button>
@@ -167,9 +167,9 @@ function AuthCard({ onClose }: { onClose: () => void }) {
               </motion.div>
             ) : (
               <motion.div key="password" initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 12 }} transition={{ duration: 0.3, ease: EASE }} className="space-y-2">
-                <div className="flex items-center justify-between px-1 text-[12.5px] text-[#8a7a5f]">
+                <div className="flex items-center justify-between px-1 text-[12.5px] text-[#4a3d2a]">
                   <span className="truncate">{email}</span>
-                  <button onClick={() => setStep("email")} className="text-[#8a6b45] hover:underline">Change</button>
+                  <button onClick={() => setStep("email")} className="text-[#2b1d0f] hover:underline">Change</button>
                 </div>
                 <InlineField type="password" placeholder="Password" value={password} onChange={setPassword} autoFocus autoComplete={mode === "signin" ? "current-password" : "new-password"} showSubmit submitting={loading === "form"} onSubmit={submit} />
               </motion.div>
@@ -179,7 +179,7 @@ function AuthCard({ onClose }: { onClose: () => void }) {
 
         <div className="mt-6 flex items-center gap-3">
           <span className="h-px flex-1 bg-[#1a1614]/10" />
-          <span className="text-[10.5px] font-medium uppercase tracking-[0.22em] text-[#a08a68]">or</span>
+          <span className="text-[10.5px] font-medium uppercase tracking-[0.22em] text-[#4a3d2a]">or</span>
           <span className="h-px flex-1 bg-[#1a1614]/10" />
         </div>
 
@@ -192,11 +192,11 @@ function AuthCard({ onClose }: { onClose: () => void }) {
           </SocialButton>
         </div>
 
-        <div className="mt-6 text-center text-[13px] text-[#8a7a5f]">
+        <div className="mt-6 text-center text-[13px] text-[#4a3d2a]">
           {mode === "signin" ? (
-            <>New here?{" "}<button onClick={() => { setMode("signup"); setStep("email"); }} className="font-medium text-[#8a6b45] hover:underline">Create an account</button></>
+            <>New here?{" "}<button onClick={() => { setMode("signup"); setStep("email"); }} className="font-medium text-[#2b1d0f] hover:underline">Create an account</button></>
           ) : (
-            <>Already have an account?{" "}<button onClick={() => { setMode("signin"); setStep("email"); }} className="font-medium text-[#8a6b45] hover:underline">Sign in</button></>
+            <>Already have an account?{" "}<button onClick={() => { setMode("signin"); setStep("email"); }} className="font-medium text-[#2b1d0f] hover:underline">Sign in</button></>
           )}
         </div>
       </div>
