@@ -271,29 +271,20 @@ function AuthPage() {
 
       {/* Auth card — front and center */}
 
-            <motion.div
-              key="auth"
-              initial={{ opacity: 0, y: 20, scale: 0.96, filter: "blur(10px)" }}
-              animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
-              exit={{ opacity: 0, y: 12, scale: 0.97, filter: "blur(8px)" }}
-              transition={{ duration: 0.55, ease: EASE }}
-              onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-[380px] overflow-hidden rounded-[26px]"
-              style={{
-                background: "rgba(255,253,247,0.82)",
-                backdropFilter: "saturate(180%) blur(40px)",
-                border: "1px solid rgba(255,255,255,0.75)",
-                boxShadow:
-                  "0 1px 0 rgba(255,255,255,0.9) inset, 0 40px 90px -30px rgba(60,42,20,0.4), 0 10px 30px -18px rgba(60,42,20,0.18)",
-              }}
-            >
-              <button
-                onClick={() => setView("welcome")}
-                aria-label="Close"
-                className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full text-[#8a7a5f] transition hover:bg-black/5 hover:text-[#0f0d0b]"
-              >
-                <X className="h-4 w-4" strokeWidth={2.2} />
-              </button>
+      <motion.div
+        initial={{ opacity: 0, y: 20, scale: 0.96, filter: "blur(10px)" }}
+        animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+        transition={{ duration: 0.55, ease: EASE }}
+        className="relative z-10 w-full max-w-[380px] overflow-hidden rounded-[26px]"
+        style={{
+          background: "rgba(255,253,247,0.82)",
+          backdropFilter: "saturate(180%) blur(40px)",
+          border: "1px solid rgba(255,255,255,0.75)",
+          boxShadow:
+            "0 1px 0 rgba(255,255,255,0.9) inset, 0 40px 90px -30px rgba(60,42,20,0.4), 0 10px 30px -18px rgba(60,42,20,0.18)",
+        }}
+      >
+
 
               <div className="px-7 pt-10 pb-6">
                 <motion.div
