@@ -112,14 +112,16 @@ function SuggestionCard({ profile, myId }: { profile: ProfileLite; myId: string 
       animate={{ opacity: 1, y: 0 }}
       className="relative w-[150px] shrink-0 rounded-2xl bg-card p-3 text-center shadow-glass"
     >
-      <div
-        className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-cover bg-center text-base font-semibold text-white ring-2 ring-white"
-        style={{ backgroundImage: profile.avatar_url ? `url(${profile.avatar_url})` : "linear-gradient(135deg, oklch(0.68 0.08 70), oklch(0.5 0.045 55))" }}
-      >
-        {!profile.avatar_url && initials}
-      </div>
-      <p className="mt-2 truncate text-[13px] font-semibold text-ink">{profile.display_name || profile.username}</p>
-      <p className="truncate text-[11px] text-muted-foreground">@{profile.username}</p>
+      <Link to="/u/$username" params={{ username: profile.username }} className="block">
+        <div
+          className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-cover bg-center text-base font-semibold text-white ring-2 ring-white"
+          style={{ backgroundImage: profile.avatar_url ? `url(${profile.avatar_url})` : "linear-gradient(135deg, oklch(0.68 0.08 70), oklch(0.5 0.045 55))" }}
+        >
+          {!profile.avatar_url && initials}
+        </div>
+        <p className="mt-2 truncate text-[13px] font-semibold text-ink">{profile.display_name || profile.username}</p>
+        <p className="truncate text-[11px] text-muted-foreground">@{profile.username}</p>
+      </Link>
       <FollowButton
         compact
         isFollowing={!!isFollowing}
