@@ -1,9 +1,9 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Globe2, MapPin, Users, X, Plus, Loader2, Check } from "lucide-react";
+import { Globe2, MapPin, Users, X, Plus, Minus, Loader2, Check, LocateFixed, Compass } from "lucide-react";
 import { format } from "date-fns";
-import { GoogleMap } from "@/components/google-map";
+import { GoogleMap, type GoogleMapHandle } from "@/components/google-map";
 import { MapTypeToggle, type MapView } from "@/components/map-type-toggle";
 import { BottomNav } from "@/components/bottom-nav";
 import { useActivities, type Activity } from "@/lib/activities";
@@ -12,6 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useUser } from "@/hooks/use-user";
 import { useQueryClient } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
+
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 
