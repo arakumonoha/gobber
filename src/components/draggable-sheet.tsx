@@ -1,6 +1,6 @@
 import { motion, useMotionValue, animate, useTransform, PanInfo } from "framer-motion";
 import { ReactNode, useEffect, useRef, useState } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, ChevronDown } from "lucide-react";
 
 /**
  * Apple Maps-style draggable bottom sheet with snap points and optional pull-to-refresh.
