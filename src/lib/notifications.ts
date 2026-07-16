@@ -79,8 +79,13 @@ export function useMarkAllRead(userId: string | undefined) {
         .eq("user_id", userId)
         .is("read_at", null);
     },
+    onMutate: async () => {
+      await qc.cancelQueries({ queryKey: ["notifications", "unread", userId] });
+      qc.setQueryData(["notifications", "unread", userId], 0);
+    },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["notifications"] });
+      qc.invalidateQueries({ queryKey: ["notifications", "unread", userId] });
     },
   });
 }
@@ -91,7 +96,10 @@ export function useMarkRead(userId: string | undefined) {
     mutationFn: async (id: string) => {
       await supabase.from("notifications").update({ read_at: new Date().toISOString() }).eq("id", id);
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["notifications"] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["notifications"] });
+      qc.invalidateQueries({ queryKey: ["notifications", "unread", userId] });
+    },
   });
 }
 
@@ -107,6 +115,7 @@ export function useNotificationsRealtime(userId: string | undefined) {
         { event: "INSERT", schema: "public", table: "notifications", filter: `user_id=eq.${userId}` },
         async (payload) => {
           qc.invalidateQueries({ queryKey: ["notifications"] });
+          qc.invalidateQueries({ queryKey: ["notifications", "unread", userId] });
           const n = payload.new as NotificationRow;
           try {
             if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
