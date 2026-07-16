@@ -292,12 +292,18 @@ export const GoogleMap = forwardRef<GoogleMapHandle, Props>(function GoogleMap({
       clickListenerRef.current.remove();
       clickListenerRef.current = null;
     }
-    if (onMapClick) {
-      clickListenerRef.current = map.addListener("click", (e: any) => {
-        if (!e.latLng) return;
-        onMapClick({ lng: e.latLng.lng(), lat: e.latLng.lat() });
-      });
-    }
+    // Always attach a click listener so we can intercept POI clicks (which carry a placeId).
+    // - POI click → let Google's native info window show; do NOT trigger onMapClick (no accidental pin).
+    // - Blank map click → forward to onMapClick if provided (add-pin flow).
+    clickListenerRef.current = map.addListener("click", (e: any) => {
+      if (e?.placeId) {
+        // A place (shop / restaurant / landmark) was clicked. Google's built-in
+        // info window will open automatically. Never fire onMapClick here.
+        return;
+      }
+      if (!onMapClick || !e.latLng) return;
+      onMapClick({ lng: e.latLng.lng(), lat: e.latLng.lat() });
+    });
     return () => {
       if (clickListenerRef.current) {
         clickListenerRef.current.remove();
