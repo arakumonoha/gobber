@@ -3,6 +3,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { UsernameOnboarding } from "@/components/username-onboarding";
 import { NotificationBell } from "@/components/notification-bell";
+import { MessageBell } from "@/components/message-bell";
+
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
