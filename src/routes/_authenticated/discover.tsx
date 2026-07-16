@@ -648,3 +648,66 @@ function ActivityCard({
 
   );
 }
+
+const GLASS_INPUT_STYLE: React.CSSProperties = {
+  background: "rgba(255,255,255,0.28)",
+  border: "1px solid rgba(255,255,255,0.6)",
+  backdropFilter: "blur(18px) saturate(180%)",
+  WebkitBackdropFilter: "blur(18px) saturate(180%)",
+  boxShadow:
+    "inset 0 1px 0 rgba(255,255,255,0.75), inset 0 -1px 0 rgba(20,18,16,0.05), 0 4px 12px -8px rgba(60,42,20,0.15)",
+};
+
+function GlassInput({ value, onChange, placeholder, autoFocus }: {
+  value: string; onChange: (v: string) => void; placeholder: string; autoFocus?: boolean;
+}) {
+  return (
+    <input
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder={placeholder}
+      autoFocus={autoFocus}
+      className="h-[48px] w-full rounded-[12px] px-4 text-[15px] tracking-[-0.01em] text-[#0f0d0b] placeholder:text-[#5a4530] outline-none transition-all duration-300 focus:bg-white/45"
+      style={GLASS_INPUT_STYLE}
+    />
+  );
+}
+
+function GlassTextarea({ value, onChange, placeholder }: {
+  value: string; onChange: (v: string) => void; placeholder: string;
+}) {
+  return (
+    <textarea
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder={placeholder}
+      rows={2}
+      className="w-full resize-none rounded-[12px] px-4 py-3 text-[14px] tracking-[-0.01em] text-[#0f0d0b] placeholder:text-[#5a4530] outline-none transition-all duration-300 focus:bg-white/45"
+      style={GLASS_INPUT_STYLE}
+    />
+  );
+}
+
+function GlassInputRaw({ value, onChange, type, min, max, suffix }: {
+  value: string; onChange: (v: string) => void; type: string; min?: number; max?: number; suffix?: string;
+}) {
+  return (
+    <div className="relative">
+      <input
+        type={type}
+        value={value}
+        min={min}
+        max={max}
+        onChange={(e) => onChange(e.target.value)}
+        className="h-[46px] w-full rounded-[12px] px-3 text-[13.5px] text-[#0f0d0b] outline-none transition-all duration-300 focus:bg-white/45"
+        style={GLASS_INPUT_STYLE}
+      />
+      {suffix && (
+        <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-medium uppercase tracking-[0.16em] text-[#4a3820]">
+          {suffix}
+        </span>
+      )}
+    </div>
+  );
+}
+
