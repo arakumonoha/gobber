@@ -508,10 +508,51 @@ function Discover() {
                 />
               ))}
               {!isLoading && filtered.length === 0 && (
-                <div className="w-full rounded-2xl bg-secondary/60 p-8 text-center">
-                  <p className="text-sm font-medium">No gatherings here yet</p>
-                  <p className="mt-1 text-xs text-muted-foreground">Tap the + button to drop the first pin.</p>
-                </div>
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="w-full rounded-[22px] p-7 text-center ring-1 ring-[#3a2a12]/[0.06]"
+                  style={{
+                    background: "color-mix(in oklab, #fffaf0 72%, transparent)",
+                    backdropFilter: "saturate(180%) blur(24px)",
+                    WebkitBackdropFilter: "saturate(180%) blur(24px)",
+                  }}
+                >
+                  <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-[#4a3820]">Quiet spot</p>
+                  <h4 className="mt-1.5 font-serif italic text-[22px] leading-[1.05] tracking-[-0.02em] text-[#0f0d0b]">
+                    {query || category ? "Nothing matches — yet." : "No gatherings here yet."}
+                  </h4>
+                  <p className="mt-1.5 text-[12.5px] text-[#4a3820]">
+                    {query
+                      ? "Try a different city, or start the vibe yourself."
+                      : "Be the first to drop a pin and set the vibe."}
+                  </p>
+                  <div className="mt-4 flex items-center justify-center gap-2">
+                    {(query || category) && (
+                      <button
+                        onClick={() => {
+                          setQuery("");
+                          setCategory(null);
+                        }}
+                        className="rounded-full bg-white/70 px-4 py-2 text-[12.5px] font-medium text-[#2b1d0f] ring-1 ring-[#3a2a12]/[0.08] transition hover:bg-white"
+                      >
+                        Clear filters
+                      </button>
+                    )}
+                    <button
+                      onClick={() => {
+                        if (!user) return toast.error("Sign in to drop a pin");
+                        if (myActivePin) return confirmRemovePin();
+                        setAddMode(true);
+                      }}
+                      className="inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[12.5px] font-medium text-white shadow-[0_12px_28px_-12px_rgba(232,90,60,0.7)] transition"
+                      style={{ background: "linear-gradient(180deg,#ff7a5c,#e85a3c)" }}
+                    >
+                      <Plus className="h-3.5 w-3.5" strokeWidth={2.4} />
+                      Drop the first pin
+                    </button>
+                  </div>
+                </motion.div>
               )}
             </AnimatePresence>
           </div>
