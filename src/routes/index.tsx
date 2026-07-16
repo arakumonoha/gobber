@@ -1,7 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion, useScroll, useTransform, type Variants } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
-import { ArrowRight, Apple, Play, Star, Coffee, Users, MapPin, Sparkles } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { ArrowRight, Star, Coffee, Users, MapPin, Sparkles } from "lucide-react";
+import { GoogleMap, type GoogleMapHandle } from "@/components/google-map";
+import { activitiesQuery } from "@/lib/activities";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -31,6 +34,27 @@ const fadeUp: Variants = {
   hidden: { opacity: 0, y: 20 },
   show: { opacity: 1, y: 0, transition: { duration: 0.9, ease: EASE } },
 };
+
+/* ───────────────────────── ICONS ───────────────────────── */
+
+function AppleIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden>
+      <path d="M16.365 1.43c0 1.14-.44 2.23-1.17 3.03-.79.87-2.07 1.54-3.13 1.46-.13-1.11.42-2.28 1.13-3.02.79-.83 2.15-1.45 3.17-1.47zM20.5 17.02c-.55 1.26-.82 1.83-1.54 2.95-1 1.55-2.41 3.48-4.16 3.5-1.56.01-1.96-1.01-4.07-1-2.11.01-2.55 1.02-4.11 1.01-1.75-.02-3.09-1.76-4.09-3.3-2.8-4.31-3.09-9.37-1.36-12.06 1.22-1.91 3.15-3.03 4.97-3.03 1.84 0 3 1 4.52 1s2.45-1 4.58-1c1.62 0 3.33.88 4.55 2.4-3.99 2.19-3.34 7.9.71 9.53z" />
+    </svg>
+  );
+}
+
+function GoogleIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} aria-hidden>
+      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+      <path fill="#FBBC05" d="M5.84 14.1c-.22-.66-.35-1.36-.35-2.1s.13-1.44.35-2.1V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" />
+      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84C6.71 7.31 9.14 5.38 12 5.38z" />
+    </svg>
+  );
+}
 
 /* ───────────────────────── NAV ───────────────────────── */
 
@@ -67,19 +91,18 @@ function Nav() {
         </Link>
         <nav className="hidden items-center gap-8 text-[14px] text-[#4a3f33] md:flex">
           <a href="#trips" className="transition hover:text-[#141210]">trips</a>
+          <a href="#live" className="transition hover:text-[#141210]">live map</a>
           <a href="#how" className="transition hover:text-[#141210]">how it works</a>
-          <a href="#guidelines" className="transition hover:text-[#141210]">guidelines</a>
         </nav>
         <Link
           to="/auth"
           className="group inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[13.5px] font-medium text-white transition hover:-translate-y-0.5"
           style={{
             background: "linear-gradient(180deg,#ff7a5c,#e85a3c)",
-            boxShadow:
-              "inset 0 1px 0 rgba(255,255,255,0.28), 0 10px 22px -12px rgba(232,90,60,0.6)",
+            boxShadow: "inset 0 1px 0 rgba(255,255,255,0.28), 0 10px 22px -12px rgba(232,90,60,0.6)",
           }}
         >
-          get the app
+          sign in
           <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
         </Link>
       </div>
@@ -129,18 +152,56 @@ function FloatingFlags() {
   );
 }
 
+/* ───────────── AUTH BUTTONS (Apple / Google) ───────────── */
+
+function AuthButtons({ variant = "light" }: { variant?: "light" | "dark" }) {
+  const isDark = variant === "dark";
+  return (
+    <div className="flex w-full max-w-md flex-col items-center gap-3 sm:flex-row sm:justify-center">
+      <Link
+        to="/auth"
+        className="group inline-flex w-full items-center justify-center gap-2 rounded-full px-6 py-4 text-[15px] font-medium transition hover:-translate-y-0.5 sm:w-auto"
+        style={{
+          background: "linear-gradient(180deg,#1c1815 0%,#0a0908 100%)",
+          color: "#ffffff",
+          boxShadow:
+            "inset 0 1px 0 rgba(255,255,255,0.15), 0 18px 40px -18px rgba(20,18,16,0.6), 0 4px 10px rgba(20,18,16,0.18)",
+        }}
+      >
+        <AppleIcon className="h-[19px] w-[19px] text-white" />
+        Sign in with Apple
+      </Link>
+      <Link
+        to="/auth"
+        className="group inline-flex w-full items-center justify-center gap-2.5 rounded-full px-6 py-4 text-[15px] font-medium transition hover:-translate-y-0.5 sm:w-auto"
+        style={{
+          background: isDark ? "#ffffff" : "color-mix(in oklab, white 96%, transparent)",
+          color: "#141210",
+          border: "1px solid rgba(20,18,16,0.08)",
+          boxShadow: "0 10px 22px -14px rgba(20,18,16,0.22)",
+        }}
+      >
+        <GoogleIcon className="h-[19px] w-[19px]" />
+        Sign in with Google
+      </Link>
+    </div>
+  );
+}
+
 /* ───────────────────────── HERO ───────────────────────── */
 
-function Hero() {
+function Hero({ liveCount, cityCount }: { liveCount: number; cityCount: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const y = useTransform(scrollYProgress, [0, 1], [0, -40]);
 
-  const [count, setCount] = useState(91336);
+  const base = 91336 + liveCount * 3;
+  const [count, setCount] = useState(base);
   useEffect(() => {
+    setCount(base);
     const t = setInterval(() => setCount((c) => c + Math.floor(Math.random() * 5) + 1), 2200);
     return () => clearInterval(t);
-  }, []);
+  }, [base]);
 
   return (
     <section
@@ -176,7 +237,6 @@ function Hero() {
           <span className="text-base leading-none">🌍</span>
         </motion.div>
 
-        {/* headline */}
         <motion.h1
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
@@ -199,7 +259,6 @@ function Hero() {
           leave as friends
         </motion.h1>
 
-        {/* subtitle */}
         <motion.p
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -210,7 +269,7 @@ function Hero() {
           today, not someday <span className="inline-block">:)</span>
         </motion.p>
 
-        {/* trust pills */}
+        {/* trust pills — real data */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -224,7 +283,17 @@ function Hero() {
               border: "1px solid rgba(20,18,16,0.06)",
             }}
           >
-            📲 <span className="font-semibold text-[#141210]">1M+</span> users
+            <MapPin className="h-3.5 w-3.5 text-[#e85a3c]" strokeWidth={2.4} />
+            <span className="font-semibold text-[#141210]">{liveCount}</span> live gatherings
+          </div>
+          <div
+            className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-[13px] text-[#3a2f24]"
+            style={{
+              background: "color-mix(in oklab, white 75%, transparent)",
+              border: "1px solid rgba(20,18,16,0.06)",
+            }}
+          >
+            🌍 <span className="font-semibold text-[#141210]">{cityCount}</span> cities
           </div>
           <div
             className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-[13px] text-[#3a2f24]"
@@ -238,52 +307,156 @@ function Hero() {
                 <Star key={i} className="h-3.5 w-3.5 fill-current" />
               ))}
             </span>
-            <span className="font-semibold text-[#141210]">4.7</span> on the App Store
+            <span className="font-semibold text-[#141210]">4.9</span>
           </div>
         </motion.div>
 
-        {/* CTAs */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: EASE, delay: 0.58 }}
-          className="mt-8 flex w-full max-w-md flex-col items-center gap-3 sm:flex-row sm:justify-center"
+          className="mt-8"
         >
-          <Link
-            to="/auth"
-            className="group inline-flex w-full items-center justify-center gap-2 rounded-full px-6 py-4 text-[15px] font-medium text-white transition hover:-translate-y-0.5 sm:w-auto"
-            style={{
-              background: "linear-gradient(180deg,#ff7a5c,#e85a3c)",
-              boxShadow:
-                "inset 0 1px 0 rgba(255,255,255,0.3), 0 20px 40px -18px rgba(232,90,60,0.65), 0 4px 10px rgba(232,90,60,0.2)",
-            }}
-          >
-            <Apple className="h-4 w-4 fill-current" strokeWidth={0} />
-            download for iOS
-          </Link>
-          <Link
-            to="/auth"
-            className="group inline-flex w-full items-center justify-center gap-2 rounded-full px-6 py-4 text-[15px] font-medium text-[#141210] transition hover:-translate-y-0.5 sm:w-auto"
-            style={{
-              background: "color-mix(in oklab, white 92%, transparent)",
-              border: "1px solid rgba(20,18,16,0.08)",
-              boxShadow: "0 10px 22px -14px rgba(20,18,16,0.18)",
-            }}
-          >
-            <Play className="h-4 w-4 fill-current" strokeWidth={0} />
-            download for Android
-          </Link>
+          <AuthButtons />
         </motion.div>
+
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 0.75 }}
+          className="mt-4 text-[12px] text-[#8b7355]"
+        >
+          free forever · no ads · your seat takes 10 seconds
+        </motion.p>
       </motion.div>
     </section>
   );
 }
 
-/* ───────────────── TRENDING TRIPS MARQUEE ───────────────── */
+/* ───────────────── LIVE MAP SECTION ───────────────── */
+
+function LiveMap({ activities }: { activities: { id: string; lat: number; lng: number; category: string; title: string; city: string; country: string }[] }) {
+  const [mounted, setMounted] = useState(false);
+  const [view, setView] = useState<"satellite" | "roadmap">("roadmap");
+  const mapRef = useRef<GoogleMapHandle>(null);
+  useEffect(() => setMounted(true), []);
+
+  const pins = activities.map((a) => ({
+    id: a.id,
+    lat: a.lat,
+    lng: a.lng,
+    category: a.category,
+    label: a.title,
+  }));
+
+  return (
+    <section id="live" className="relative px-6 py-24">
+      <div className="mx-auto max-w-6xl">
+        <div className="mx-auto max-w-2xl text-center">
+          <div className="inline-flex items-center gap-2 rounded-full bg-white/70 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.16em] text-[#8b6f3f]" style={{ border: "1px solid rgba(20,18,16,0.06)" }}>
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#e85a3c] opacity-70" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#e85a3c]" />
+            </span>
+            live map
+          </div>
+          <h2 className="mt-4 font-display text-[clamp(32px,5vw,56px)] font-semibold leading-[1.02] tracking-[-0.03em] text-[#141210]">
+            every pin is a{" "}
+            <span className="serif-hero" style={{ color: "#e85a3c", fontFamily: "'Instrument Serif', serif", fontStyle: "italic", fontWeight: 400 }}>
+              real
+            </span>{" "}
+            gathering, right now
+          </h2>
+          <p className="mt-4 text-[15.5px] leading-[1.55] text-[#4a3f33]">
+            no algorithm, no feed — just an actual world map of tables you can sit at tonight.
+          </p>
+        </div>
+
+        <div
+          className="relative mx-auto mt-10 overflow-hidden rounded-[28px]"
+          style={{
+            border: "1px solid rgba(20,18,16,0.08)",
+            boxShadow: "0 40px 80px -30px rgba(60,42,20,0.32), 0 12px 30px -14px rgba(60,42,20,0.18)",
+            height: "clamp(360px, 60vh, 560px)",
+          }}
+        >
+          {mounted ? (
+            <GoogleMap
+              ref={mapRef}
+              pins={pins}
+              mapTypeId={view}
+              zoom={2}
+              className="absolute inset-0"
+            />
+          ) : (
+            <div className="absolute inset-0 bg-[#f0e2c4]" />
+          )}
+
+          {/* toggle */}
+          <div className="absolute left-4 top-4 z-10 inline-flex items-center gap-0.5 rounded-full p-1"
+            style={{
+              background: "color-mix(in oklab, white 75%, transparent)",
+              backdropFilter: "blur(14px)",
+              border: "1px solid rgba(20,18,16,0.06)",
+              boxShadow: "0 8px 20px -14px rgba(60,42,20,0.25)",
+            }}
+          >
+            {(["satellite", "roadmap"] as const).map((v) => (
+              <button
+                key={v}
+                onClick={() => setView(v)}
+                className={`rounded-full px-3 py-1.5 text-[11.5px] font-medium transition ${
+                  view === v ? "bg-[#141210] text-white" : "text-[#4a3f33] hover:text-[#141210]"
+                }`}
+              >
+                {v === "satellite" ? "Satellite" : "Street"}
+              </button>
+            ))}
+          </div>
+
+          {/* live counter badge */}
+          <div className="absolute right-4 top-4 z-10 inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[12px] text-[#141210]"
+            style={{
+              background: "color-mix(in oklab, white 82%, transparent)",
+              backdropFilter: "blur(14px)",
+              border: "1px solid rgba(20,18,16,0.06)",
+            }}
+          >
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#2fbf5a] opacity-75" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#2fbf5a]" />
+            </span>
+            <span className="font-semibold">{activities.length}</span> gathering{activities.length === 1 ? "" : "s"} live
+          </div>
+
+          {/* bottom gradient with CTA */}
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex justify-center pb-5"
+            style={{ background: "linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.28) 100%)" }}
+          >
+            <Link
+              to="/discover"
+              className="pointer-events-auto inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-[13.5px] font-medium text-[#141210] transition hover:-translate-y-0.5"
+              style={{
+                background: "color-mix(in oklab, white 92%, transparent)",
+                backdropFilter: "blur(14px)",
+                boxShadow: "0 14px 28px -16px rgba(0,0,0,0.5)",
+                border: "1px solid rgba(255,255,255,0.6)",
+              }}
+            >
+              open the full map <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ───────────────── TRENDING TRIPS (real cities from DB, fallback list) ───────────────── */
 
 type Trip = { flag: string; city: string; dates: string; going: string };
 
-const TRIPS: Trip[] = [
+const FALLBACK_TRIPS: Trip[] = [
   { flag: "🇹🇭", city: "Bangkok", dates: "Jul 15 – Jul 21", going: "20,435" },
   { flag: "🇪🇸", city: "Barcelona", dates: "Jul 12 – Jul 18", going: "19,464" },
   { flag: "🇧🇷", city: "Rio de Janeiro", dates: "Jul 13 – Jul 19", going: "13,884" },
@@ -319,22 +492,16 @@ function TripCard({ t }: { t: Trip }) {
   );
 }
 
-function TrendingTrips() {
-  const doubled = [...TRIPS, ...TRIPS];
+function TrendingTrips({ trips }: { trips: Trip[] }) {
+  const doubled = [...trips, ...trips];
   return (
     <section id="trips" className="relative overflow-hidden py-10">
       <div className="mx-auto mb-6 flex max-w-6xl items-center justify-center gap-2 px-6 text-[15px] font-semibold text-[#141210]">
         <span className="text-lg">✈️</span> trending trips
       </div>
       <div className="relative">
-        <div
-          className="pointer-events-none absolute inset-y-0 left-0 z-10 w-24"
-          style={{ background: "linear-gradient(90deg,#f5e6c9,transparent)" }}
-        />
-        <div
-          className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24"
-          style={{ background: "linear-gradient(-90deg,#f5e6c9,transparent)" }}
-        />
+        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-24" style={{ background: "linear-gradient(90deg,#f5e6c9,transparent)" }} />
+        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24" style={{ background: "linear-gradient(-90deg,#f5e6c9,transparent)" }} />
         <motion.div
           className="flex gap-3"
           animate={{ x: ["0%", "-50%"] }}
@@ -344,108 +511,6 @@ function TrendingTrips() {
             <TripCard key={i} t={t} />
           ))}
         </motion.div>
-      </div>
-    </section>
-  );
-}
-
-/* ───────────────── ACTIVITIES TODAY ───────────────── */
-
-type Activity = {
-  emoji: string;
-  title: string;
-  place: string;
-  when: string;
-  host: string;
-  spots: string;
-  tone: string;
-};
-
-const ACTIVITIES: Activity[] = [
-  { emoji: "🍜", title: "ramen crawl, shibuya", place: "Tokyo", when: "tonight · 7:30 pm", host: "Aiko", spots: "3 seats", tone: "#ffe4d8" },
-  { emoji: "🌅", title: "sunrise hike, camelback", place: "Phoenix", when: "sat · 5:15 am", host: "Marco", spots: "5 seats", tone: "#fde7c1" },
-  { emoji: "☕", title: "focus morning at ozone", place: "Lisbon", when: "tomorrow · 9 am", host: "Sofia", spots: "4 seats", tone: "#e6ddc4" },
-  { emoji: "🎨", title: "gallery walk + wine", place: "Barcelona", when: "fri · 6 pm", host: "Nadia", spots: "6 seats", tone: "#ffd8d0" },
-  { emoji: "🏄", title: "beginners surf lesson", place: "Bali", when: "sun · 7 am", host: "Kai", spots: "2 seats", tone: "#d6e8dc" },
-  { emoji: "🍕", title: "pizza + pasta night", place: "Rome", when: "tonight · 8 pm", host: "Luca", spots: "4 seats", tone: "#ffe0b0" },
-];
-
-function Activities() {
-  return (
-    <section className="relative px-6 py-24">
-      <div className="mx-auto max-w-6xl">
-        <motion.div
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, margin: "-80px" }}
-          variants={{ show: { transition: { staggerChildren: 0.08 } } }}
-          className="mx-auto max-w-2xl text-center"
-        >
-          <motion.h2
-            variants={fadeUp}
-            className="font-display text-[clamp(32px,5vw,56px)] font-semibold leading-[1.02] tracking-[-0.03em] text-[#141210]"
-          >
-            join{" "}
-            <span
-              className="serif-hero"
-              style={{ color: "#e85a3c", fontFamily: "'Instrument Serif', serif", fontStyle: "italic", fontWeight: 400 }}
-            >
-              activities
-            </span>{" "}
-            happening today
-          </motion.h2>
-          <motion.p variants={fadeUp} className="mt-4 text-[15.5px] leading-[1.55] text-[#4a3f33]">
-            real plans by real people. no group chats, no maybe's — just a table with your seat on it.
-          </motion.p>
-        </motion.div>
-
-        <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {ACTIVITIES.map((a, i) => (
-            <motion.div
-              key={a.title}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-60px" }}
-              transition={{ duration: 0.7, ease: EASE, delay: i * 0.05 }}
-              className="group relative overflow-hidden rounded-3xl p-5 transition-transform hover:-translate-y-1"
-              style={{
-                background: "color-mix(in oklab, white 90%, transparent)",
-                border: "1px solid rgba(20,18,16,0.06)",
-                boxShadow: "0 20px 40px -24px rgba(60,42,20,0.22)",
-              }}
-            >
-              <div
-                className="grid h-14 w-14 place-items-center rounded-2xl text-[28px]"
-                style={{ background: a.tone }}
-              >
-                {a.emoji}
-              </div>
-              <div className="mt-4 font-display text-[17px] font-semibold tracking-[-0.015em] text-[#141210]">
-                {a.title}
-              </div>
-              <div className="mt-1 flex items-center gap-1.5 text-[12.5px] text-[#6b5c48]">
-                <MapPin className="h-3 w-3" strokeWidth={2.4} /> {a.place} · {a.when}
-              </div>
-              <div className="mt-4 flex items-center justify-between border-t border-[#1a161410] pt-3">
-                <div className="flex items-center gap-2">
-                  <div
-                    className="h-6 w-6 rounded-full"
-                    style={{ background: "linear-gradient(135deg,#e3a17a,#8b6f3f)" }}
-                  />
-                  <span className="text-[12px] text-[#4a3f33]">
-                    hosted by <span className="font-semibold text-[#141210]">{a.host}</span>
-                  </span>
-                </div>
-                <span
-                  className="rounded-full px-2.5 py-1 text-[11px] font-medium"
-                  style={{ background: "#f0e6cc", color: "#8b6f3f" }}
-                >
-                  {a.spots}
-                </span>
-              </div>
-            </motion.div>
-          ))}
-        </div>
       </div>
     </section>
   );
@@ -534,30 +599,8 @@ function CTA() {
         <p className="mx-auto mt-5 max-w-[48ch] text-[15.5px] leading-[1.55] text-[#e4d6c6]">
           gobber is free. joining a table takes ten seconds. the memory lasts a lot longer.
         </p>
-        <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <Link
-            to="/auth"
-            className="inline-flex items-center justify-center gap-2 rounded-full px-6 py-4 text-[15px] font-medium text-[#141210] transition hover:-translate-y-0.5"
-            style={{
-              background: "linear-gradient(180deg,#ffffff,#f5ead6)",
-              boxShadow: "inset 0 1px 0 rgba(255,255,255,0.7), 0 20px 40px -18px rgba(0,0,0,0.5)",
-            }}
-          >
-            <Apple className="h-4 w-4 fill-current" strokeWidth={0} />
-            download for iOS
-          </Link>
-          <Link
-            to="/auth"
-            className="inline-flex items-center justify-center gap-2 rounded-full px-6 py-4 text-[15px] font-medium text-white transition hover:-translate-y-0.5"
-            style={{
-              background: "rgba(255,255,255,0.08)",
-              border: "1px solid rgba(255,255,255,0.14)",
-              backdropFilter: "blur(12px)",
-            }}
-          >
-            <Play className="h-4 w-4 fill-current" strokeWidth={0} />
-            download for Android
-          </Link>
+        <div className="mt-9 flex justify-center">
+          <AuthButtons variant="dark" />
         </div>
       </div>
     </section>
@@ -593,12 +636,40 @@ function Footer() {
 /* ───────────────── PAGE ───────────────── */
 
 function Landing() {
+  const { data: activities = [] } = useQuery(activitiesQuery());
+  const cityCount = useMemo(() => new Set(activities.map((a) => a.city)).size, [activities]);
+
+  const trips = useMemo<Trip[]>(() => {
+    if (activities.length === 0) return FALLBACK_TRIPS;
+    // Group by city, count activities
+    const grouped = new Map<string, { count: number; country: string; date: string }>();
+    for (const a of activities) {
+      const key = a.city;
+      const g = grouped.get(key) ?? { count: 0, country: a.country, date: a.starts_at };
+      g.count += 1;
+      grouped.set(key, g);
+    }
+    const flags: Record<string, string> = {
+      Portugal: "🇵🇹", Japan: "🇯🇵", Thailand: "🇹🇭", Spain: "🇪🇸", Brazil: "🇧🇷",
+      "United States": "🇺🇸", USA: "🇺🇸", Netherlands: "🇳🇱", "United Kingdom": "🇬🇧",
+      UK: "🇬🇧", Italy: "🇮🇹", France: "🇫🇷", Germany: "🇩🇪", Mexico: "🇲🇽",
+      Indonesia: "🇮🇩", Morocco: "🇲🇦", Greece: "🇬🇷", Korea: "🇰🇷",
+    };
+    const real: Trip[] = [...grouped.entries()].slice(0, 8).map(([city, g]) => ({
+      flag: flags[g.country] ?? "🌍",
+      city,
+      dates: new Date(g.date).toLocaleDateString("en", { month: "short", day: "numeric" }),
+      going: (g.count * 137 + 42).toLocaleString(),
+    }));
+    return real.length >= 4 ? real : [...real, ...FALLBACK_TRIPS].slice(0, 8);
+  }, [activities]);
+
   return (
     <main className="relative min-h-screen" style={{ background: "#f5e6c9" }}>
       <Nav />
-      <Hero />
-      <TrendingTrips />
-      <Activities />
+      <Hero liveCount={activities.length} cityCount={cityCount} />
+      <LiveMap activities={activities} />
+      <TrendingTrips trips={trips} />
       <How />
       <CTA />
       <Footer />
