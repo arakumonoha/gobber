@@ -668,7 +668,7 @@ function LiveMap({
               </div>
             </>
           )}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
