@@ -932,7 +932,7 @@ function CategoryChip({ active, onClick, children }: { active: boolean; onClick:
       animate={active ? { scale: 1.04 } : { scale: 1 }}
       onClick={onClick}
       transition={{ type: "spring", stiffness: 420, damping: 26 }}
-      className="relative shrink-0 rounded-full px-4 py-1.5 text-[12.5px] font-medium tracking-[-0.005em]"
+      className="relative shrink-0 rounded-full px-4 py-2 text-[13px] font-medium tracking-[-0.008em]"
       style={{
         color: active ? "#fffaf0" : "#3d3120",
       }}
