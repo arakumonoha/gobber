@@ -188,12 +188,26 @@ function Explore() {
         )}
       </AnimatePresence>
 
+      {/* Top-left flank: Drop-a-pin FAB — mirrors the notification bell top-right */}
+      <div className="absolute left-5 top-5 z-30 sm:left-7">
+        <motion.button
+          whileTap={{ scale: 0.92 }}
+          onClick={() => { setDropMode((v) => !v); setDrop(null); setSelectedId(null); }}
+          aria-pressed={dropMode}
+          aria-label={dropMode ? "Cancel pin" : "Drop a pin"}
+          className="flex h-11 w-11 items-center justify-center rounded-full bg-white/85 text-[#1a1614] ring-1 ring-black/[0.06] shadow-[0_18px_36px_-14px_rgba(60,42,20,0.28)] transition hover:bg-white"
+          style={{ backdropFilter: "saturate(180%) blur(20px)", WebkitBackdropFilter: "saturate(180%) blur(20px)" }}
+        >
+          <Plus className={`h-4 w-4 transition-transform ${dropMode ? "rotate-45" : ""}`} strokeWidth={2.2} aria-hidden="true" />
+        </motion.button>
+      </div>
+
       {/* Header — editorial, centered */}
       <motion.div
         initial={{ y: -12, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-        className="relative z-20 mx-auto w-full max-w-[860px] px-5 pt-9 sm:px-7"
+        className="relative z-20 mx-auto w-full max-w-[720px] px-5 pt-9 sm:px-7"
       >
         <div className="flex flex-col items-center text-center">
           <p className="text-[10.5px] font-semibold uppercase tracking-[0.3em] text-[#3a2a12]">Right now</p>
@@ -205,51 +219,51 @@ function Explore() {
           </div>
 
           <div
-            className="mt-5 flex max-w-full gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-            role="tablist"
-            aria-label="Filter by category"
+            className="relative mt-5 w-full"
+            style={{
+              WebkitMaskImage:
+                "linear-gradient(to right, transparent 0, #000 32px, #000 calc(100% - 32px), transparent 100%)",
+              maskImage:
+                "linear-gradient(to right, transparent 0, #000 32px, #000 calc(100% - 32px), transparent 100%)",
+            }}
           >
-            <button
-              onClick={() => setCategory(null)}
-              role="tab"
-              aria-selected={!category}
-              className={`shrink-0 rounded-full px-4 py-1.5 text-xs font-semibold tracking-[-0.005em] ring-1 transition ${
-                !category
-                  ? "bg-[#1a1108] text-[#fff7e8] ring-black/10 shadow-[0_10px_22px_-12px_rgba(20,12,4,0.55)]"
-                  : "bg-white/70 text-[#2a1c0c] ring-black/[0.06] backdrop-blur-xl shadow-[0_6px_16px_-10px_rgba(60,40,14,0.28)]"
-              }`}
+            <div
+              className="mx-auto flex w-max max-w-full justify-center gap-2 overflow-x-auto px-8 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              role="tablist"
+              aria-label="Filter by category"
             >
-              All
-            </button>
-            {CATEGORIES.map((c) => (
               <button
-                key={c.id}
-                onClick={() => setCategory(c.id === category ? null : c.id)}
+                onClick={() => setCategory(null)}
                 role="tab"
-                aria-selected={category === c.id}
+                aria-selected={!category}
                 className={`shrink-0 rounded-full px-4 py-1.5 text-xs font-semibold tracking-[-0.005em] ring-1 transition ${
-                  category === c.id
+                  !category
                     ? "bg-[#1a1108] text-[#fff7e8] ring-black/10 shadow-[0_10px_22px_-12px_rgba(20,12,4,0.55)]"
                     : "bg-white/70 text-[#2a1c0c] ring-black/[0.06] backdrop-blur-xl shadow-[0_6px_16px_-10px_rgba(60,40,14,0.28)]"
                 }`}
               >
-                <span className="mr-1" aria-hidden="true">{c.icon}</span>{c.label}
+                All
               </button>
-            ))}
+              {CATEGORIES.map((c) => (
+                <button
+                  key={c.id}
+                  onClick={() => setCategory(c.id === category ? null : c.id)}
+                  role="tab"
+                  aria-selected={category === c.id}
+                  className={`shrink-0 rounded-full px-4 py-1.5 text-xs font-semibold tracking-[-0.005em] ring-1 transition ${
+                    category === c.id
+                      ? "bg-[#1a1108] text-[#fff7e8] ring-black/10 shadow-[0_10px_22px_-12px_rgba(20,12,4,0.55)]"
+                      : "bg-white/70 text-[#2a1c0c] ring-black/[0.06] backdrop-blur-xl shadow-[0_6px_16px_-10px_rgba(60,40,14,0.28)]"
+                  }`}
+                >
+                  <span className="mr-1" aria-hidden="true">{c.icon}</span>{c.label}
+                </button>
+              ))}
+            </div>
           </div>
-
-          <button
-            onClick={() => { setDropMode((v) => !v); setDrop(null); setSelectedId(null); }}
-            aria-pressed={dropMode}
-            className={`mt-4 inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold shadow-float transition hover:-translate-y-0.5 ${
-              dropMode ? "bg-ink text-background" : "bg-primary text-primary-foreground"
-            }`}
-          >
-            <Plus className={`h-3.5 w-3.5 transition-transform ${dropMode ? "rotate-45" : ""}`} aria-hidden="true" />
-            {dropMode ? "Cancel pin" : "Drop a pin"}
-          </button>
         </div>
       </motion.div>
+
 
 
       {/* Stat chip */}
