@@ -52,7 +52,11 @@ export function ArcgisGlobe({
 
   useEffect(() => {
     let cancelled = false;
-    let rafId: number | undefined;
+    let spinTimer: ReturnType<typeof setInterval> | undefined;
+
+    const prefersReduced =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     loadArcgis()
       .then((require) => {
@@ -78,22 +82,31 @@ export function ArcgisGlobe({
                 lighting: { type: "virtual" },
               },
               ui: { components: [] },
-              constraints: { altitude: { min: 5000000, max: 30000000 } },
               alphaCompositingEnabled: true,
+              // preview-only: no drag/zoom/keyboard so it can't get "stuck"
+              navigation: {
+                mouseWheelZoomEnabled: false,
+                browserTouchPanEnabled: false,
+                momentumEnabled: false,
+              },
             });
+            // block interaction completely for a stable ambient preview
+            view.on("drag", (e: any) => e.stopPropagation());
+            view.on("mouse-wheel", (e: any) => e.stopPropagation());
+            view.on("key-down", (e: any) => e.stopPropagation());
+
             viewRef.current = view;
             view.when(() => {
               if (cancelled) return;
               setReady(true);
-              if (!spin) return;
-              const step = () => {
-                if (cancelled || !viewRef.current) return;
+              if (!spin || prefersReduced) return;
+              // throttled spin: ~4°/sec at 8fps updates — cheap and smooth
+              spinTimer = setInterval(() => {
+                if (!viewRef.current || document.hidden) return;
                 const cam = viewRef.current.camera.clone();
-                cam.position.longitude = (cam.position.longitude + 0.05) % 360;
+                cam.position.longitude = ((cam.position.longitude + 0.5) + 540) % 360 - 180;
                 viewRef.current.goTo(cam, { animate: false });
-                rafId = requestAnimationFrame(step);
-              };
-              rafId = requestAnimationFrame(step);
+              }, 125);
             });
           },
         );
@@ -102,7 +115,7 @@ export function ArcgisGlobe({
 
     return () => {
       cancelled = true;
-      if (rafId) cancelAnimationFrame(rafId);
+      if (spinTimer) clearInterval(spinTimer);
       if (viewRef.current) {
         try {
           viewRef.current.destroy();
@@ -111,6 +124,7 @@ export function ArcgisGlobe({
       }
     };
   }, [basemap, spin]);
+
 
   return (
     <div className={className} style={{ position: "relative", width: "100%", height: "100%" }}>
