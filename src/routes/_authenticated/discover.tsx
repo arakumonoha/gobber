@@ -13,6 +13,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useUser } from "@/hooks/use-user";
 import { toast } from "sonner";
+import { getLocationPhoto } from "@/lib/place-photo.functions";
 
 export const Route = createFileRoute("/_authenticated/discover")({
   head: () => ({
