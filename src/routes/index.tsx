@@ -588,27 +588,27 @@ type Trip = { flag: string; city: string; count: number };
 function TripCard({ t }: { t: Trip }) {
   return (
     <div
-      className="flex min-w-[260px] items-center gap-3 rounded-2xl px-4 py-3"
+      className="relative flex h-24 w-24 shrink-0 items-center justify-center rounded-3xl sm:h-28 sm:w-28"
       style={{
-        background: "color-mix(in oklab, white 85%, transparent)",
+        background: "color-mix(in oklab, white 90%, transparent)",
         border: "1px solid rgba(20,18,16,0.06)",
-        boxShadow: "0 12px 28px -18px rgba(60,42,20,0.22)",
+        boxShadow: "0 14px 30px -18px rgba(60,42,20,0.25)",
       }}
+      role="img"
+      aria-label={`${t.city} — ${t.count} live gatherings this week`}
+      title={`${t.city} · ${t.count} live`}
     >
-      <span className="text-[28px] leading-none">{t.flag}</span>
-      <div className="min-w-0 flex-1">
-        <div className="text-[14.5px] font-semibold tracking-[-0.01em]" style={{ color: PALETTE.ink }}>{t.city}</div>
-        <div className="text-[11.5px]" style={{ color: "#6b5c48" }}>gathering, this week</div>
-      </div>
+      <span className="text-[44px] leading-none sm:text-[52px]" aria-hidden>{t.flag}</span>
       <span
-        className="shrink-0 rounded-full px-2.5 py-1 text-[11.5px] font-medium"
-        style={{ background: PALETTE.amberSoft, color: PALETTE.amberDeep }}
+        className="absolute -bottom-1.5 -right-1.5 min-w-[22px] rounded-full px-1.5 text-center text-[11px] font-semibold leading-[20px]"
+        style={{ background: PALETTE.amber, color: PALETTE.ink, boxShadow: "0 4px 10px rgba(60,42,20,0.25)" }}
       >
-        {t.count} live
+        {t.count}
       </span>
     </div>
   );
 }
+
 
 function TrendingMarquee({ trips }: { trips: Trip[] }) {
   if (trips.length === 0) return null;
@@ -622,7 +622,7 @@ function TrendingMarquee({ trips }: { trips: Trip[] }) {
         <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-24" style={{ background: `linear-gradient(90deg,${PALETTE.paper},transparent)` }} />
         <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24" style={{ background: `linear-gradient(-90deg,${PALETTE.paper},transparent)` }} />
         <motion.div
-          className="flex gap-3"
+          className="flex gap-4 sm:gap-6"
           animate={{ x: ["0%", "-50%"] }}
           transition={{ duration: 45, repeat: Infinity, ease: "linear" }}
         >

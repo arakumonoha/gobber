@@ -88,30 +88,38 @@ export function TrendingStrip({
 }) {
   if (trending.length === 0) return null;
   return (
-    <div className="flex flex-wrap items-center justify-center gap-2">
+    <div className="flex flex-wrap items-center justify-center gap-2.5">
       <span className="text-[11px] font-medium uppercase tracking-[0.16em] text-[#8b6f3f]">
         trending 24h
       </span>
-      {trending.slice(0, 6).map((t) => (
-        <motion.div
-          key={t.city}
-          whileHover={{ y: -2 }}
-          className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[12px] text-[#1A1614]"
-          style={{
-            background: "color-mix(in oklab, white 85%, transparent)",
-            border: "1px solid rgba(20,18,16,0.06)",
-          }}
-        >
-          <span>{fallbackFlags[t.country] ?? "🌍"}</span>
-          <span className="font-semibold">{t.city}</span>
-          <span
-            className="ml-1 rounded-full px-1.5 text-[10px] font-medium"
-            style={{ background: "#FBF0D6", color: "#B4801F" }}
+      {trending.slice(0, 8).map((t) => {
+        const flag = fallbackFlags[t.country] ?? "🌍";
+        return (
+          <motion.div
+            key={t.city}
+            whileHover={{ y: -3, scale: 1.05 }}
+            transition={{ type: "spring", stiffness: 320, damping: 20 }}
+            className="relative inline-flex h-11 w-11 items-center justify-center rounded-full text-[22px] leading-none"
+            style={{
+              background: "color-mix(in oklab, white 88%, transparent)",
+              border: "1px solid rgba(20,18,16,0.06)",
+              boxShadow: "0 10px 22px -14px rgba(60,42,20,0.28)",
+            }}
+            role="img"
+            aria-label={`${t.city} — ${t.count} trending`}
+            title={`${t.city} · ${t.count} live`}
           >
-            +{t.count}
-          </span>
-        </motion.div>
-      ))}
+            <span aria-hidden>{flag}</span>
+            <span
+              className="absolute -bottom-1 -right-1 min-w-[18px] rounded-full px-1 text-center text-[10px] font-semibold leading-[16px]"
+              style={{ background: "#E8A93C", color: "#1A1614", boxShadow: "0 2px 6px rgba(60,42,20,0.25)" }}
+            >
+              {t.count}
+            </span>
+          </motion.div>
+        );
+      })}
     </div>
   );
 }
+
