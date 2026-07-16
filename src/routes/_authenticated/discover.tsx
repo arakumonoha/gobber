@@ -705,12 +705,12 @@ function Discover() {
                     autoFocus
                     value={form.title}
                     onChange={(v) => setForm({ ...form, title: v })}
-                    placeholder="Sunset ramen in Shibuya"
+                    placeholder={TITLE_PLACEHOLDERS[form.category] ?? "What's happening?"}
                   />
                   <GlassTextarea
                     value={form.description}
                     onChange={(v) => setForm({ ...form, description: v })}
-                    placeholder="What's the vibe? (optional)"
+                    placeholder={DESC_PLACEHOLDERS[form.category] ?? "What's the vibe? (optional)"}
                   />
 
                   <div className="pt-1">
