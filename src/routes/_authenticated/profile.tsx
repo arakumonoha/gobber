@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { LogOut, Loader2, AtSign } from "lucide-react";
+import { LogOut, Loader2, AtSign, Pencil, ChevronDown } from "lucide-react";
 import { useUser } from "@/hooks/use-user";
 import { supabase } from "@/integrations/supabase/client";
 import { useMyRsvps, useActivities } from "@/lib/activities";
@@ -29,6 +29,7 @@ function Profile() {
   const [profile, setProfile] = useState<{ display_name: string; bio: string; home_city: string; avatar_url: string; username: string }>({ display_name: "", bio: "", home_city: "", avatar_url: "", username: "" });
   const [loading, setLoading] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -84,14 +85,36 @@ function Profile() {
           <FriendsPanel />
         </div>
 
-        <div className="mt-8 space-y-4 rounded-3xl bg-card p-5 shadow-glass">
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Edit profile</h2>
-          <div><Label className="text-xs">Display name</Label><Input value={profile.display_name} onChange={(e) => setProfile({ ...profile, display_name: e.target.value })} className="mt-1 h-11 rounded-xl" /></div>
-          <div><Label className="text-xs">Home city</Label><Input value={profile.home_city} onChange={(e) => setProfile({ ...profile, home_city: e.target.value })} className="mt-1 h-11 rounded-xl" placeholder="Lisbon" /></div>
-          <div><Label className="text-xs">Avatar URL</Label><Input value={profile.avatar_url} onChange={(e) => setProfile({ ...profile, avatar_url: e.target.value })} className="mt-1 h-11 rounded-xl" placeholder="https://..." /></div>
-          <div><Label className="text-xs">Bio</Label><Textarea rows={3} value={profile.bio} onChange={(e) => setProfile({ ...profile, bio: e.target.value })} className="mt-1 rounded-xl" placeholder="I collect sunsets and third-wave coffee." /></div>
-          <Button onClick={save} disabled={loading} className="h-11 w-full rounded-xl">{loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save"}</Button>
+        <div className="mt-8 overflow-hidden rounded-3xl bg-card shadow-glass">
+          <button
+            onClick={() => setEditOpen((v) => !v)}
+            className="flex w-full items-center justify-between px-5 py-4 text-left transition hover:bg-black/[0.02]"
+            aria-expanded={editOpen}
+          >
+            <span className="flex items-center gap-2.5">
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-black/5 text-ink"><Pencil className="h-3.5 w-3.5" /></span>
+              <span className="text-[15px] font-semibold text-ink">Edit profile</span>
+            </span>
+            <motion.span animate={{ rotate: editOpen ? 180 : 0 }} transition={{ type: "spring", stiffness: 300, damping: 26 }} className="text-muted-foreground">
+              <ChevronDown className="h-4 w-4" />
+            </motion.span>
+          </button>
+          <motion.div
+            initial={false}
+            animate={{ height: editOpen ? "auto" : 0, opacity: editOpen ? 1 : 0 }}
+            transition={{ type: "spring", stiffness: 220, damping: 28 }}
+            style={{ overflow: "hidden" }}
+          >
+            <div className="space-y-4 px-5 pb-5">
+              <div><Label className="text-xs">Display name</Label><Input value={profile.display_name} onChange={(e) => setProfile({ ...profile, display_name: e.target.value })} className="mt-1 h-11 rounded-xl" /></div>
+              <div><Label className="text-xs">Home city</Label><Input value={profile.home_city} onChange={(e) => setProfile({ ...profile, home_city: e.target.value })} className="mt-1 h-11 rounded-xl" placeholder="Lisbon" /></div>
+              <div><Label className="text-xs">Avatar URL</Label><Input value={profile.avatar_url} onChange={(e) => setProfile({ ...profile, avatar_url: e.target.value })} className="mt-1 h-11 rounded-xl" placeholder="https://..." /></div>
+              <div><Label className="text-xs">Bio</Label><Textarea rows={3} value={profile.bio} onChange={(e) => setProfile({ ...profile, bio: e.target.value })} className="mt-1 rounded-xl" placeholder="I collect sunsets and third-wave coffee." /></div>
+              <Button onClick={save} disabled={loading} className="h-11 w-full rounded-xl">{loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save"}</Button>
+            </div>
+          </motion.div>
         </div>
+
 
         <BlockedPanel />
 
