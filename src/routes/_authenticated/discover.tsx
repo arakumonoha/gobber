@@ -61,12 +61,57 @@ function Discover() {
     });
   }, [activities, category, query]);
 
-  const pins = filtered.map((a) => ({ id: a.id, lat: a.lat, lng: a.lng, label: a.title, category: a.category }));
+  // A user is only allowed one *active* pin at a time (starts_at + duration_hours > now)
+  const myActivePin = useMemo(() => {
+    if (!user) return null;
+    const now = Date.now();
+    return (
+      activities.find((a) => {
+        if (a.host_id !== user.id) return false;
+        const start = new Date(a.starts_at).getTime();
+        const durHrs = (a as unknown as { duration_hours?: number }).duration_hours ?? 2;
+        const end = start + durHrs * 60 * 60 * 1000;
+        return end > now;
+      }) ?? null
+    );
+  }, [activities, user]);
+
+  const pins = filtered.map((a) => ({
+    id: a.id,
+    lat: a.lat,
+    lng: a.lng,
+    label: a.title,
+    category: a.category,
+    mine: !!user && a.host_id === user.id,
+  }));
 
   function focusActivity(a: Activity) {
     setSelectedId(a.id);
     mapRef.current?.panTo(a.lat, a.lng, 12);
   }
+
+  async function removeMyPin() {
+    if (!myActivePin || !user) return;
+    const id = myActivePin.id;
+    try {
+      const { error } = await supabase.from("activities").delete().eq("id", id).eq("host_id", user.id);
+      if (error) throw error;
+      toast.success("Pin removed");
+      await qc.invalidateQueries({ queryKey: ["activities"] });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Could not remove");
+    }
+  }
+
+  function confirmRemovePin() {
+    if (!myActivePin) return;
+    toast(`Remove "${myActivePin.title}"?`, {
+      description: "This takes down your pin for everyone.",
+      action: { label: "Remove", onClick: removeMyPin },
+      duration: 6000,
+    });
+  }
+
 
   async function reverseGeocode(lat: number, lng: number): Promise<string> {
     try {
