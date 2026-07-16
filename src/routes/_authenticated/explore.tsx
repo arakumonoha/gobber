@@ -55,8 +55,12 @@ function Explore() {
     [activities, category],
   );
 
-  const pins = filtered.map((a) => ({ id: a.id, lat: a.lat, lng: a.lng, label: a.title, category: a.category }));
+  const pins = useMemo(
+    () => filtered.map((a) => ({ id: a.id, lat: a.lat, lng: a.lng, label: a.title, category: a.category })),
+    [filtered],
+  );
   const selected = selectedId ? activities.find((a) => a.id === selectedId) ?? null : null;
+
 
   async function handleDrop(c: { lng: number; lat: number }) {
     setDrop({ lat: c.lat, lng: c.lng });
@@ -300,7 +304,7 @@ function Explore() {
               <div className="relative h-40 w-full overflow-hidden">
                 <div
                   className="absolute inset-0 bg-cover bg-center"
-                  style={{ backgroundImage: `url(${selected.cover_url ?? "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=1200&q=80"})` }}
+                  style={{ backgroundImage: `url(${selected.cover_url ?? "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=800&q=75&auto=format"})` }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
                 <button
@@ -375,7 +379,7 @@ function MiniCard({ a, onClick }: { a: Activity; onClick: () => void }) {
     >
       <div
         className="h-14 w-14 shrink-0 rounded-xl bg-cover bg-center ring-1 ring-black/5"
-        style={{ backgroundImage: `url(${a.cover_url ?? "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=600&q=80"})` }}
+        style={{ backgroundImage: `url(${a.cover_url ?? "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=400&q=70&auto=format"})` }}
       />
       <div className="min-w-0 flex-1">
         <p className="text-[9.5px] font-bold uppercase tracking-[0.22em] text-[#7a3f16]">{a.category}</p>

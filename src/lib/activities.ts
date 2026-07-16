@@ -27,11 +27,16 @@ export const activitiesQuery = () => ({
     if (error) throw error;
     return data as Activity[];
   },
+  // Activities are pinned for at most 24h; refetching every keystroke is wasteful.
+  staleTime: 60_000,
+  gcTime: 5 * 60_000,
+  refetchOnWindowFocus: false,
 });
 
 export function useActivities() {
   return useQuery(activitiesQuery());
 }
+
 
 export function activityQuery(id: string) {
   return {
