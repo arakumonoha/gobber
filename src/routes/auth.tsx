@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { toast } from "sonner";
-import { Loader2, ArrowRight, X } from "lucide-react";
+import { Loader2, ArrowRight } from "lucide-react";
 
 
 export const Route = createFileRoute("/auth")({
@@ -167,7 +167,6 @@ function InlineField({
 
 function AuthPage() {
   const navigate = useNavigate();
-  const [view, setView] = useState<"welcome" | "auth">("welcome");
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [step, setStep] = useState<"email" | "password">("email");
   const [email, setEmail] = useState("");
@@ -240,204 +239,51 @@ function AuthPage() {
         }}
       />
 
-      {/* Goldfish-style ambient aurora — single centered orb, softly breathing */}
-      {view === "welcome" && (
-        <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          <motion.div
-            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-            style={{
-              width: "min(92vw, 780px)",
-              height: "min(92vw, 780px)",
-              borderRadius: "50%",
-              background:
-                "radial-gradient(closest-side, rgba(122,155,205,0.28) 0%, rgba(214,168,110,0.18) 38%, rgba(155,185,150,0.10) 62%, transparent 78%)",
-              filter: "blur(40px)",
-            }}
-            animate={{
-              scale: [1, 1.05, 1],
-              rotate: [0, 12, 0],
-            }}
-            transition={{ duration: 22, repeat: Infinity, ease: [0.45, 0, 0.55, 1] }}
-          />
-          <motion.div
-            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-            style={{
-              width: "min(60vw, 520px)",
-              height: "min(60vw, 520px)",
-              borderRadius: "50%",
-              background:
-                "radial-gradient(closest-side, rgba(255,238,200,0.55) 0%, rgba(255,224,170,0.18) 45%, transparent 72%)",
-              filter: "blur(30px)",
-              mixBlendMode: "screen",
-            }}
-            animate={{ scale: [1, 1.08, 1], opacity: [0.85, 1, 0.85] }}
-            transition={{ duration: 9, repeat: Infinity, ease: [0.45, 0, 0.55, 1] }}
-          />
-        </div>
-      )}
+      {/* Ambient aurora — blurred backdrop behind the card */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden" style={{ filter: "blur(24px)" }}>
+        <motion.div
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+          style={{
+            width: "min(92vw, 780px)",
+            height: "min(92vw, 780px)",
+            borderRadius: "50%",
+            background:
+              "radial-gradient(closest-side, rgba(122,155,205,0.32) 0%, rgba(214,168,110,0.20) 38%, rgba(155,185,150,0.12) 62%, transparent 78%)",
+          }}
+          animate={{ scale: [1, 1.05, 1], rotate: [0, 12, 0] }}
+          transition={{ duration: 22, repeat: Infinity, ease: [0.45, 0, 0.55, 1] }}
+        />
+        <motion.div
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+          style={{
+            width: "min(60vw, 520px)",
+            height: "min(60vw, 520px)",
+            borderRadius: "50%",
+            background:
+              "radial-gradient(closest-side, rgba(255,238,200,0.6) 0%, rgba(255,224,170,0.20) 45%, transparent 72%)",
+            mixBlendMode: "screen",
+          }}
+          animate={{ scale: [1, 1.08, 1], opacity: [0.85, 1, 0.85] }}
+          transition={{ duration: 9, repeat: Infinity, ease: [0.45, 0, 0.55, 1] }}
+        />
+      </div>
 
-      {/* Welcome layer — always mounted; blurs & dims when auth overlay opens */}
+      {/* Auth card — front and center */}
+
       <motion.div
-        animate={
-          view === "auth"
-            ? { filter: "blur(18px)", scale: 0.97, opacity: 0.55 }
-            : { filter: "blur(0px)", scale: 1, opacity: 1 }
-        }
-        transition={{ duration: 0.7, ease: EASE }}
-        className="relative z-10 flex w-full max-w-[440px] flex-col items-center text-center"
-        style={{ pointerEvents: view === "auth" ? "none" : "auto" }}
+        initial={{ opacity: 0, y: 20, scale: 0.96, filter: "blur(10px)" }}
+        animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+        transition={{ duration: 0.55, ease: EASE }}
+        className="relative z-10 w-full max-w-[380px] overflow-hidden rounded-[26px]"
+        style={{
+          background: "rgba(255,253,247,0.82)",
+          backdropFilter: "saturate(180%) blur(40px)",
+          border: "1px solid rgba(255,255,255,0.75)",
+          boxShadow:
+            "0 1px 0 rgba(255,255,255,0.9) inset, 0 40px 90px -30px rgba(60,42,20,0.4), 0 10px 30px -18px rgba(60,42,20,0.18)",
+        }}
       >
-          {/* Micro mark */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.6 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, ease: EASE }}
-            className="flex items-center gap-2"
-          >
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#c4965a] opacity-70" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-[#8a6b45]" />
-            </span>
-            <span
-              className="text-[11px] font-medium uppercase tracking-[0.32em] text-[#8a7a5f]"
-              style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif' }}
-            >
-              Gobber
-            </span>
-          </motion.div>
 
-          {/* Wordmark */}
-          <motion.h1
-            initial={{ opacity: 0, y: 18, filter: "blur(10px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            transition={{ duration: 1.1, delay: 0.15, ease: EASE }}
-            className="mt-14 text-[64px] sm:text-[84px] leading-[0.95] tracking-[-0.045em] text-[#0f0d0b]"
-            style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif', fontWeight: 500 }}
-          >
-            Visit
-            <span
-              className="mx-2 text-[#8a6b45]"
-              style={{ fontFamily: '"Instrument Serif", Georgia, serif', fontStyle: "italic", fontWeight: 400 }}
-            >
-              n
-            </span>
-            Vibe
-          </motion.h1>
-
-          {/* Sub-copy */}
-          <motion.p
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.35, ease: EASE }}
-            className="mt-6 max-w-[340px] text-[14.5px] leading-[1.55] tracking-[-0.005em] text-[#5a4a38]"
-            style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif' }}
-          >
-            A quiet home for real-life gatherings. Sit at a table, meet the world.
-          </motion.p>
-
-          {/* CTA stack */}
-          <motion.div
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.5, ease: EASE }}
-            className="mt-12 flex w-full max-w-[340px] flex-col gap-2"
-          >
-            <motion.button
-              whileHover={{ y: -1 }}
-              whileTap={{ scale: 0.985 }}
-              transition={{ type: "spring", stiffness: 420, damping: 26 }}
-              onClick={() => setView("auth")}
-              className="group flex h-[52px] items-center justify-between rounded-full bg-[#0f0d0b] pl-6 pr-2 text-[14.5px] font-medium tracking-[-0.005em] text-white transition hover:bg-[#1a1614]"
-              style={{ boxShadow: "0 20px 40px -18px rgba(60,42,20,0.55), 0 2px 4px rgba(0,0,0,0.08)" }}
-            >
-              <span className="flex items-center gap-2.5">
-                <AppleIcon className="h-[18px] w-[18px] text-white" />
-                Continue with Apple
-              </span>
-              <span
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-white/12 transition group-hover:bg-white/20"
-              >
-                <ArrowRight className="h-4 w-4" strokeWidth={2.2} />
-              </span>
-            </motion.button>
-
-            <motion.button
-              whileHover={{ y: -1 }}
-              whileTap={{ scale: 0.985 }}
-              transition={{ type: "spring", stiffness: 420, damping: 26 }}
-              onClick={() => setView("auth")}
-              className="flex h-[52px] items-center justify-center gap-2.5 rounded-full bg-white/70 text-[14.5px] font-medium tracking-[-0.005em] text-[#0f0d0b] transition hover:bg-white"
-              style={{
-                border: "1px solid rgba(26,22,20,0.09)",
-                boxShadow: "0 1px 0 rgba(255,255,255,0.9) inset, 0 8px 22px -14px rgba(60,42,20,0.28)",
-                backdropFilter: "saturate(180%) blur(14px)",
-              }}
-            >
-              <GoogleIcon className="h-[18px] w-[18px]" />
-              Continue with Google
-            </motion.button>
-
-            <button
-              onClick={() => setView("auth")}
-              className="mt-1 text-[13px] tracking-[-0.005em] text-[#8a7a5f] transition hover:text-[#0f0d0b]"
-            >
-              or continue with email →
-            </button>
-          </motion.div>
-
-          {/* Footer */}
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 0.9 }}
-            className="mt-16 text-[11px] tracking-[0.06em] text-[#a08a68]"
-          >
-            <span className="cursor-pointer hover:text-[#8a6b45]">Privacy</span>
-            <span className="mx-2 opacity-50">/</span>
-            <span className="cursor-pointer hover:text-[#8a6b45]">Terms</span>
-            <span className="mx-2 opacity-50">/</span>
-            <span>© Gobber</span>
-          </motion.p>
-      </motion.div>
-
-      {/* Auth overlay — minimal card, front & center */}
-      <AnimatePresence>
-        {view === "auth" && (
-          <motion.div
-            key="auth-overlay"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.4, ease: EASE }}
-            className="absolute inset-0 z-20 flex items-center justify-center px-5"
-            style={{ background: "rgba(30,22,14,0.14)" }}
-            onClick={() => setView("welcome")}
-          >
-
-      /* iCloud-style centered card */
-            <motion.div
-              key="auth"
-              initial={{ opacity: 0, y: 20, scale: 0.96, filter: "blur(10px)" }}
-              animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
-              exit={{ opacity: 0, y: 12, scale: 0.97, filter: "blur(8px)" }}
-              transition={{ duration: 0.55, ease: EASE }}
-              onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-[380px] overflow-hidden rounded-[26px]"
-              style={{
-                background: "rgba(255,253,247,0.82)",
-                backdropFilter: "saturate(180%) blur(40px)",
-                border: "1px solid rgba(255,255,255,0.75)",
-                boxShadow:
-                  "0 1px 0 rgba(255,255,255,0.9) inset, 0 40px 90px -30px rgba(60,42,20,0.4), 0 10px 30px -18px rgba(60,42,20,0.18)",
-              }}
-            >
-              <button
-                onClick={() => setView("welcome")}
-                aria-label="Close"
-                className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full text-[#8a7a5f] transition hover:bg-black/5 hover:text-[#0f0d0b]"
-              >
-                <X className="h-4 w-4" strokeWidth={2.2} />
-              </button>
 
               <div className="px-7 pt-10 pb-6">
                 <motion.div
@@ -552,12 +398,9 @@ function AuthPage() {
                   )}
                 </div>
               </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
+      </motion.div>
     </div>
+
   );
 }
 
