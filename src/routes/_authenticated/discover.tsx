@@ -198,7 +198,9 @@ function Discover() {
           <div className="mt-4">
             <MapTypeToggle value={mapView} onChange={setMapView} />
           </div>
+        </div>
       </motion.div>
+
 
 
       {/* Compass — mirrors FAB position on the left */}
