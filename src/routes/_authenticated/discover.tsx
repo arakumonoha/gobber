@@ -511,7 +511,7 @@ function Discover() {
                 </AnimatePresence>
               </h2>
             </div>
-            <span className="text-[11px] font-medium uppercase tracking-[0.16em] text-[#2a1c0c]"><span className="hidden lg:inline">Click to collapse</span><span className="lg:hidden">Swipe · Pull to refresh</span></span>
+            <span className="text-[11px] font-medium uppercase tracking-[0.16em] text-[#2a1c0c] lg:hidden">Swipe · Pull to refresh</span>
           </div>
 
 
