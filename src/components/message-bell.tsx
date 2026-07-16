@@ -318,71 +318,89 @@ function ChatView({ convId, onBack }: { convId: string; onBack: () => void }) {
             {conv.type === "location" ? "Say hi to your fellow travellers." : "Say something nice."}
           </div>
         ) : (
-          <ul className="flex flex-col gap-0.5">
+          <ul className="flex flex-col gap-0.5 px-1">
             {msgs.map((m, i) => {
               const mine = m.sender_id === user?.id;
               const prev = msgs[i - 1];
               const next = msgs[i + 1];
               const sameAsPrev = prev?.sender_id === m.sender_id;
               const sameAsNext = next?.sender_id === m.sender_id;
-              const showName = conv.type === "location" && !mine && !sameAsPrev;
+              const t = new Date(m.created_at);
+              const prevT = prev ? new Date(prev.created_at) : null;
+              // Show a centered timestamp separator on the first message or when >15 min gap
+              const showTimestamp = !prev || (prevT && t.getTime() - prevT.getTime() > 15 * 60 * 1000);
+              const groupBreak = showTimestamp || !sameAsPrev;
+              const showName = conv.type === "location" && !mine && groupBreak;
               const sender = conv.members.find((mm) => mm.user_id === m.sender_id);
-              const tailTight = sameAsNext;
+              const groupedWithNext = sameAsNext && next && new Date(next.created_at).getTime() - t.getTime() <= 15 * 60 * 1000;
+              const tailTight = groupedWithNext;
               const bubbleRadius = mine
                 ? `rounded-[22px] ${tailTight ? "rounded-br-md" : ""}`
                 : `rounded-[22px] ${tailTight ? "rounded-bl-md" : ""}`;
+              const now = new Date();
+              const sameDay = t.toDateString() === now.toDateString();
+              const timeLabel = sameDay
+                ? t.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })
+                : t.toLocaleString([], { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
               return (
-                <li
-                  key={m.id}
-                  className={`flex ${mine ? "justify-end" : "justify-start"} ${
-                    sameAsPrev ? "mt-0" : "mt-2"
-                  }`}
-                >
-                  <div className="max-w-[75%]">
-                    {showName && (
-                      <p className="mb-1 pl-3 text-[10.5px] font-medium text-muted-foreground">
-                        {sender?.profile?.display_name || sender?.profile?.username || "Member"}
-                      </p>
-                    )}
-                    {m.media_url && m.signed_url && (
-                      <div
-                        className={`mb-1 overflow-hidden rounded-[22px] ${
-                          mine ? "ml-auto" : ""
-                        }`}
-                        style={{ maxWidth: 260 }}
-                      >
-                        {m.media_type === "video" ? (
-                          <video
-                            src={m.signed_url}
-                            controls
-                            playsInline
-                            className="block max-h-80 w-full bg-black object-contain"
-                          />
-                        ) : (
-                          <a href={m.signed_url} target="_blank" rel="noreferrer">
-                            <img
+                <div key={m.id}>
+                  {showTimestamp && (
+                    <div className="my-3 flex items-center justify-center">
+                      <span className="text-[10.5px] font-medium uppercase tracking-wide text-muted-foreground/80">
+                        {timeLabel}
+                      </span>
+                    </div>
+                  )}
+                  <li
+                    className={`flex ${mine ? "justify-end" : "justify-start"} ${
+                      groupBreak ? "mt-1.5" : "mt-0"
+                    }`}
+                  >
+                    <div className={`flex max-w-[75%] flex-col ${mine ? "items-end" : "items-start"}`}>
+                      {showName && (
+                        <p className="mb-1 pl-3 text-[10.5px] font-medium text-muted-foreground">
+                          {sender?.profile?.display_name || sender?.profile?.username || "Member"}
+                        </p>
+                      )}
+                      {m.media_url && m.signed_url && (
+                        <div
+                          className="mb-1 overflow-hidden rounded-[22px]"
+                          style={{ maxWidth: 260 }}
+                        >
+                          {m.media_type === "video" ? (
+                            <video
                               src={m.signed_url}
-                              alt="attachment"
-                              className="block max-h-80 w-full object-cover"
-                              loading="lazy"
+                              controls
+                              playsInline
+                              className="block max-h-80 w-full bg-black object-contain"
                             />
-                          </a>
-                        )}
-                      </div>
-                    )}
-                    {m.body && (
-                      <div
-                        className={`whitespace-pre-wrap break-words px-3.5 py-2 text-[14.5px] leading-[1.35] ${bubbleRadius} ${
-                          mine
-                            ? "bg-primary text-white shadow-[0_1px_1px_rgba(0,0,0,0.06)]"
-                            : "bg-black/[0.06] text-ink"
-                        }`}
-                      >
-                        {m.body}
-                      </div>
-                    )}
-                  </div>
-                </li>
+                          ) : (
+                            <a href={m.signed_url} target="_blank" rel="noreferrer">
+                              <img
+                                src={m.signed_url}
+                                alt="attachment"
+                                className="block max-h-80 w-full object-cover"
+                                loading="lazy"
+                              />
+                            </a>
+                          )}
+                        </div>
+                      )}
+                      {m.body && (
+                        <div
+                          title={t.toLocaleString()}
+                          className={`whitespace-pre-wrap break-words px-3.5 py-2 text-[14.5px] leading-[1.35] ${bubbleRadius} ${
+                            mine
+                              ? "bg-primary text-white shadow-[0_1px_1px_rgba(0,0,0,0.06)]"
+                              : "bg-black/[0.06] text-ink"
+                          }`}
+                        >
+                          {m.body}
+                        </div>
+                      )}
+                    </div>
+                  </li>
+                </div>
               );
             })}
           </ul>
