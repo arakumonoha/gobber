@@ -141,11 +141,18 @@ function Discover() {
   async function submitCreate(e: React.FormEvent) {
     e.preventDefault();
     if (!user || !ghostPin) return;
+    if (myActivePin) {
+      toast.error("You already have an active pin. Remove it first.");
+      setShowCreate(false);
+      setGhostPin(null);
+      return;
+    }
     if (!form.title) {
       toast.error("Add a title");
       return;
     }
     setCreating(true);
+
     try {
       const [city, country = ""] = placeLabel.split(",").map((s) => s.trim());
       const duration = Math.min(24, Math.max(1, form.duration_hours || 2));
