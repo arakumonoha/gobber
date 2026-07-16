@@ -293,11 +293,15 @@ function Discover() {
         )}
       </AnimatePresence>
 
-      {/* FAB — Add pin */}
+      {/* FAB — Add pin OR Remove your active pin */}
       <motion.button
         onClick={() => {
           if (!user) {
             toast.error("Sign in to drop a pin");
+            return;
+          }
+          if (myActivePin) {
+            confirmRemovePin();
             return;
           }
           setAddMode((v) => !v);
@@ -305,14 +309,17 @@ function Discover() {
         whileTap={{ scale: 0.92 }}
         className="absolute bottom-28 right-5 z-30 flex h-14 w-14 items-center justify-center rounded-full text-white shadow-[0_18px_36px_-14px_rgba(232,90,60,0.7)] transition sm:right-7"
         style={{
-          background: addMode
-            ? "linear-gradient(180deg,#1a1614,#0a0908)"
-            : "linear-gradient(180deg,#ff7a5c,#e85a3c)",
+          background: myActivePin
+            ? "linear-gradient(180deg,#f0a020,#c67a10)"
+            : addMode
+              ? "linear-gradient(180deg,#1a1614,#0a0908)"
+              : "linear-gradient(180deg,#ff7a5c,#e85a3c)",
         }}
-        aria-label={addMode ? "Cancel add pin" : "Add pin"}
+        aria-label={myActivePin ? "Remove your pin" : addMode ? "Cancel add pin" : "Add pin"}
       >
-        {addMode ? <X className="h-6 w-6" strokeWidth={2.4} /> : <Plus className="h-6 w-6" strokeWidth={2.4} />}
+        {myActivePin ? <Trash2 className="h-5 w-5" strokeWidth={2.2} /> : addMode ? <X className="h-6 w-6" strokeWidth={2.4} /> : <Plus className="h-6 w-6" strokeWidth={2.4} />}
       </motion.button>
+
 
       {/* Bottom sheet */}
       <DraggableSheet
