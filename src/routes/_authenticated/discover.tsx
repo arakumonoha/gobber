@@ -90,26 +90,29 @@ function Discover() {
     mapRef.current?.panTo(a.lat, a.lng, 12);
   }
 
+  const [removing, setRemoving] = useState(false);
+  const [showRemoveConfirm, setShowRemoveConfirm] = useState(false);
+
   async function removeMyPin() {
     if (!myActivePin || !user) return;
     const id = myActivePin.id;
+    setRemoving(true);
     try {
       const { error } = await supabase.from("activities").delete().eq("id", id).eq("host_id", user.id);
       if (error) throw error;
       toast.success("Pin removed");
       await qc.invalidateQueries({ queryKey: ["activities"] });
+      setShowRemoveConfirm(false);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Could not remove");
+    } finally {
+      setRemoving(false);
     }
   }
 
   function confirmRemovePin() {
     if (!myActivePin) return;
-    toast(`Remove "${myActivePin.title}"?`, {
-      description: "This takes down your pin for everyone.",
-      action: { label: "Remove", onClick: removeMyPin },
-      duration: 6000,
-    });
+    setShowRemoveConfirm(true);
   }
 
 
