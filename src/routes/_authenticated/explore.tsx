@@ -1,9 +1,9 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Globe2, MapPin, Users, X, Plus, Loader2, Check } from "lucide-react";
+import { Globe2, MapPin, Users, X, Plus, Minus, Loader2, Check, LocateFixed, Compass } from "lucide-react";
 import { format } from "date-fns";
-import { GoogleMap } from "@/components/google-map";
+import { GoogleMap, type GoogleMapHandle } from "@/components/google-map";
 import { MapTypeToggle, type MapView } from "@/components/map-type-toggle";
 import { BottomNav } from "@/components/bottom-nav";
 import { useActivities, type Activity } from "@/lib/activities";
@@ -12,6 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useUser } from "@/hooks/use-user";
 import { useQueryClient } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
+
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 
@@ -34,7 +35,20 @@ function Explore() {
   const [dropMode, setDropMode] = useState(false);
   const [drop, setDrop] = useState<DropCoords | null>(null);
   const [mapView, setMapView] = useState<MapView>("satellite");
+  const [heading, setHeading] = useState(0);
+  const [locating, setLocating] = useState(false);
+  const mapRef = useRef<GoogleMapHandle>(null);
   const navigate = useNavigate();
+
+  async function handleLocate() {
+    setLocating(true);
+    try {
+      await mapRef.current?.locate();
+    } finally {
+      setLocating(false);
+    }
+  }
+
 
   const filtered = useMemo(
     () => activities.filter((a) => (category ? a.category === category : true)),
@@ -77,6 +91,7 @@ function Explore() {
   return (
     <div className="relative h-[100dvh] w-full overflow-hidden bg-background">
       <GoogleMap
+        ref={mapRef}
         pins={pins}
         mapTypeId={mapView}
         center={{ lat: 25, lng: 10 }}
@@ -87,10 +102,64 @@ function Explore() {
         onMapClick={dropMode ? handleMapClick : undefined}
         onLongPress={(c) => { if (!dropMode) handleDrop(c); }}
         ghostPin={drop}
+        onHeadingChange={setHeading}
       />
 
       {/* Vignette */}
       <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-52 bg-gradient-to-b from-background/60 via-background/10 to-transparent" />
+
+      {/* Left column: stacked glass controls (zoom / locate / compass) */}
+      <div className="absolute bottom-28 left-5 z-30 flex flex-col gap-2 sm:left-7">
+        <div
+          className="flex flex-col overflow-hidden rounded-2xl bg-white/85 ring-1 ring-black/[0.06] shadow-[0_18px_36px_-14px_rgba(60,42,20,0.28)]"
+          style={{ backdropFilter: "saturate(180%) blur(20px)", WebkitBackdropFilter: "saturate(180%) blur(20px)" }}
+        >
+          <motion.button
+            whileTap={{ scale: 0.92 }}
+            onClick={() => mapRef.current?.zoomIn()}
+            className="flex h-11 w-11 items-center justify-center text-[#1a1614] transition hover:bg-black/5"
+            aria-label="Zoom in"
+          >
+            <Plus className="h-4 w-4" strokeWidth={2.2} />
+          </motion.button>
+          <div className="mx-2 h-px bg-black/[0.08]" />
+          <motion.button
+            whileTap={{ scale: 0.92 }}
+            onClick={() => mapRef.current?.zoomOut()}
+            className="flex h-11 w-11 items-center justify-center text-[#1a1614] transition hover:bg-black/5"
+            aria-label="Zoom out"
+          >
+            <Minus className="h-4 w-4" strokeWidth={2.2} />
+          </motion.button>
+        </div>
+        <motion.button
+          whileTap={{ scale: 0.92 }}
+          onClick={handleLocate}
+          disabled={locating}
+          className="flex h-11 w-11 items-center justify-center rounded-full bg-white/85 text-[#1a1614] ring-1 ring-black/[0.06] shadow-[0_18px_36px_-14px_rgba(60,42,20,0.28)] transition hover:bg-white"
+          style={{ backdropFilter: "saturate(180%) blur(20px)", WebkitBackdropFilter: "saturate(180%) blur(20px)" }}
+          aria-label="My location"
+        >
+          {locating ? <Loader2 className="h-4 w-4 animate-spin" /> : <LocateFixed className="h-4 w-4" strokeWidth={2.2} />}
+        </motion.button>
+        <AnimatePresence>
+          {Math.abs(heading) > 1 && (
+            <motion.button
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0, opacity: 0 }}
+              whileTap={{ scale: 0.92 }}
+              onClick={() => mapRef.current?.resetHeading()}
+              className="flex h-11 w-11 items-center justify-center rounded-full bg-white/85 ring-1 ring-black/[0.06] shadow-[0_18px_36px_-14px_rgba(60,42,20,0.28)]"
+              style={{ backdropFilter: "saturate(180%) blur(20px)", WebkitBackdropFilter: "saturate(180%) blur(20px)" }}
+              aria-label="Reset north"
+            >
+              <Compass className="h-4 w-4 text-[#1a1614]" style={{ transform: `rotate(${-heading}deg)` }} strokeWidth={2} />
+            </motion.button>
+          )}
+        </AnimatePresence>
+      </div>
+
 
       {/* Drop-mode banner */}
       <AnimatePresence>

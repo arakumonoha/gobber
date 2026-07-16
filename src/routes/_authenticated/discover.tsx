@@ -314,58 +314,6 @@ function Discover() {
 
 
 
-      {/* Compass — mirrors FAB position on the left */}
-      {/* Left column: stacked glass controls (zoom / locate / compass) */}
-      <div className="absolute bottom-28 left-5 z-30 flex flex-col gap-2 sm:left-7">
-        <div
-          className="flex flex-col overflow-hidden rounded-2xl bg-white/85 ring-1 ring-black/[0.06] shadow-[0_18px_36px_-14px_rgba(60,42,20,0.28)]"
-          style={{ backdropFilter: "saturate(180%) blur(20px)", WebkitBackdropFilter: "saturate(180%) blur(20px)" }}
-        >
-          <motion.button
-            whileTap={{ scale: 0.92 }}
-            onClick={() => mapRef.current?.zoomIn()}
-            className="flex h-11 w-11 items-center justify-center text-[#1a1614] transition hover:bg-black/5"
-            aria-label="Zoom in"
-          >
-            <Plus className="h-4.5 w-4.5" strokeWidth={2.2} />
-          </motion.button>
-          <div className="mx-2 h-px bg-black/[0.08]" />
-          <motion.button
-            whileTap={{ scale: 0.92 }}
-            onClick={() => mapRef.current?.zoomOut()}
-            className="flex h-11 w-11 items-center justify-center text-[#1a1614] transition hover:bg-black/5"
-            aria-label="Zoom out"
-          >
-            <Minus className="h-4.5 w-4.5" strokeWidth={2.2} />
-          </motion.button>
-        </div>
-        <motion.button
-          whileTap={{ scale: 0.92 }}
-          onClick={handleLocate}
-          disabled={locating}
-          className="flex h-11 w-11 items-center justify-center rounded-full bg-white/85 text-[#1a1614] ring-1 ring-black/[0.06] shadow-[0_18px_36px_-14px_rgba(60,42,20,0.28)] transition hover:bg-white"
-          style={{ backdropFilter: "saturate(180%) blur(20px)", WebkitBackdropFilter: "saturate(180%) blur(20px)" }}
-          aria-label="My location"
-        >
-          {locating ? <Loader2 className="h-4 w-4 animate-spin" /> : <LocateFixed className="h-4 w-4" strokeWidth={2.2} />}
-        </motion.button>
-        <AnimatePresence>
-          {Math.abs(heading) > 1 && (
-            <motion.button
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0, opacity: 0 }}
-              whileTap={{ scale: 0.92 }}
-              onClick={() => mapRef.current?.resetHeading()}
-              className="flex h-11 w-11 items-center justify-center rounded-full bg-white/85 ring-1 ring-black/[0.06] shadow-[0_18px_36px_-14px_rgba(60,42,20,0.28)]"
-              style={{ backdropFilter: "saturate(180%) blur(20px)", WebkitBackdropFilter: "saturate(180%) blur(20px)" }}
-              aria-label="Reset north"
-            >
-              <Compass className="h-4 w-4 text-[#1a1614]" style={{ transform: `rotate(${-heading}deg)` }} strokeWidth={2} />
-            </motion.button>
-          )}
-        </AnimatePresence>
-      </div>
 
       {/* Add-mode banner */}
       <AnimatePresence>
