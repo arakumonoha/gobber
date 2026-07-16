@@ -43,10 +43,9 @@ function Discover() {
     title: "",
     description: "",
     category: "Dinner" as string,
-    starts_at: "",
     duration_hours: 2,
-    max_spots: 6,
   });
+
 
 
   const navigate = useNavigate();
@@ -97,14 +96,15 @@ function Discover() {
   async function submitCreate(e: React.FormEvent) {
     e.preventDefault();
     if (!user || !ghostPin) return;
-    if (!form.title || !form.starts_at) {
-      toast.error("Add a title and date");
+    if (!form.title) {
+      toast.error("Add a title");
       return;
     }
     setCreating(true);
     try {
       const [city, country = ""] = placeLabel.split(",").map((s) => s.trim());
       const duration = Math.min(24, Math.max(1, form.duration_hours || 2));
+      const startsAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
       const { data, error } = await supabase
         .from("activities")
         .insert({
@@ -116,19 +116,19 @@ function Discover() {
           country: country || "Earth",
           lat: ghostPin.lat,
           lng: ghostPin.lng,
-          starts_at: new Date(form.starts_at).toISOString(),
+          starts_at: startsAt,
           duration_hours: duration,
-          max_spots: form.max_spots,
+          max_spots: 6,
           cover_url: null,
         })
         .select()
         .single();
       if (error) throw error;
-      toast.success("Pin dropped ✨");
+      toast.success("Pin dropped ✨ Starts in 10 min");
       await qc.invalidateQueries({ queryKey: ["activities"] });
       setShowCreate(false);
       setGhostPin(null);
-      setForm({ title: "", description: "", category: "Dinner", starts_at: "", duration_hours: 2, max_spots: 6 });
+      setForm({ title: "", description: "", category: "Dinner", duration_hours: 2 });
       if (data) mapRef.current?.panTo(data.lat, data.lng, 13);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to create");
@@ -137,6 +137,7 @@ function Discover() {
     }
 
   }
+
 
   function cancelCreate() {
     setShowCreate(false);
@@ -494,44 +495,27 @@ function Discover() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2.5 pt-1">
-                    <div>
-                      <label className="mb-1 block px-1 text-[10.5px] font-semibold uppercase tracking-[0.2em] text-[#4a3820]">Starts</label>
-                      <GlassInputRaw
-                        type="datetime-local"
-                        value={form.starts_at}
-                        onChange={(v) => setForm({ ...form, starts_at: v })}
-                      />
-                    </div>
-                    <div>
-                      <label className="mb-1 block px-1 text-[10.5px] font-semibold uppercase tracking-[0.2em] text-[#4a3820]">
-                        Duration · max 24h
-                      </label>
-                      <GlassInputRaw
-                        type="number"
-                        min={1}
-                        max={24}
-                        value={String(form.duration_hours)}
-                        onChange={(v) => {
-                          const n = Math.min(24, Math.max(1, parseInt(v) || 1));
-                          setForm({ ...form, duration_hours: n });
-                        }}
-                        suffix="hrs"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="mb-1 block px-1 text-[10.5px] font-semibold uppercase tracking-[0.2em] text-[#4a3820]">Spots</label>
+                  <div className="pt-1">
+                    <label className="mb-1 block px-1 text-[10.5px] font-semibold uppercase tracking-[0.2em] text-[#4a3820]">
+                      Duration · max 24h
+                    </label>
                     <GlassInputRaw
                       type="number"
-                      min={2}
-                      max={30}
-                      value={String(form.max_spots)}
-                      onChange={(v) => setForm({ ...form, max_spots: Math.min(30, Math.max(2, parseInt(v) || 6)) })}
+                      min={1}
+                      max={24}
+                      value={String(form.duration_hours)}
+                      onChange={(v) => {
+                        const n = Math.min(24, Math.max(1, parseInt(v) || 1));
+                        setForm({ ...form, duration_hours: n });
+                      }}
+                      suffix="hrs"
                     />
+                    <p className="mt-2 px-1 text-[11px] text-[#5a4530]">
+                      Starts automatically 10 min after you drop the pin. Fine-tune schedule and spots later from Manage.
+                    </p>
                   </div>
                 </div>
+
 
                 <motion.button
                   type="submit"
