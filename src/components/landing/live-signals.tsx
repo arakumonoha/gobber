@@ -92,18 +92,24 @@ export function TrendingStrip({
       <span className="text-[11px] font-medium uppercase tracking-[0.16em] text-[#8b6f3f]">
         trending 24h
       </span>
-      {trending.slice(0, 8).map((t) => {
+      {trending.slice(0, 8).map((t, idx) => {
         const flag = fallbackFlags[t.country] ?? "🌍";
+        const themes = [
+          { bg: "linear-gradient(150deg, #E0F0FF 0%, #FFFFFF 100%)", ring: "#0A84FF", badge: "#0A84FF", fg: "#FFFFFF" },
+          { bg: "linear-gradient(150deg, #FBF0D6 0%, #FFFFFF 100%)", ring: "#B4801F", badge: "#E8A93C", fg: "#1A1614" },
+          { bg: "linear-gradient(150deg, #EAF2E6 0%, #FFFFFF 100%)", ring: "#7DA88E", badge: "#7DA88E", fg: "#FFFFFF" },
+        ];
+        const th = themes[idx % themes.length];
         return (
           <motion.div
             key={t.city}
-            whileHover={{ y: -3, scale: 1.05 }}
-            transition={{ type: "spring", stiffness: 320, damping: 20 }}
+            whileHover={{ y: -4, scale: 1.1, rotate: -3 }}
+            transition={{ type: "spring", stiffness: 320, damping: 18 }}
             className="relative inline-flex h-11 w-11 items-center justify-center rounded-full text-[22px] leading-none"
             style={{
-              background: "color-mix(in oklab, white 88%, transparent)",
-              border: "1px solid rgba(20,18,16,0.06)",
-              boxShadow: "0 10px 22px -14px rgba(60,42,20,0.28)",
+              background: th.bg,
+              border: `1px solid color-mix(in oklab, ${th.ring} 25%, transparent)`,
+              boxShadow: `0 10px 22px -12px ${th.ring}66`,
             }}
             role="img"
             aria-label={`${t.city} — ${t.count} trending`}
@@ -111,8 +117,8 @@ export function TrendingStrip({
           >
             <span aria-hidden>{flag}</span>
             <span
-              className="absolute -bottom-1 -right-1 min-w-[18px] rounded-full px-1 text-center text-[10px] font-semibold leading-[16px]"
-              style={{ background: "#E8A93C", color: "#1A1614", boxShadow: "0 2px 6px rgba(60,42,20,0.25)" }}
+              className="absolute -bottom-1 -right-1 min-w-[18px] rounded-full px-1 text-center text-[10px] font-bold leading-[16px]"
+              style={{ background: th.badge, color: th.fg, boxShadow: `0 2px 6px ${th.ring}55`, border: "1.5px solid #fff" }}
             >
               {t.count}
             </span>
