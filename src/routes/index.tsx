@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowRight, Star, Coffee, Users, MapPin, Hand, Radio, Compass } from "lucide-react";
 import { GoogleMap, type GoogleMapHandle } from "@/components/google-map";
+import { ArcgisGlobe } from "@/components/arcgis-globe";
 import { activitiesQuery } from "@/lib/activities";
 import { getLandingStats, type LandingStats } from "@/lib/landing-stats.functions";
 import { FloatingFlags } from "@/components/landing/floating-flags";
@@ -564,7 +565,13 @@ function LiveMap({
             height: "clamp(360px, 60vh, 560px)",
           }}
         >
-          {mounted ? (
+          {!interactive ? (
+            mounted ? (
+              <ArcgisGlobe basemap="satellite" spin className="absolute inset-0" />
+            ) : (
+              <div className="absolute inset-0" style={{ background: PALETTE.paper }} />
+            )
+          ) : mounted ? (
             <GoogleMap
               ref={mapRef}
               pins={pins}
