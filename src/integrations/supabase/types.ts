@@ -22,6 +22,7 @@ export type Database = {
           cover_url: string | null
           created_at: string
           description: string
+          duration_hours: number
           host_id: string
           id: string
           lat: number
@@ -38,6 +39,7 @@ export type Database = {
           cover_url?: string | null
           created_at?: string
           description: string
+          duration_hours?: number
           host_id: string
           id?: string
           lat: number
@@ -54,6 +56,7 @@ export type Database = {
           cover_url?: string | null
           created_at?: string
           description?: string
+          duration_hours?: number
           host_id?: string
           id?: string
           lat?: number
