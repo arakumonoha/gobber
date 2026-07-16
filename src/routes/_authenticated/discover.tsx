@@ -619,7 +619,7 @@ function Discover() {
               >
                 <div
                   className="h-14 w-14 shrink-0 rounded-xl bg-cover bg-center ring-1 ring-[#3a2a12]/[0.06]"
-                  style={{ backgroundImage: `url(${a.cover_url ?? "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=400&q=80"})` }}
+                  style={{ backgroundImage: `url(${a.cover_url ?? "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=320&q=70&auto=format"})` }}
                 />
                 <div className="min-w-0 flex-1">
                   <p className="text-[9.5px] font-semibold uppercase tracking-[0.22em] text-[#3a2a18]">{a.category}</p>
@@ -995,7 +995,7 @@ function ActivityCard({
     >
       <div
         className="h-36 w-full bg-cover bg-center transition-transform duration-[900ms] group-hover:scale-[1.04]"
-        style={{ backgroundImage: `url(${a.cover_url ?? "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=1200&q=80"})` }}
+        style={{ backgroundImage: `url(${a.cover_url ?? "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=800&q=75&auto=format"})` }}
       />
       <div className="p-4">
         <p className="text-[9.5px] font-semibold uppercase tracking-[0.22em] text-[#3a2a18]">{a.category}</p>
