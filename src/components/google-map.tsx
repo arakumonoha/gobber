@@ -402,7 +402,7 @@ export const GoogleMap = forwardRef<GoogleMapHandle, Props>(function GoogleMap({
         const overlay: any = new g.maps.OverlayView();
         overlay.onAdd = function () {
           const panes = this.getPanes();
-          const el = pinElement(pin.category);
+          const el = pinElement(pin.category, { mine: pin.mine });
           el.addEventListener("click", (ev) => {
             ev.stopPropagation();
             onPinClick?.(pin.id);
