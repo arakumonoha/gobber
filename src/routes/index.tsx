@@ -181,21 +181,22 @@ function Nav() {
                 href={l.href}
                 onClick={() => setActive(l.id)}
                 className="relative rounded-full px-4 py-1.5 transition"
-                style={{ color: isActive ? PALETTE.ink : "#5a4f43" }}
-              >
-                {isActive && (
-                  <motion.span
-                    layoutId="nav-glass-pill"
-                    className="absolute inset-0 rounded-full"
-                    transition={{ type: "spring", stiffness: 380, damping: 32 }}
-                    style={{
-                      background:
-                        "linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.6) 100%)",
-                      border: "1px solid rgba(255,255,255,0.9)",
-                      boxShadow:
-                        "inset 0 1px 0 rgba(255,255,255,1), inset 0 -1px 0 rgba(20,18,16,0.06), 0 6px 14px -6px rgba(20,18,16,0.18)",
-                    }}
-                  />
+              style={{ color: isActive ? "#FAF3E1" : "rgba(250,243,225,0.65)" }}
+            >
+              {isActive && (
+                <motion.span
+                  layoutId="nav-glass-pill"
+                  className="absolute inset-0 rounded-full"
+                  transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                  style={{
+                    background:
+                      "linear-gradient(180deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.08) 100%)",
+                    border: "1px solid rgba(255,255,255,0.2)",
+                    boxShadow:
+                      "inset 0 1px 0 rgba(255,255,255,0.25), inset 0 -1px 0 rgba(0,0,0,0.15), 0 6px 14px -6px rgba(0,0,0,0.35)",
+                  }}
+                />
+
                 )}
                 <span className="relative z-10 font-medium">{l.label}</span>
               </a>
