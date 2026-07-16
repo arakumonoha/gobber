@@ -52,6 +52,8 @@ function AuthenticatedShell() {
         </motion.div>
       </AnimatePresence>
       <NotificationBell />
+      <MessageBell />
+
       <UsernameOnboarding />
     </>
   );
