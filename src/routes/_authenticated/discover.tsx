@@ -350,8 +350,19 @@ function Discover() {
           }
           setAddMode((v) => !v);
         }}
-        whileTap={{ scale: 0.92 }}
-        className="absolute bottom-28 right-5 z-30 flex h-14 w-14 items-center justify-center rounded-full text-white shadow-[0_18px_36px_-14px_rgba(232,90,60,0.7)] transition sm:right-7"
+        whileTap={{ scale: 0.9 }}
+        whileHover={{ scale: 1.06, y: -2 }}
+        animate={
+          addMode || myActivePin
+            ? { scale: 1 }
+            : { scale: [1, 1.04, 1] }
+        }
+        transition={
+          addMode || myActivePin
+            ? { type: "spring", stiffness: 380, damping: 22 }
+            : { duration: 2.4, repeat: Infinity, ease: "easeInOut" }
+        }
+        className="absolute bottom-28 right-5 z-30 flex h-14 w-14 items-center justify-center rounded-full text-white shadow-[0_18px_36px_-14px_rgba(232,90,60,0.7)] sm:right-7"
         style={{
           background: myActivePin
             ? "linear-gradient(180deg,#f0a020,#c67a10)"
