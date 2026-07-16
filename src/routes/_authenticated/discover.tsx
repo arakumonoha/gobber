@@ -419,7 +419,8 @@ function Discover() {
       >
         <div className="px-5 pt-1">
           {/* Search + categories live inside the sheet, beneath the handle */}
-          <div
+          <form
+            onSubmit={handleSearchSubmit}
             className="flex w-full items-center gap-2.5 rounded-full px-4 py-3 ring-1 ring-[#3a2a12]/[0.06]"
             style={{
               background: "color-mix(in oklab, #fffaf0 72%, transparent)",
@@ -429,14 +430,29 @@ function Discover() {
                 "inset 0 1px 0 rgba(255,255,255,0.65), 0 1px 2px rgba(60,42,20,0.05), 0 18px 40px -20px rgba(60,42,20,0.22)",
             }}
           >
-            <Search className="h-4 w-4 text-[#4a3820]" strokeWidth={2} />
+            {searching ? (
+              <Loader2 className="h-4 w-4 animate-spin text-[#4a3820]" />
+            ) : (
+              <Search className="h-4 w-4 text-[#4a3820]" strokeWidth={2} />
+            )}
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Where to? Lisbon, Tokyo, Bali…"
+              placeholder="Search a city or vibe — press enter to fly"
               className="w-full bg-transparent text-[14px] tracking-[-0.01em] outline-none placeholder:text-[#5a4530] text-[#1a1614]"
+              enterKeyHint="search"
             />
-          </div>
+            {query && (
+              <button
+                type="button"
+                onClick={() => setQuery("")}
+                aria-label="Clear"
+                className="text-[#4a3820] transition hover:text-[#1a1614]"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
+          </form>
 
           <div
             className="relative -mx-5 mt-3"
