@@ -187,8 +187,8 @@ function Explore() {
         className="relative z-20 mx-auto w-full max-w-[860px] px-5 pt-9 sm:px-7"
       >
         <div className="flex flex-col items-center text-center">
-          <p className="text-[10.5px] font-semibold uppercase tracking-[0.28em] text-[#4a3820]">Right now</p>
-          <h1 className="mt-1.5 font-serif italic text-[44px] leading-[0.95] tracking-[-0.03em] text-[#0f0d0b] sm:text-[52px]">
+          <p className="text-[10.5px] font-semibold uppercase tracking-[0.3em] text-[#3a2a12]">Right now</p>
+          <h1 className="mt-1.5 font-serif italic text-[44px] leading-[0.95] tracking-[-0.03em] text-[#0b0906] drop-shadow-[0_1px_0_rgba(255,255,255,0.55)] sm:text-[52px]">
             Explore.
           </h1>
           <div className="mt-4">
@@ -204,7 +204,11 @@ function Explore() {
               onClick={() => setCategory(null)}
               role="tab"
               aria-selected={!category}
-              className={`shrink-0 rounded-full px-4 py-1.5 text-xs font-medium transition ${!category ? "bg-primary text-primary-foreground" : "glass text-foreground"}`}
+              className={`shrink-0 rounded-full px-4 py-1.5 text-xs font-semibold tracking-[-0.005em] ring-1 transition ${
+                !category
+                  ? "bg-[#1a1108] text-[#fff7e8] ring-black/10 shadow-[0_10px_22px_-12px_rgba(20,12,4,0.55)]"
+                  : "bg-white/70 text-[#2a1c0c] ring-black/[0.06] backdrop-blur-xl shadow-[0_6px_16px_-10px_rgba(60,40,14,0.28)]"
+              }`}
             >
               All
             </button>
@@ -214,7 +218,11 @@ function Explore() {
                 onClick={() => setCategory(c.id === category ? null : c.id)}
                 role="tab"
                 aria-selected={category === c.id}
-                className={`shrink-0 rounded-full px-4 py-1.5 text-xs font-medium transition ${category === c.id ? "bg-primary text-primary-foreground" : "glass text-foreground"}`}
+                className={`shrink-0 rounded-full px-4 py-1.5 text-xs font-semibold tracking-[-0.005em] ring-1 transition ${
+                  category === c.id
+                    ? "bg-[#1a1108] text-[#fff7e8] ring-black/10 shadow-[0_10px_22px_-12px_rgba(20,12,4,0.55)]"
+                    : "bg-white/70 text-[#2a1c0c] ring-black/[0.06] backdrop-blur-xl shadow-[0_6px_16px_-10px_rgba(60,40,14,0.28)]"
+                }`}
               >
                 <span className="mr-1" aria-hidden="true">{c.icon}</span>{c.label}
               </button>
@@ -233,6 +241,7 @@ function Explore() {
           </button>
         </div>
       </motion.div>
+
 
       {/* Stat chip */}
       {!dropMode && (
