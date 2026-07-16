@@ -232,18 +232,20 @@ function Discover() {
         </div>
       </motion.div>
 
-      {/* Compass */}
+      {/* Compass — mirrors FAB position on the left */}
       <AnimatePresence>
         {Math.abs(heading) > 1 && (
           <motion.button
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0, opacity: 0 }}
+            whileTap={{ scale: 0.92 }}
             onClick={() => mapRef.current?.resetHeading()}
-            className="absolute right-4 top-56 z-20 flex h-11 w-11 items-center justify-center rounded-full glass shadow-float sm:right-6"
+            className="absolute bottom-28 left-5 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-white/85 ring-1 ring-black/[0.06] shadow-[0_18px_36px_-14px_rgba(60,42,20,0.35)] backdrop-blur-xl sm:left-7"
+            style={{ backdropFilter: "saturate(180%) blur(20px)" }}
             aria-label="Reset north"
           >
-            <Compass className="h-5 w-5 text-clay" style={{ transform: `rotate(${-heading}deg)` }} />
+            <Compass className="h-5 w-5 text-[#1a1614]" style={{ transform: `rotate(${-heading}deg)` }} strokeWidth={2} />
           </motion.button>
         )}
       </AnimatePresence>
