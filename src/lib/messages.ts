@@ -59,10 +59,21 @@ export function useConversations(userId?: string) {
         .in("id", ids)
         .order("last_message_at", { ascending: false });
 
-      const { data: members } = await supabase
+      const { data: rawMembers } = await supabase
         .from("conversation_members")
-        .select("id, conversation_id, user_id, role, joined_at, profile:profiles(username, display_name, avatar_url)")
+        .select("id, conversation_id, user_id, role, joined_at")
         .in("conversation_id", ids);
+      const memberUserIds = Array.from(new Set((rawMembers ?? []).map((m) => m.user_id)));
+      const { data: memberProfiles } = memberUserIds.length
+        ? await supabase.from("profiles").select("id, username, display_name, avatar_url").in("id", memberUserIds)
+        : { data: [] as { id: string; username: string | null; display_name: string | null; avatar_url: string | null }[] };
+      const profileMap = new Map((memberProfiles ?? []).map((p) => [p.id, p]));
+      const members: MemberRow[] = (rawMembers ?? []).map((m) => ({
+        ...(m as Omit<MemberRow, "profile">),
+        role: m.role as "owner" | "member",
+        profile: profileMap.get(m.user_id) ?? null,
+      }));
+
 
       const { data: lastMsgs } = await supabase
         .from("messages")
