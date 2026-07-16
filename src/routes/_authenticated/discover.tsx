@@ -496,8 +496,19 @@ function Discover() {
           <div className="mb-3 mt-4 flex items-center justify-between">
             <div>
               <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#2a1c0c]">Around you</p>
-              <h2 className="mt-0.5 text-[17px] font-semibold tracking-[-0.01em] text-[#0f0d0b]">
-                {isLoading ? "Loading…" : `${filtered.length} gathering${filtered.length === 1 ? "" : "s"}`}
+              <h2 className="mt-0.5 text-[17px] font-semibold tracking-[-0.01em] text-[#0f0d0b] tabular-nums">
+                <AnimatePresence mode="popLayout" initial={false}>
+                  <motion.span
+                    key={isLoading ? "loading" : `${filtered.length}`}
+                    initial={{ opacity: 0, y: 8, filter: "blur(6px)" }}
+                    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                    exit={{ opacity: 0, y: -8, filter: "blur(6px)" }}
+                    transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+                    className="inline-block"
+                  >
+                    {isLoading ? "Loading…" : `${filtered.length} gathering${filtered.length === 1 ? "" : "s"}`}
+                  </motion.span>
+                </AnimatePresence>
               </h2>
             </div>
             <span className="text-[11px] font-medium uppercase tracking-[0.16em] text-[#2a1c0c]"><span className="hidden lg:inline">Click to collapse</span><span className="lg:hidden">Swipe · Pull to refresh</span></span>
