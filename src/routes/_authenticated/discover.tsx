@@ -104,6 +104,7 @@ function Discover() {
     setCreating(true);
     try {
       const [city, country = ""] = placeLabel.split(",").map((s) => s.trim());
+      const duration = Math.min(24, Math.max(1, form.duration_hours || 2));
       const { data, error } = await supabase
         .from("activities")
         .insert({
@@ -116,6 +117,7 @@ function Discover() {
           lat: ghostPin.lat,
           lng: ghostPin.lng,
           starts_at: new Date(form.starts_at).toISOString(),
+          duration_hours: duration,
           max_spots: form.max_spots,
           cover_url: null,
         })
@@ -126,13 +128,14 @@ function Discover() {
       await qc.invalidateQueries({ queryKey: ["activities"] });
       setShowCreate(false);
       setGhostPin(null);
-      setForm({ title: "", description: "", category: "Dinner", starts_at: "", max_spots: 6 });
+      setForm({ title: "", description: "", category: "Dinner", starts_at: "", duration_hours: 2, max_spots: 6 });
       if (data) mapRef.current?.panTo(data.lat, data.lng, 13);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to create");
     } finally {
       setCreating(false);
     }
+
   }
 
   function cancelCreate() {
