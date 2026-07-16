@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageCircle, Send, MapPin, Users, ChevronLeft, MoreHorizontal, LogOut, UserMinus, Search, X, Paperclip } from "lucide-react";
+import { MessageCircle, Send, MapPin, Users, ChevronLeft, MoreHorizontal, LogOut, UserMinus, Search, X, Paperclip, SquarePen } from "lucide-react";
 import { formatDistanceToNowStrict } from "date-fns";
 import { useUser } from "@/hooks/use-user";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
