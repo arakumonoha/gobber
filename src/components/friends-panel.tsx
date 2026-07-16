@@ -63,7 +63,7 @@ export function FriendsPanel() {
             <p className="text-[12px] text-muted-foreground">Check back after more travelers join Gobber.</p>
           </div>
         ) : (
-          <div className="-mx-5 overflow-x-auto scrollbar-none">
+          <div className="-mx-5 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
             <div className="flex gap-3 px-5 pb-2">
               {suggested.map((p) => (
                 <SuggestionCard key={p.id} profile={p} myId={user?.id} />
