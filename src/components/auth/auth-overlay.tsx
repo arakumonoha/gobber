@@ -80,10 +80,10 @@ function SocialButton({ children, onClick, loading, disabled, label }: {
   return (
     <motion.button
       onClick={onClick} disabled={disabled}
-      whileHover={{ y: -1 }} whileTap={{ scale: 0.96 }}
-      transition={{ type: "spring", stiffness: 420, damping: 26 }}
+      whileHover={{ y: -2, scale: 1.02 }} whileTap={{ scale: 0.95 }}
+      transition={{ type: "spring", stiffness: 420, damping: 24 }}
       aria-label={label}
-      className="flex h-[48px] flex-1 items-center justify-center rounded-[12px] transition disabled:opacity-60"
+      className="group flex h-[48px] flex-1 items-center justify-center rounded-[12px] transition-colors hover:bg-white/35 disabled:opacity-60"
       style={{
         background: "rgba(255,255,255,0.22)",
         border: "1px solid rgba(255,255,255,0.55)",
@@ -91,10 +91,17 @@ function SocialButton({ children, onClick, loading, disabled, label }: {
         boxShadow: "inset 0 1px 0 rgba(255,255,255,0.75), 0 6px 18px -12px rgba(60,42,20,0.25)",
       }}
     >
-      {loading ? <Loader2 className="h-4 w-4 animate-spin text-[#0f0d0b]" /> : children}
+      {loading ? (
+        <Loader2 className="h-4 w-4 animate-spin text-[#0f0d0b]" />
+      ) : (
+        <span className="inline-flex transition-transform duration-500 group-hover:rotate-[12deg] group-hover:scale-110">
+          {children}
+        </span>
+      )}
     </motion.button>
   );
 }
+
 
 function AuthCard({ onClose }: { onClose: () => void }) {
   const navigate = useNavigate();
