@@ -183,13 +183,13 @@ function Nav() {
           to="/auth"
           className="group relative inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[13px] font-medium transition hover:-translate-y-0.5"
           style={{
-            color: PALETTE.ink,
+            color: "#ffffff",
             background:
-              "linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.5) 100%)",
-            border: "1px solid rgba(255,255,255,0.85)",
+              "linear-gradient(180deg, rgba(28,26,24,0.95) 0%, rgba(20,18,16,0.85) 100%)",
+            border: "1px solid rgba(20,18,16,0.9)",
             backdropFilter: "blur(14px) saturate(180%)",
             boxShadow:
-              "inset 0 1px 0 rgba(255,255,255,1), inset 0 -1px 0 rgba(20,18,16,0.05), 0 10px 22px -12px rgba(20,18,16,0.28)",
+              "inset 0 1px 0 rgba(255,255,255,0.12), inset 0 -1px 0 rgba(0,0,0,0.3), 0 10px 22px -12px rgba(20,18,16,0.4)",
           }}
         >
           sign in
