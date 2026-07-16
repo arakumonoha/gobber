@@ -1,16 +1,20 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowRight, Star, Coffee, Users, MapPin, Hand, Radio, Compass } from "lucide-react";
-import { GoogleMap, type GoogleMapHandle } from "@/components/google-map";
-import { ArcgisGlobe } from "@/components/arcgis-globe";
+import type { GoogleMapHandle } from "@/components/google-map";
 import { activitiesQuery } from "@/lib/activities";
 import { getLandingStats, type LandingStats } from "@/lib/landing-stats.functions";
 import { FloatingFlags } from "@/components/landing/floating-flags";
 import { JoinsTicker, TrendingStrip, twemojiUrl } from "@/components/landing/live-signals";
 import owlLogo from "@/assets/gobber-owl.png.asset.json";
 import { AuthOverlay, openAuth } from "@/components/auth/auth-overlay";
+
+// Heavy map/globe modules are split out of the landing bundle; both live
+// below the fold and the interactive map only mounts after user intent.
+const ArcgisGlobe = lazy(() => import("@/components/arcgis-globe").then((m) => ({ default: m.ArcgisGlobe })));
+const GoogleMap = lazy(() => import("@/components/google-map").then((m) => ({ default: m.GoogleMap })));
 
 export const Route = createFileRoute("/")({
   head: () => ({
