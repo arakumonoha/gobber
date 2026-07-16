@@ -318,7 +318,7 @@ export const GoogleMap = forwardRef<GoogleMapHandle, Props>(function GoogleMap({
       mapRef.current = new g.maps.Map(containerRef.current, {
         center,
         zoom,
-        mapTypeId,
+        mapTypeId: mapTypeId === "satellite" ? "hybrid" : mapTypeId,
         tilt: 45,
         heading: 0,
         disableDefaultUI: true,
