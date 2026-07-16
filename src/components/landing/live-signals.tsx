@@ -2,6 +2,15 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { LandingStats } from "@/lib/landing-stats.functions";
 
+export function twemojiUrl(emoji: string): string {
+  const cps: string[] = [];
+  for (const ch of emoji) {
+    const cp = ch.codePointAt(0);
+    if (cp && cp !== 0xfe0f) cps.push(cp.toString(16));
+  }
+  return `https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/${cps.join("-")}.svg`;
+}
+
 const CATEGORY_ICON: Record<string, string> = {
   Dinner: "🍜",
   Adventure: "🏞️",
