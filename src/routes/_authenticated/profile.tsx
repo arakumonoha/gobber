@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { LogOut, Loader2 } from "lucide-react";
+import { LogOut, Loader2, AtSign } from "lucide-react";
 import { useUser } from "@/hooks/use-user";
 import { supabase } from "@/integrations/supabase/client";
 import { useMyRsvps, useActivities } from "@/lib/activities";
@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { BottomNav } from "@/components/bottom-nav";
+import { FriendsPanel } from "@/components/friends-panel";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -24,14 +25,14 @@ function Profile() {
   const qc = useQueryClient();
   const { data: rsvps = [] } = useMyRsvps(user?.id);
   const { data: activities = [] } = useActivities();
-  const [profile, setProfile] = useState<{ display_name: string; bio: string; home_city: string; avatar_url: string }>({ display_name: "", bio: "", home_city: "", avatar_url: "" });
+  const [profile, setProfile] = useState<{ display_name: string; bio: string; home_city: string; avatar_url: string; username: string }>({ display_name: "", bio: "", home_city: "", avatar_url: "", username: "" });
   const [loading, setLoading] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
 
   useEffect(() => {
     if (!user) return;
     supabase.from("profiles").select("*").eq("id", user.id).maybeSingle().then(({ data }) => {
-      if (data) setProfile({ display_name: data.display_name ?? "", bio: data.bio ?? "", home_city: data.home_city ?? "", avatar_url: data.avatar_url ?? "" });
+      if (data) setProfile({ display_name: data.display_name ?? "", bio: data.bio ?? "", home_city: data.home_city ?? "", avatar_url: data.avatar_url ?? "", username: (data as any).username ?? "" });
     });
   }, [user]);
 
@@ -66,7 +67,10 @@ function Profile() {
           </div>
           <div>
             <h1 className="text-2xl font-semibold tracking-tight text-ink">{profile.display_name || "Traveler"}</h1>
-            <p className="text-sm text-muted-foreground">{profile.home_city || user?.email}</p>
+            {profile.username && (
+              <p className="flex items-center gap-0.5 text-sm text-muted-foreground"><AtSign className="h-3.5 w-3.5" />{profile.username}</p>
+            )}
+            {profile.home_city && <p className="text-xs text-muted-foreground">{profile.home_city}</p>}
           </div>
         </motion.div>
 
@@ -83,6 +87,8 @@ function Profile() {
           <div><Label className="text-xs">Bio</Label><Textarea rows={3} value={profile.bio} onChange={(e) => setProfile({ ...profile, bio: e.target.value })} className="mt-1 rounded-xl" placeholder="I collect sunsets and third-wave coffee." /></div>
           <Button onClick={save} disabled={loading} className="h-11 w-full rounded-xl">{loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save"}</Button>
         </div>
+
+        <FriendsPanel />
 
         <Button onClick={signOut} disabled={signingOut} variant="ghost" className="mt-4 h-11 w-full rounded-xl text-muted-foreground">
           <LogOut className="mr-2 h-4 w-4" /> Sign out
