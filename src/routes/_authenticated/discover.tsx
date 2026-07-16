@@ -107,6 +107,9 @@ function Discover() {
   function focusActivity(a: Activity) {
     setSelectedId(a.id);
     mapRef.current?.panTo(a.lat, a.lng, 12);
+    // Smoothly snap the corresponding card into center of the rail
+    const el = railRef.current?.querySelector<HTMLElement>(`[data-id="${a.id}"]`);
+    el?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
   }
 
   const [removing, setRemoving] = useState(false);
