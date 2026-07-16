@@ -9,6 +9,7 @@ import { getLandingStats, type LandingStats } from "@/lib/landing-stats.function
 import { FloatingFlags } from "@/components/landing/floating-flags";
 import { JoinsTicker, TrendingStrip, twemojiUrl } from "@/components/landing/live-signals";
 import owlLogo from "@/assets/gobber-owl.png.asset.json";
+import { AuthOverlay, openAuth } from "@/components/auth/auth-overlay";
 
 export const Route = createFileRoute("/")({
   head: () => ({
