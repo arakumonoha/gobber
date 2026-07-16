@@ -399,12 +399,9 @@ function AuthPage() {
                   )}
                 </div>
               </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
+      </motion.div>
     </div>
+
   );
 }
 
