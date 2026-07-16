@@ -43,15 +43,14 @@ function FlagSlot({ slot, index }: { slot: Slot; index: number }) {
   const [step, setStep] = useState(index * 3);
 
   useEffect(() => {
-    const t = setTimeout(() => {
-      const id = setInterval(() => setStep((s) => s + 1), CYCLE_MS);
+    let interval: ReturnType<typeof setInterval> | undefined;
+    const start = setTimeout(() => {
       setStep((s) => s + 1);
-      // store for cleanup
-      (FlagSlot as any)._id = id;
+      interval = setInterval(() => setStep((s) => s + 1), CYCLE_MS);
     }, slot.delay * 1000);
     return () => {
-      clearTimeout(t);
-      if ((FlagSlot as any)._id) clearInterval((FlagSlot as any)._id);
+      clearTimeout(start);
+      if (interval) clearInterval(interval);
     };
   }, [slot.delay]);
 
