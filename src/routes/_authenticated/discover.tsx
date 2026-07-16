@@ -95,14 +95,19 @@ function Discover() {
     );
   }, [activities, user]);
 
-  const pins = filtered.map((a) => ({
-    id: a.id,
-    lat: a.lat,
-    lng: a.lng,
-    label: a.title,
-    category: a.category,
-    mine: !!user && a.host_id === user.id,
-  }));
+  const pins = useMemo(
+    () =>
+      filtered.map((a) => ({
+        id: a.id,
+        lat: a.lat,
+        lng: a.lng,
+        label: a.title,
+        category: a.category,
+        mine: !!user && a.host_id === user.id,
+      })),
+    [filtered, user],
+  );
+
 
   function focusActivity(a: Activity) {
     setSelectedId(a.id);
