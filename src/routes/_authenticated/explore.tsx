@@ -55,8 +55,12 @@ function Explore() {
     [activities, category],
   );
 
-  const pins = filtered.map((a) => ({ id: a.id, lat: a.lat, lng: a.lng, label: a.title, category: a.category }));
+  const pins = useMemo(
+    () => filtered.map((a) => ({ id: a.id, lat: a.lat, lng: a.lng, label: a.title, category: a.category })),
+    [filtered],
+  );
   const selected = selectedId ? activities.find((a) => a.id === selectedId) ?? null : null;
+
 
   async function handleDrop(c: { lng: number; lat: number }) {
     setDrop({ lat: c.lat, lng: c.lng });
