@@ -16,6 +16,7 @@ import {
 import { useRankedSuggestions } from "@/lib/notifications";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { BlockedPanel } from "@/components/blocked-panel";
 
 export function FriendsPanel() {
   const { user } = useUser();
@@ -46,6 +47,10 @@ export function FriendsPanel() {
         </div>
         <ChevronRight className="h-4 w-4 text-muted-foreground" />
       </button>
+
+      {/* Blocked people */}
+      <BlockedPanel />
+
 
       {/* Suggested for you */}
       <section className="mt-8">

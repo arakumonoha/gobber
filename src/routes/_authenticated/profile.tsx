@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { BottomNav } from "@/components/bottom-nav";
 import { FriendsPanel } from "@/components/friends-panel";
-import { BlockedPanel } from "@/components/blocked-panel";
+
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -116,7 +116,6 @@ function Profile() {
         </div>
 
 
-        <BlockedPanel />
 
 
         <Button onClick={signOut} disabled={signingOut} variant="ghost" className="mt-4 h-11 w-full rounded-xl text-muted-foreground">
