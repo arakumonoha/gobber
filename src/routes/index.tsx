@@ -7,7 +7,7 @@ import { GoogleMap, type GoogleMapHandle } from "@/components/google-map";
 import { activitiesQuery } from "@/lib/activities";
 import { getLandingStats, type LandingStats } from "@/lib/landing-stats.functions";
 import { FloatingFlags } from "@/components/landing/floating-flags";
-import { JoinsTicker, TrendingStrip } from "@/components/landing/live-signals";
+import { JoinsTicker, TrendingStrip, twemojiUrl } from "@/components/landing/live-signals";
 import owlLogo from "@/assets/gobber-owl.png.asset.json";
 
 export const Route = createFileRoute("/")({
@@ -212,7 +212,7 @@ function Hero({ stats, nearYou }: { stats: LandingStats | undefined; nearYou: Ne
           radial-gradient(70% 50% at 50% 110%, ${PALETTE.blueSoft} 0%, transparent 60%),
           radial-gradient(60% 50% at 10% 40%, ${PALETTE.amberSoft} 0%, transparent 65%),
           radial-gradient(60% 50% at 90% 60%, ${PALETTE.sageSoft} 0%, transparent 65%),
-          linear-gradient(180deg, ${PALETTE.cream} 0%, ${PALETTE.paper} 100%)
+          linear-gradient(180deg, ${PALETTE.cream} 0%, ${PALETTE.paper} 55%, ${PALETTE.cream} 100%)
         `,
       }}
     >
@@ -371,6 +371,15 @@ function Hero({ stats, nearYou }: { stats: LandingStats | undefined; nearYou: Ne
           free forever · no ads · your seat takes 10 seconds
         </motion.p>
       </motion.div>
+
+      {/* smooth dissolve into next section */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-32"
+        style={{
+          background: `linear-gradient(180deg, transparent 0%, ${PALETTE.cream} 100%)`,
+        }}
+      />
     </section>
   );
 }
@@ -612,7 +621,7 @@ function TripCard({ t, idx }: { t: Trip; idx: number }) {
         className="pointer-events-none absolute inset-0 rounded-3xl"
         style={{ background: "linear-gradient(180deg, rgba(255,255,255,0.55) 0%, transparent 45%)" }}
       />
-      <span className="relative text-[44px] leading-none drop-shadow-sm sm:text-[52px]" aria-hidden>{t.flag}</span>
+      <img src={twemojiUrl(t.flag)} alt="" draggable={false} className="relative h-12 w-12 drop-shadow-sm sm:h-14 sm:w-14" />
       <span
         className="absolute -bottom-1.5 -right-1.5 min-w-[24px] rounded-full px-1.5 text-center text-[11px] font-bold leading-[20px] tracking-tight"
         style={{ background: theme.badge, color: theme.badgeFg, boxShadow: `0 4px 12px ${theme.ring}55`, border: "1.5px solid #fff" }}

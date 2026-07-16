@@ -18,6 +18,15 @@ const FLAGS: Flag[] = [
   { flag: "🇰🇷", top: "90%", left: "48%", size: 46, delay: 0.1, mobile: true },
 ];
 
+function twemojiUrl(emoji: string): string {
+  const cps: string[] = [];
+  for (const ch of emoji) {
+    const cp = ch.codePointAt(0);
+    if (cp && cp !== 0xfe0f) cps.push(cp.toString(16));
+  }
+  return `https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/${cps.join("-")}.svg`;
+}
+
 export function FloatingFlags() {
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
@@ -41,12 +50,18 @@ export function FloatingFlags() {
           style={{
             top: f.top,
             left: f.left,
-            fontSize: `clamp(${Math.round(f.size * 0.55)}px, ${f.size / 14}vw, ${f.size}px)`,
+            width: `clamp(${Math.round(f.size * 0.55)}px, ${f.size / 14}vw, ${f.size}px)`,
             lineHeight: 1,
-            filter: "drop-shadow(0 12px 24px rgba(60,42,20,0.18))",
+            filter: "drop-shadow(0 12px 24px rgba(60,42,20,0.22))",
           }}
         >
-          {f.flag}
+          <img
+            src={twemojiUrl(f.flag)}
+            alt=""
+            loading="lazy"
+            draggable={false}
+            className="block h-auto w-full"
+          />
         </motion.div>
       ))}
     </div>
