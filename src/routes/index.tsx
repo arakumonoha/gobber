@@ -958,6 +958,25 @@ function Footer() {
 /* ───────────────── PAGE ───────────────── */
 
 function Landing() {
+  const navigate = useNavigate();
+  // If a session is already present (e.g. after an OAuth full-page redirect
+  // returned to the origin on tablets/in-app browsers), push into the app.
+  useEffect(() => {
+    let cancelled = false;
+    supabase.auth.getSession().then(({ data }) => {
+      if (!cancelled && data.session) navigate({ to: "/discover", replace: true });
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session && (event === "SIGNED_IN" || event === "INITIAL_SESSION")) {
+        navigate({ to: "/discover", replace: true });
+      }
+    });
+    return () => {
+      cancelled = true;
+      sub.subscription.unsubscribe();
+    };
+  }, [navigate]);
+
   const { data: activities = [] } = useQuery(activitiesQuery());
   const { data: stats } = useQuery({
     queryKey: ["landing-stats"],
