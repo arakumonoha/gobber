@@ -44,8 +44,10 @@ function Discover() {
     description: "",
     category: "Dinner" as string,
     starts_at: "",
+    duration_hours: 2,
     max_spots: 6,
   });
+
 
   const navigate = useNavigate();
   const qc = useQueryClient();
