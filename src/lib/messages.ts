@@ -92,11 +92,12 @@ export function useConversations(userId?: string) {
       }
 
       const membersByConv = new Map<string, MemberRow[]>();
-      for (const m of (members ?? []) as MemberRow[]) {
+      for (const m of members) {
         const arr = membersByConv.get(m.conversation_id) ?? [];
         arr.push(m);
         membersByConv.set(m.conversation_id, arr);
       }
+
 
       return (convs ?? []).map((c) => ({
         ...(c as ConversationRow),
