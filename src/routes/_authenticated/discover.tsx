@@ -372,7 +372,18 @@ function Discover() {
         }}
         aria-label={myActivePin ? "Remove your pin" : addMode ? "Cancel add pin" : "Add pin"}
       >
-        {myActivePin ? <Trash2 className="h-5 w-5" strokeWidth={2.2} /> : addMode ? <X className="h-6 w-6" strokeWidth={2.4} /> : <Plus className="h-6 w-6" strokeWidth={2.4} />}
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.span
+            key={myActivePin ? "trash" : addMode ? "cancel" : "plus"}
+            initial={{ opacity: 0, scale: 0.6, rotate: -90 }}
+            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+            exit={{ opacity: 0, scale: 0.6, rotate: 90 }}
+            transition={{ type: "spring", stiffness: 420, damping: 22 }}
+            className="flex items-center justify-center"
+          >
+            {myActivePin ? <Trash2 className="h-5 w-5" strokeWidth={2.2} /> : addMode ? <X className="h-6 w-6" strokeWidth={2.4} /> : <Plus className="h-6 w-6" strokeWidth={2.4} />}
+          </motion.span>
+        </AnimatePresence>
       </motion.button>
 
 
