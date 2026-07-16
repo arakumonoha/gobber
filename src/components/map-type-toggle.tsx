@@ -19,7 +19,14 @@ export function MapTypeToggle({ value, onChange, className }: Props) {
     <div
       role="tablist"
       aria-label="Map view"
-      className={`relative inline-flex items-center gap-0.5 rounded-full p-1 border border-white/40 bg-white/25 backdrop-blur-2xl shadow-[0_8px_24px_-12px_rgba(60,40,10,0.25),inset_0_1px_0_rgba(255,255,255,0.6)] ${className ?? ""}`}
+      className={`relative inline-flex items-center gap-1 rounded-full p-[5px] ring-1 ring-black/[0.06] ${className ?? ""}`}
+      style={{
+        background:
+          "linear-gradient(180deg, rgba(255,252,246,0.82) 0%, rgba(246,238,224,0.72) 100%)",
+        backdropFilter: "saturate(180%) blur(24px)",
+        boxShadow:
+          "0 20px 44px -20px rgba(60,40,14,0.35), 0 1px 0 rgba(255,255,255,0.9) inset, 0 -1px 0 rgba(90,60,20,0.05) inset",
+      }}
     >
       {OPTIONS.map(({ id, label, Icon }) => {
         const active = value === id;
@@ -30,13 +37,19 @@ export function MapTypeToggle({ value, onChange, className }: Props) {
             aria-selected={active}
             aria-pressed={active}
             onClick={() => onChange(id)}
-            className="relative flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-semibold transition-colors"
+            className="relative flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[11.5px] font-semibold tracking-[-0.005em] transition-colors"
           >
             {active && (
               <motion.span
                 layoutId="map-toggle-glass"
-                transition={{ type: "spring", stiffness: 400, damping: 32, mass: 0.7 }}
-                className="absolute inset-0 rounded-full border border-white/60 bg-white/55 backdrop-blur-xl shadow-[0_6px_18px_-8px_rgba(60,40,10,0.35),inset_0_1px_0_rgba(255,255,255,0.8)]"
+                transition={{ type: "spring", stiffness: 420, damping: 34, mass: 0.7 }}
+                className="absolute inset-0 rounded-full"
+                style={{
+                  background:
+                    "linear-gradient(180deg, #ffffff 0%, #fbf5e8 100%)",
+                  boxShadow:
+                    "0 10px 22px -10px rgba(60,40,14,0.38), 0 1px 0 rgba(255,255,255,1) inset, 0 0 0 1px rgba(90,60,20,0.09)",
+                }}
               />
             )}
             <motion.span
@@ -47,9 +60,9 @@ export function MapTypeToggle({ value, onChange, className }: Props) {
               }}
               className="relative z-10 inline-flex"
             >
-              <Icon className={`h-3.5 w-3.5 ${active ? "text-[#2a1c0c]" : "text-foreground/60"}`} />
+              <Icon className={`h-3.5 w-3.5 ${active ? "text-[#1a1108]" : "text-[#6b533a]"}`} strokeWidth={2.4} />
             </motion.span>
-            <span className={`relative z-10 ${active ? "text-[#2a1c0c]" : "text-foreground/70"}`}>
+            <span className={`relative z-10 ${active ? "text-[#1a1108]" : "text-[#6b533a]"}`}>
               {label}
             </span>
           </button>
