@@ -28,10 +28,19 @@ export function DraggableSheet({
   onSnapChange,
 }: Props) {
   const [vh, setVh] = useState(() => (typeof window !== "undefined" ? window.innerHeight : 800));
+  const [isDesktop, setIsDesktop] = useState(() =>
+    typeof window !== "undefined" ? window.matchMedia("(min-width: 1024px)").matches : false,
+  );
   useEffect(() => {
     const onResize = () => setVh(window.innerHeight);
+    const mq = window.matchMedia("(min-width: 1024px)");
+    const onMq = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
     window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
+    mq.addEventListener("change", onMq);
+    return () => {
+      window.removeEventListener("resize", onResize);
+      mq.removeEventListener("change", onMq);
+    };
   }, []);
 
   // sheet's "top" y position from viewport top
