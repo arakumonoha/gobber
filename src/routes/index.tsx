@@ -280,14 +280,8 @@ function Hero({ stats, nearYou }: { stats: LandingStats | undefined; nearYou: Ne
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: EASE }}
-          className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-[13px]"
-          style={{
-            background: "color-mix(in oklab, white 80%, transparent)",
-            border: "1px solid rgba(20,18,16,0.06)",
-            boxShadow: "0 8px 20px -14px rgba(60,42,20,0.25)",
-            backdropFilter: "blur(12px)",
-            color: "#3a2f24",
-          }}
+          className="glass-chip inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-[13px]"
+          style={{ color: "#3a2f24" }}
         >
           <span className="relative flex h-2 w-2">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#7DA88E] opacity-70" />
