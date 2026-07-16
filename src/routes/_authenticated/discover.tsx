@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, MapPin, Compass, Plus, X, Loader2 } from "lucide-react";
+import { Search, MapPin, Compass, Plus, X, Loader2, Trash2 } from "lucide-react";
 import { GoogleMap, type GoogleMapHandle } from "@/components/google-map";
 import { MapTypeToggle, type MapView } from "@/components/map-type-toggle";
 import { BottomNav } from "@/components/bottom-nav";
