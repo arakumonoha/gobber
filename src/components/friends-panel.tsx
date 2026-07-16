@@ -16,6 +16,7 @@ import {
 import { useRankedSuggestions } from "@/lib/notifications";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { BlockedPanel } from "@/components/blocked-panel";
 
 export function FriendsPanel() {
   const { user } = useUser();
