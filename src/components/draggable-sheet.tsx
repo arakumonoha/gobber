@@ -46,6 +46,7 @@ export function DraggableSheet({
   // sheet's "top" y position from viewport top
   const topFor = (idx: number) => vh - snapPoints[idx];
   const y = useMotionValue(topFor(initialSnap));
+  const [snapIdx, setSnapIdx] = useState(initialSnap);
   const snapIndex = useRef(initialSnap);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const [refreshing, setRefreshing] = useState(false);
@@ -61,6 +62,7 @@ export function DraggableSheet({
   function snapTo(idx: number) {
     const clamped = Math.max(0, Math.min(snapPoints.length - 1, idx));
     snapIndex.current = clamped;
+    setSnapIdx(clamped);
     animate(y, topFor(clamped), SPRING);
     onSnapChange?.(clamped);
   }
