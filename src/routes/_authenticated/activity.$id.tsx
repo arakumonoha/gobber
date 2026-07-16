@@ -58,7 +58,7 @@ function ActivityDetail() {
         <motion.div
           initial={{ scale: 1.1 }} animate={{ scale: 1 }} transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
           className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${activity.cover_url ?? "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=1600&q=80"})` }}
+          style={{ backgroundImage: `url(${activity.cover_url ?? "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=1200&q=75&auto=format"})` }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-background/40" />
         <button onClick={() => navigate({ to: "/discover" })} className="absolute left-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full glass shadow-glass">
