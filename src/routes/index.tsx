@@ -622,7 +622,7 @@ function TrendingMarquee({ trips }: { trips: Trip[] }) {
         <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-24" style={{ background: `linear-gradient(90deg,${PALETTE.paper},transparent)` }} />
         <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24" style={{ background: `linear-gradient(-90deg,${PALETTE.paper},transparent)` }} />
         <motion.div
-          className="flex gap-3"
+          className="flex gap-4 sm:gap-6"
           animate={{ x: ["0%", "-50%"] }}
           transition={{ duration: 45, repeat: Infinity, ease: "linear" }}
         >
