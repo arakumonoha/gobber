@@ -428,15 +428,15 @@ function Discover() {
             }}
           >
             {searching ? (
-              <Loader2 className="h-4 w-4 animate-spin text-[#4a3820]" />
+              <Loader2 className="h-4 w-4 animate-spin text-[#2a1c0c]" />
             ) : (
-              <Search className="h-4 w-4 text-[#4a3820]" strokeWidth={2} />
+              <Search className="h-4 w-4 text-[#2a1c0c]" strokeWidth={2} />
             )}
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search a city or vibe — press enter to fly"
-              className="w-full bg-transparent text-[14px] tracking-[-0.01em] outline-none placeholder:text-[#5a4530] text-[#1a1614]"
+              className="w-full bg-transparent text-[14px] tracking-[-0.01em] outline-none placeholder:text-[#6b5230] text-[#1a1614]"
               enterKeyHint="search"
             />
             {query && (
@@ -444,7 +444,7 @@ function Discover() {
                 type="button"
                 onClick={() => setQuery("")}
                 aria-label="Clear"
-                className="text-[#4a3820] transition hover:text-[#1a1614]"
+                className="text-[#2a1c0c] transition hover:text-[#1a1614]"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -476,12 +476,12 @@ function Discover() {
 
           <div className="mb-3 mt-4 flex items-center justify-between">
             <div>
-              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#4a3820]">Around you</p>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#2a1c0c]">Around you</p>
               <h2 className="mt-0.5 text-[17px] font-semibold tracking-[-0.01em] text-[#0f0d0b]">
                 {isLoading ? "Loading…" : `${filtered.length} gathering${filtered.length === 1 ? "" : "s"}`}
               </h2>
             </div>
-            <span className="text-[11px] font-medium uppercase tracking-[0.16em] text-[#4a3820]"><span className="hidden lg:inline">Click to collapse</span><span className="lg:hidden">Swipe · Pull to refresh</span></span>
+            <span className="text-[11px] font-medium uppercase tracking-[0.16em] text-[#2a1c0c]"><span className="hidden lg:inline">Click to collapse</span><span className="lg:hidden">Swipe · Pull to refresh</span></span>
           </div>
 
 
@@ -515,11 +515,11 @@ function Discover() {
                     WebkitBackdropFilter: "saturate(180%) blur(24px)",
                   }}
                 >
-                  <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-[#4a3820]">Quiet spot</p>
+                  <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-[#2a1c0c]">Quiet spot</p>
                   <h4 className="mt-1.5 font-serif italic text-[22px] leading-[1.05] tracking-[-0.02em] text-[#0f0d0b]">
                     {query || category ? "Nothing matches — yet." : "No gatherings here yet."}
                   </h4>
-                  <p className="mt-1.5 text-[12.5px] text-[#4a3820]">
+                  <p className="mt-1.5 text-[12.5px] text-[#2a1c0c]">
                     {query
                       ? "Try a different city, or start the vibe yourself."
                       : "Be the first to drop a pin and set the vibe."}
@@ -579,9 +579,9 @@ function Discover() {
                   style={{ backgroundImage: `url(${a.cover_url ?? "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=400&q=80"})` }}
                 />
                 <div className="min-w-0 flex-1">
-                  <p className="text-[9.5px] font-semibold uppercase tracking-[0.22em] text-[#5a4222]">{a.category}</p>
+                  <p className="text-[9.5px] font-semibold uppercase tracking-[0.22em] text-[#3a2a18]">{a.category}</p>
                   <h4 className="line-clamp-1 text-[14px] font-semibold tracking-[-0.01em] text-[#0f0d0b]">{a.title}</h4>
-                  <p className="line-clamp-1 text-[11.5px] text-[#4a3820]">
+                  <p className="line-clamp-1 text-[11.5px] text-[#2a1c0c]">
                     {a.city}, {a.country} · {format(new Date(a.starts_at), "MMM d")}
                   </p>
                 </div>
@@ -640,7 +640,7 @@ function Discover() {
 
               <div className="px-7 pt-9 pb-6">
                 <div className="text-left">
-                  <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-[#4a3820]">Drop a pin</p>
+                  <p className="text-[10.5px] font-semibold uppercase tracking-[0.24em] text-[#2a1c0c]">Drop a pin</p>
                   <h3 className="mt-1.5 font-serif italic text-[28px] leading-[1] tracking-[-0.02em] text-[#0f0d0b]">
                     New gathering
                   </h3>
@@ -653,7 +653,7 @@ function Discover() {
                 <div className="mt-5 space-y-3.5">
                   {/* Category picker — top of form, all tags visible */}
                   <div>
-                    <label className="mb-1.5 block px-1 text-[10.5px] font-semibold uppercase tracking-[0.2em] text-[#4a3820]">
+                    <label className="mb-1.5 block px-1 text-[10.5px] font-semibold uppercase tracking-[0.2em] text-[#2a1c0c]">
                       Vibe
                     </label>
                     <div
@@ -732,7 +732,7 @@ function Discover() {
                   />
 
                   <div className="pt-1">
-                    <label className="mb-1 block px-1 text-[10.5px] font-semibold uppercase tracking-[0.2em] text-[#4a3820]">
+                    <label className="mb-1 block px-1 text-[10.5px] font-semibold uppercase tracking-[0.2em] text-[#2a1c0c]">
                       Duration · max 24h
                     </label>
                     <GlassInputRaw
@@ -746,7 +746,7 @@ function Discover() {
                       }}
                       suffix="hrs"
                     />
-                    <p className="mt-2 px-1 text-[11px] text-[#5a4530]">
+                    <p className="mt-2 px-1 text-[11px] text-[#3a2a18]">
                       Starts 10 min after you drop the pin. We'll pull a photo of the spot from Google Maps — or hand-pick one if there isn't one.
                     </p>
                   </div>
@@ -822,7 +822,7 @@ function Discover() {
                 <h3 className="font-serif text-[26px] italic leading-[1] tracking-[-0.02em] text-[#0f0d0b]">
                   Remove pin?
                 </h3>
-                <p className="mt-2.5 text-[13.5px] leading-[1.5] tracking-[-0.005em] text-[#4a3820]">
+                <p className="mt-2.5 text-[13.5px] leading-[1.5] tracking-[-0.005em] text-[#2a1c0c]">
                   "<span className="font-medium text-[#1a1614]">{myActivePin.title}</span>" will disappear from the map for everyone.
                 </p>
               </div>
@@ -942,9 +942,9 @@ function ActivityCard({
         style={{ backgroundImage: `url(${a.cover_url ?? "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=1200&q=80"})` }}
       />
       <div className="p-4">
-        <p className="text-[9.5px] font-semibold uppercase tracking-[0.22em] text-[#5a4222]">{a.category}</p>
+        <p className="text-[9.5px] font-semibold uppercase tracking-[0.22em] text-[#3a2a18]">{a.category}</p>
         <h3 className="mt-1 line-clamp-1 font-serif italic text-[19px] leading-tight tracking-[-0.02em] text-[#0f0d0b]">{a.title}</h3>
-        <div className="mt-2 flex items-center gap-1.5 text-[11.5px] text-[#4a3820]">
+        <div className="mt-2 flex items-center gap-1.5 text-[11.5px] text-[#2a1c0c]">
           <MapPin className="h-3 w-3" strokeWidth={2} />
           <span className="line-clamp-1">{a.city}, {a.country}</span>
           <span className="mx-0.5">·</span>
@@ -974,7 +974,7 @@ function GlassInput({ value, onChange, placeholder, autoFocus }: {
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
       autoFocus={autoFocus}
-      className="h-[48px] w-full rounded-[12px] px-4 text-[15px] tracking-[-0.01em] text-[#0f0d0b] placeholder:text-[#5a4530] outline-none transition-all duration-300 focus:bg-white/45"
+      className="h-[48px] w-full rounded-[12px] px-4 text-[15px] tracking-[-0.01em] text-[#0f0d0b] placeholder:text-[#6b5230] outline-none transition-all duration-300 focus:bg-white/45"
       style={GLASS_INPUT_STYLE}
     />
   );
@@ -989,7 +989,7 @@ function GlassTextarea({ value, onChange, placeholder }: {
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
       rows={2}
-      className="w-full resize-none rounded-[12px] px-4 py-3 text-[14px] tracking-[-0.01em] text-[#0f0d0b] placeholder:text-[#5a4530] outline-none transition-all duration-300 focus:bg-white/45"
+      className="w-full resize-none rounded-[12px] px-4 py-3 text-[14px] tracking-[-0.01em] text-[#0f0d0b] placeholder:text-[#6b5230] outline-none transition-all duration-300 focus:bg-white/45"
       style={GLASS_INPUT_STYLE}
     />
   );
@@ -1010,7 +1010,7 @@ function GlassInputRaw({ value, onChange, type, min, max, suffix }: {
         style={GLASS_INPUT_STYLE}
       />
       {suffix && (
-        <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-medium uppercase tracking-[0.16em] text-[#4a3820]">
+        <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-medium uppercase tracking-[0.16em] text-[#2a1c0c]">
           {suffix}
         </span>
       )}
