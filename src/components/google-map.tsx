@@ -57,8 +57,13 @@ function loadGoogleMaps(): Promise<void> {
   return window.__nomadGmapReady;
 }
 
-function iconFor(category?: string) {
-  return CATEGORIES.find((c) => c.id === category)?.icon ?? "📍";
+function categoryMeta(category?: string) {
+  const c = CATEGORIES.find((x) => x.id === category);
+  return {
+    icon: c?.icon ?? "📍",
+    tint: c?.tint ?? "#1a1614",
+    tintSoft: c?.tintSoft ?? "#f0e8d4",
+  };
 }
 
 // Apple Maps-inspired styling — soft, minimal, editorial. Pairs with Warm Sand palette.
@@ -87,26 +92,98 @@ const CLASSY_MAP_STYLES: any[] = [
   { featureType: "water", elementType: "labels.text.stroke", stylers: [{ color: "#e8f0f5" }, { weight: 2 }] },
 ];
 
+// Inject pin CSS once (hover/pop animation, drop-in)
+let __gobberPinStylesInjected = false;
+function ensurePinStyles() {
+  if (typeof document === "undefined" || __gobberPinStylesInjected) return;
+  __gobberPinStylesInjected = true;
+  const style = document.createElement("style");
+  style.setAttribute("data-gobber-pin", "");
+  style.textContent = `
+    @keyframes gobber-pin-drop {
+      0% { transform: translate(-50%, -140%) scale(0.6); opacity: 0; }
+      60% { transform: translate(-50%, -96%) scale(1.08); opacity: 1; }
+      100% { transform: translate(-50%, -100%) scale(1); opacity: 1; }
+    }
+    @keyframes gobber-pin-pulse {
+      0%, 100% { opacity: 0.55; transform: translate(-50%, -50%) scale(1); }
+      50% { opacity: 0; transform: translate(-50%, -50%) scale(2.2); }
+    }
+    .gobber-pin {
+      position: absolute;
+      cursor: pointer;
+      transform: translate(-50%, -100%);
+      animation: gobber-pin-drop 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+      transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1), filter 260ms ease;
+      will-change: transform;
+    }
+    .gobber-pin:hover { transform: translate(-50%, -108%) scale(1.06); filter: brightness(1.04); z-index: 10; }
+    .gobber-pin-body {
+      position: relative;
+      display: flex;
+      height: 44px;
+      width: 44px;
+      align-items: center;
+      justify-content: center;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.55);
+      backdrop-filter: blur(20px) saturate(180%);
+      box-shadow:
+        0 1px 0 rgba(255,255,255,0.9) inset,
+        0 0 0 1px rgba(255,255,255,0.55),
+        0 14px 32px -10px rgba(20,14,8,0.45),
+        0 4px 10px -4px rgba(20,14,8,0.35);
+    }
+    .gobber-pin-ring {
+      position: absolute; inset: 3px; border-radius: 9999px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 1px 0 rgba(255,255,255,0.9) inset;
+    }
+    .gobber-pin-icon {
+      position: relative; font-size: 20px; line-height: 1;
+      filter: drop-shadow(0 1px 2px rgba(0,0,0,0.25));
+    }
+    .gobber-pin-stem {
+      position: absolute;
+      left: 50%; bottom: -5px;
+      width: 10px; height: 10px;
+      transform: translateX(-50%) rotate(45deg);
+      background: rgba(255, 255, 255, 0.55);
+      backdrop-filter: blur(20px) saturate(180%);
+      box-shadow: 0 8px 12px -4px rgba(20,14,8,0.35);
+      border-radius: 2px;
+    }
+    .gobber-pin-halo {
+      position: absolute; left: 50%; top: 50%;
+      width: 44px; height: 44px; border-radius: 9999px;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      animation: gobber-pin-pulse 2.6s ease-out infinite;
+    }
+    .gobber-pin-ghost .gobber-pin-body { background: rgba(232, 90, 60, 0.9); }
+    .gobber-pin-ghost .gobber-pin-stem { background: rgba(232, 90, 60, 0.9); }
+  `;
+  document.head.appendChild(style);
+}
 
 function pinElement(category: string | undefined, ghost = false) {
+  ensurePinStyles();
+  const { icon, tint, tintSoft } = categoryMeta(category);
   const el = document.createElement("div");
-  el.style.transform = "translate(-50%, -100%)";
-  el.style.cursor = "pointer";
+  el.className = `gobber-pin${ghost ? " gobber-pin-ghost" : ""}`;
   el.innerHTML = `
-    <div style="position:relative;display:flex;flex-direction:column;align-items:center;">
-      <div style="position:relative;display:flex;height:44px;width:44px;align-items:center;justify-content:center;border-radius:9999px;
-                  background:${ghost ? "rgba(139,115,85,0.75)" : "rgba(255,255,255,0.28)"};
-                  box-shadow:0 10px 28px rgba(0,0,0,0.35);
-                  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-                  border:1px solid rgba(255,255,255,0.65);font-size:20px;">
-        <div style="position:absolute;inset:0;border-radius:9999px;background:linear-gradient(to bottom,rgba(255,255,255,0.6),rgba(255,255,255,0.05));"></div>
-        <span style="position:relative;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.35));">${ghost ? "📍" : iconFor(category)}</span>
+    <div class="gobber-pin-body">
+      <span class="gobber-pin-halo" style="background:${ghost ? "rgba(232,90,60,0.35)" : tint + "55"};"></span>
+      <div class="gobber-pin-ring" style="background:${ghost ? "rgba(255,255,255,0.28)" : "linear-gradient(180deg," + tintSoft + "ee," + tintSoft + "aa)"};">
+        <span class="gobber-pin-icon">${ghost ? "📍" : icon}</span>
       </div>
-      <div style="width:8px;height:8px;transform:rotate(45deg);margin-top:-4px;background:rgba(255,255,255,0.5);border:1px solid rgba(255,255,255,0.65);backdrop-filter:blur(14px);"></div>
     </div>
+    <div class="gobber-pin-stem" style="${ghost ? "" : "background:" + tintSoft + "cc;"}"></div>
   `;
+  el.style.setProperty("--tint", tint);
   return el;
 }
+
 
 export const GoogleMap = forwardRef<GoogleMapHandle, Props>(function GoogleMap({
   pins,
