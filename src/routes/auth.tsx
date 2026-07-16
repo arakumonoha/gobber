@@ -240,181 +240,166 @@ function AuthPage() {
         }}
       />
 
-      {/* Warm glowing globe horizon at bottom — subtle Apple-style earth curvature */}
+      {/* Goldfish-style ambient aurora — single centered orb, softly breathing */}
       {view === "welcome" && (
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[28vh] overflow-hidden">
-          {/* Curved horizon disc — sits low, only crown visible */}
-          <div
-            className="absolute left-1/2 -translate-x-1/2"
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <motion.div
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
             style={{
-              bottom: "-140vh",
-              width: "220vw",
-              height: "160vh",
+              width: "min(92vw, 780px)",
+              height: "min(92vw, 780px)",
               borderRadius: "50%",
               background:
-                "radial-gradient(ellipse at 50% 8%, rgba(255,232,182,0.35) 0%, rgba(228,192,138,0.18) 6%, rgba(196,158,110,0.10) 12%, transparent 22%)",
-              filter: "blur(0.4px)",
+                "radial-gradient(closest-side, rgba(122,155,205,0.28) 0%, rgba(214,168,110,0.18) 38%, rgba(155,185,150,0.10) 62%, transparent 78%)",
+              filter: "blur(40px)",
             }}
+            animate={{
+              scale: [1, 1.05, 1],
+              rotate: [0, 12, 0],
+            }}
+            transition={{ duration: 22, repeat: Infinity, ease: [0.45, 0, 0.55, 1] }}
           />
-          {/* Rim light along the top of the disc */}
-          <div
-            className="absolute left-1/2 -translate-x-1/2"
+          <motion.div
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
             style={{
-              bottom: "19vh",
-              width: "170vw",
-              height: "2px",
+              width: "min(60vw, 520px)",
+              height: "min(60vw, 520px)",
+              borderRadius: "50%",
               background:
-                "radial-gradient(ellipse at center, rgba(255,236,196,0.55) 0%, rgba(255,220,160,0.2) 40%, transparent 70%)",
-              filter: "blur(2.5px)",
+                "radial-gradient(closest-side, rgba(255,238,200,0.55) 0%, rgba(255,224,170,0.18) 45%, transparent 72%)",
+              filter: "blur(30px)",
+              mixBlendMode: "screen",
             }}
+            animate={{ scale: [1, 1.08, 1], opacity: [0.85, 1, 0.85] }}
+            transition={{ duration: 9, repeat: Infinity, ease: [0.45, 0, 0.55, 1] }}
           />
-          {/* Tiny city lights scattered on the horizon crown */}
-          <svg
-            className="absolute inset-x-0 bottom-0 h-[22vh] w-full opacity-60"
-            viewBox="0 0 1000 220"
-            preserveAspectRatio="xMidYMax slice"
-            aria-hidden
-          >
-            {[
-              [140, 60, 1.2], [220, 90, 1], [310, 70, 1.4], [400, 100, 1.6],
-              [500, 80, 1], [600, 110, 1.3], [700, 85, 1.4], [800, 105, 1.1],
-              [880, 75, 1.2], [180, 140, 1], [360, 160, 1.3], [560, 165, 1.1],
-              [740, 155, 1.4], [860, 150, 1],
-            ].map(([x, y, r], i) => (
-              <circle
-                key={i}
-                cx={x}
-                cy={y}
-                r={r}
-                fill="#ffd98a"
-                style={{ filter: "drop-shadow(0 0 3px rgba(255,200,120,0.8))" }}
-              />
-            ))}
-          </svg>
         </div>
       )}
 
-
-
       <AnimatePresence mode="wait" initial={false}>
       {view === "welcome" ? (
-        /* iCloud-style welcome screen — cloud mark, wordmark, sign in */
+        /* Goldfish-inspired minimal welcome — tight sans wordmark, restrained CTAs */
         <motion.div
           key="welcome"
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.985, filter: "blur(6px)" }}
           transition={{ duration: 0.7, ease: EASE }}
-          className="relative z-10 flex w-full max-w-[560px] flex-col items-center text-center"
+          className="relative z-10 flex w-full max-w-[440px] flex-col items-center text-center"
         >
-          <motion.h1
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.05, ease: EASE }}
-            className="text-[64px] sm:text-[72px] leading-[1.02] tracking-[-0.035em] text-[#0f0d0b]"
-            style={{ fontFamily: '"Instrument Serif", Georgia, serif', fontWeight: 400, fontStyle: "italic" }}
+          {/* Micro mark */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.6 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, ease: EASE }}
+            className="flex items-center gap-2"
           >
-            Travel with strangers.
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#c4965a] opacity-70" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-[#8a6b45]" />
+            </span>
+            <span
+              className="text-[11px] font-medium uppercase tracking-[0.32em] text-[#8a7a5f]"
+              style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif' }}
+            >
+              Gobber
+            </span>
+          </motion.div>
+
+          {/* Wordmark */}
+          <motion.h1
+            initial={{ opacity: 0, y: 18, filter: "blur(10px)" }}
+            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            transition={{ duration: 1.1, delay: 0.15, ease: EASE }}
+            className="mt-14 text-[64px] sm:text-[84px] leading-[0.95] tracking-[-0.045em] text-[#0f0d0b]"
+            style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif', fontWeight: 500 }}
+          >
+            Visit
+            <span
+              className="mx-2 text-[#8a6b45]"
+              style={{ fontFamily: '"Instrument Serif", Georgia, serif', fontStyle: "italic", fontWeight: 400 }}
+            >
+              n
+            </span>
+            Vibe
           </motion.h1>
 
-          <motion.h2
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.18, ease: EASE }}
-            className="mt-1 text-[54px] sm:text-[60px] leading-[1.05] tracking-[-0.03em] text-[#8a6b45]"
-            style={{ fontFamily: '"Instrument Serif", Georgia, serif', fontWeight: 400, fontStyle: "italic" }}
-          >
-            Meet as friends.
-          </motion.h2>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.9, delay: 0.35 }}
-            className="mt-5 flex items-center gap-3"
-          >
-            <span className="h-px w-6 bg-[#a08a68]/40" />
-            <p className="text-[13px] tracking-[0.01em] text-[#8a7a5f]">
-              Real-life gatherings, wherever you land.
-            </p>
-            <span className="h-px w-6 bg-[#a08a68]/40" />
-          </motion.div>
-
-          <div className="mt-6 w-full">
-            <MemojiOrbit />
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.5, ease: EASE }}
-            className="mt-14 flex w-full max-w-[360px] flex-col gap-2"
-          >
-
-
-            <motion.button
-              whileHover={{ y: -1 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => setView("auth")}
-              className="flex h-[54px] items-center justify-center gap-2 rounded-full bg-[#0f0d0b] text-[15.5px] font-medium tracking-[-0.01em] text-white transition hover:bg-[#1a1614]"
-              style={{ boxShadow: "0 14px 32px -14px rgba(60,42,20,0.5), 0 2px 4px rgba(0,0,0,0.08)" }}
-            >
-              <AppleIcon className="h-[19px] w-[19px] text-white" />
-              Continue with Apple
-            </motion.button>
-            <motion.button
-              whileHover={{ y: -1 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => setView("auth")}
-              className="flex h-[54px] items-center justify-center gap-2.5 rounded-full bg-white text-[15.5px] font-medium tracking-[-0.01em] text-[#0f0d0b] transition hover:bg-white/90"
-              style={{ boxShadow: "0 8px 22px -14px rgba(60,42,20,0.35), 0 1px 2px rgba(0,0,0,0.05)", border: "1px solid rgba(26,22,20,0.06)" }}
-            >
-              <GoogleIcon className="h-[19px] w-[19px]" />
-              Continue with Google
-            </motion.button>
-            <motion.button
-              whileHover={{ y: -1 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => { setMode("signup"); setView("auth"); }}
-              className="flex h-[54px] items-center justify-center gap-2.5 rounded-full bg-white text-[15.5px] font-medium tracking-[-0.01em] text-[#0f0d0b] transition hover:bg-white/90"
-              style={{ boxShadow: "0 8px 22px -14px rgba(60,42,20,0.35), 0 1px 2px rgba(0,0,0,0.05)", border: "1px solid rgba(26,22,20,0.06)" }}
-            >
-              <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                <rect x="3" y="5" width="18" height="14" rx="2" />
-                <path d="m3 7 9 6 9-6" />
-              </svg>
-              Continue with Email
-            </motion.button>
-          </motion.div>
-
+          {/* Sub-copy */}
           <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.9, delay: 0.75 }}
-            className="mt-5 text-[13px] text-[#8a7a5f]"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 0.35, ease: EASE }}
+            className="mt-6 max-w-[340px] text-[14.5px] leading-[1.55] tracking-[-0.005em] text-[#5a4a38]"
+            style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif' }}
           >
-            Already have an account?{" "}
-            <button
-              onClick={() => setView("auth")}
-              className="font-semibold text-[#0f0d0b] hover:underline"
-            >
-              Sign in ›
-            </button>
+            A quiet home for real-life gatherings. Sit at a table, meet the world.
           </motion.p>
 
+          {/* CTA stack */}
+          <motion.div
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 0.5, ease: EASE }}
+            className="mt-12 flex w-full max-w-[340px] flex-col gap-2"
+          >
+            <motion.button
+              whileHover={{ y: -1 }}
+              whileTap={{ scale: 0.985 }}
+              transition={{ type: "spring", stiffness: 420, damping: 26 }}
+              onClick={() => setView("auth")}
+              className="group flex h-[52px] items-center justify-between rounded-full bg-[#0f0d0b] pl-6 pr-2 text-[14.5px] font-medium tracking-[-0.005em] text-white transition hover:bg-[#1a1614]"
+              style={{ boxShadow: "0 20px 40px -18px rgba(60,42,20,0.55), 0 2px 4px rgba(0,0,0,0.08)" }}
+            >
+              <span className="flex items-center gap-2.5">
+                <AppleIcon className="h-[18px] w-[18px] text-white" />
+                Continue with Apple
+              </span>
+              <span
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-white/12 transition group-hover:bg-white/20"
+              >
+                <ArrowRight className="h-4 w-4" strokeWidth={2.2} />
+              </span>
+            </motion.button>
 
+            <motion.button
+              whileHover={{ y: -1 }}
+              whileTap={{ scale: 0.985 }}
+              transition={{ type: "spring", stiffness: 420, damping: 26 }}
+              onClick={() => setView("auth")}
+              className="flex h-[52px] items-center justify-center gap-2.5 rounded-full bg-white/70 text-[14.5px] font-medium tracking-[-0.005em] text-[#0f0d0b] transition hover:bg-white"
+              style={{
+                border: "1px solid rgba(26,22,20,0.09)",
+                boxShadow: "0 1px 0 rgba(255,255,255,0.9) inset, 0 8px 22px -14px rgba(60,42,20,0.28)",
+                backdropFilter: "saturate(180%) blur(14px)",
+              }}
+            >
+              <GoogleIcon className="h-[18px] w-[18px]" />
+              Continue with Google
+            </motion.button>
 
+            <button
+              onClick={() => setView("auth")}
+              className="mt-1 text-[13px] tracking-[-0.005em] text-[#8a7a5f] transition hover:text-[#0f0d0b]"
+            >
+              or continue with email →
+            </button>
+          </motion.div>
+
+          {/* Footer */}
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 0.9 }}
-            className="mt-12 text-[11px] tracking-[-0.005em] text-[#a08a68]"
+            className="mt-16 text-[11px] tracking-[0.06em] text-[#a08a68]"
           >
             <span className="cursor-pointer hover:text-[#8a6b45]">Privacy</span>
-            {" · "}
+            <span className="mx-2 opacity-50">/</span>
             <span className="cursor-pointer hover:text-[#8a6b45]">Terms</span>
+            <span className="mx-2 opacity-50">/</span>
+            <span>© Gobber</span>
           </motion.p>
         </motion.div>
+
       ) : (
       /* iCloud-style centered card */
       <motion.div
