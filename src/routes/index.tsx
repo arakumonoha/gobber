@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowRight, Star, Coffee, Users, MapPin, Hand, Radio, Compass } from "lucide-react";
 import { GoogleMap, type GoogleMapHandle } from "@/components/google-map";
+import { ArcgisGlobe } from "@/components/arcgis-globe";
 import { activitiesQuery } from "@/lib/activities";
 import { getLandingStats, type LandingStats } from "@/lib/landing-stats.functions";
 import { FloatingFlags } from "@/components/landing/floating-flags";
