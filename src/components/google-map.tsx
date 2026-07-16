@@ -359,7 +359,9 @@ export const GoogleMap = forwardRef<GoogleMapHandle, Props>(function GoogleMap({
     const map = mapRef.current;
     const g = window.google;
     if (!map || !g) return;
-    map.setMapTypeId(mapTypeId);
+    // "satellite" → use hybrid internally for labeled context, feels more premium
+    const effective = mapTypeId === "satellite" ? "hybrid" : mapTypeId;
+    map.setMapTypeId(effective);
     map.setOptions({
       styles: mapTypeId === "roadmap" ? CLASSY_MAP_STYLES : undefined,
       tilt: mapTypeId === "roadmap" ? 0 : 45,
