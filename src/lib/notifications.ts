@@ -79,8 +79,13 @@ export function useMarkAllRead(userId: string | undefined) {
         .eq("user_id", userId)
         .is("read_at", null);
     },
+    onMutate: async () => {
+      await qc.cancelQueries({ queryKey: ["notifications", "unread", userId] });
+      qc.setQueryData(["notifications", "unread", userId], 0);
+    },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["notifications"] });
+      qc.invalidateQueries({ queryKey: ["notifications", "unread", userId] });
     },
   });
 }
