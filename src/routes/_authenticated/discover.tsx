@@ -191,7 +191,7 @@ function Discover() {
         className="relative z-30 mx-auto w-full max-w-[720px] px-5 pt-9 sm:px-7"
       >
         <div className="flex flex-col items-center text-center">
-          <p className="text-[10.5px] font-semibold uppercase tracking-[0.28em] text-[#6b5540]">Right now</p>
+          <p className="text-[10.5px] font-semibold uppercase tracking-[0.28em] text-[#4a3820]">Right now</p>
           <h1 className="mt-1.5 font-serif italic text-[44px] leading-[0.95] tracking-[-0.03em] text-[#0f0d0b] sm:text-[52px]">
             Discover.
           </h1>
@@ -210,12 +210,12 @@ function Discover() {
               "inset 0 1px 0 rgba(255,255,255,0.65), 0 1px 2px rgba(60,42,20,0.05), 0 18px 40px -20px rgba(60,42,20,0.22)",
           }}
         >
-          <Search className="h-4 w-4 text-[#6b5540]" strokeWidth={2} />
+          <Search className="h-4 w-4 text-[#4a3820]" strokeWidth={2} />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Where to? Lisbon, Tokyo, Bali…"
-            className="w-full bg-transparent text-[14px] tracking-[-0.01em] outline-none placeholder:text-[#8a7658] text-[#1a1614]"
+            className="w-full bg-transparent text-[14px] tracking-[-0.01em] outline-none placeholder:text-[#5a4530] text-[#1a1614]"
           />
         </div>
 
@@ -310,12 +310,12 @@ function Discover() {
         <div className="px-5 pt-1">
           <div className="mb-3 flex items-center justify-between">
             <div>
-              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#6b5540]">Around you</p>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#4a3820]">Around you</p>
               <h2 className="mt-0.5 text-[17px] font-semibold tracking-[-0.01em] text-[#0f0d0b]">
                 {isLoading ? "Loading…" : `${filtered.length} gathering${filtered.length === 1 ? "" : "s"}`}
               </h2>
             </div>
-            <span className="text-[11px] font-medium uppercase tracking-[0.16em] text-[#6b5540]">Swipe · Pull to refresh</span>
+            <span className="text-[11px] font-medium uppercase tracking-[0.16em] text-[#4a3820]"><span className="hidden lg:inline">Click to expand</span><span className="lg:hidden">Swipe · Pull to refresh</span></span>
           </div>
 
           <div
@@ -371,9 +371,9 @@ function Discover() {
                   style={{ backgroundImage: `url(${a.cover_url ?? "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=400&q=80"})` }}
                 />
                 <div className="min-w-0 flex-1">
-                  <p className="text-[9.5px] font-semibold uppercase tracking-[0.22em] text-[#8a6b45]">{a.category}</p>
+                  <p className="text-[9.5px] font-semibold uppercase tracking-[0.22em] text-[#5a4222]">{a.category}</p>
                   <h4 className="line-clamp-1 text-[14px] font-semibold tracking-[-0.01em] text-[#0f0d0b]">{a.title}</h4>
-                  <p className="line-clamp-1 text-[11.5px] text-[#6b5540]">
+                  <p className="line-clamp-1 text-[11.5px] text-[#4a3820]">
                     {a.city}, {a.country} · {format(new Date(a.starts_at), "MMM d")}
                   </p>
                 </div>
@@ -427,14 +427,14 @@ function Discover() {
                   value={form.title}
                   onChange={(e) => setForm({ ...form, title: e.target.value })}
                   placeholder="Sunset ramen in Shibuya"
-                  className="h-11 w-full rounded-xl border border-[#1a161418] bg-white/85 px-3.5 text-[14px] text-[#0f0d0b] outline-none placeholder:text-[#a89676] focus:border-[#8a6b45]/50"
+                  className="h-11 w-full rounded-xl border border-[#1a161418] bg-white/85 px-3.5 text-[14px] text-[#0f0d0b] outline-none placeholder:text-[#a89676] focus:border-[#5a4222]/50"
                 />
                 <textarea
                   value={form.description}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
                   placeholder="What's the vibe? (optional)"
                   rows={2}
-                  className="w-full resize-none rounded-xl border border-[#1a161418] bg-white/85 px-3.5 py-2.5 text-[14px] text-[#0f0d0b] outline-none placeholder:text-[#a89676] focus:border-[#8a6b45]/50"
+                  className="w-full resize-none rounded-xl border border-[#1a161418] bg-white/85 px-3.5 py-2.5 text-[14px] text-[#0f0d0b] outline-none placeholder:text-[#a89676] focus:border-[#5a4222]/50"
                 />
 
                 <div className="flex flex-wrap gap-1.5">
@@ -457,7 +457,7 @@ function Discover() {
                     type="datetime-local"
                     value={form.starts_at}
                     onChange={(e) => setForm({ ...form, starts_at: e.target.value })}
-                    className="h-11 w-full rounded-xl border border-[#1a161418] bg-white/85 px-3 text-[13.5px] text-[#0f0d0b] outline-none focus:border-[#8a6b45]/50"
+                    className="h-11 w-full rounded-xl border border-[#1a161418] bg-white/85 px-3 text-[13.5px] text-[#0f0d0b] outline-none focus:border-[#5a4222]/50"
                   />
                   <input
                     type="number"
@@ -466,7 +466,7 @@ function Discover() {
                     value={form.max_spots}
                     onChange={(e) => setForm({ ...form, max_spots: parseInt(e.target.value) || 6 })}
                     placeholder="Spots"
-                    className="h-11 w-full rounded-xl border border-[#1a161418] bg-white/85 px-3 text-[13.5px] text-[#0f0d0b] outline-none focus:border-[#8a6b45]/50"
+                    className="h-11 w-full rounded-xl border border-[#1a161418] bg-white/85 px-3 text-[13.5px] text-[#0f0d0b] outline-none focus:border-[#5a4222]/50"
                   />
                 </div>
               </div>
@@ -569,9 +569,9 @@ function ActivityCard({
         style={{ backgroundImage: `url(${a.cover_url ?? "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=1200&q=80"})` }}
       />
       <div className="p-4">
-        <p className="text-[9.5px] font-semibold uppercase tracking-[0.22em] text-[#8a6b45]">{a.category}</p>
+        <p className="text-[9.5px] font-semibold uppercase tracking-[0.22em] text-[#5a4222]">{a.category}</p>
         <h3 className="mt-1 line-clamp-1 font-serif italic text-[19px] leading-tight tracking-[-0.02em] text-[#0f0d0b]">{a.title}</h3>
-        <div className="mt-2 flex items-center gap-1.5 text-[11.5px] text-[#6b5540]">
+        <div className="mt-2 flex items-center gap-1.5 text-[11.5px] text-[#4a3820]">
           <MapPin className="h-3 w-3" strokeWidth={2} />
           <span className="line-clamp-1">{a.city}, {a.country}</span>
           <span className="mx-0.5">·</span>
