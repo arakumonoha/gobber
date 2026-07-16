@@ -96,7 +96,10 @@ export function useMarkRead(userId: string | undefined) {
     mutationFn: async (id: string) => {
       await supabase.from("notifications").update({ read_at: new Date().toISOString() }).eq("id", id);
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["notifications"] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["notifications"] });
+      qc.invalidateQueries({ queryKey: ["notifications", "unread", userId] });
+    },
   });
 }
 
