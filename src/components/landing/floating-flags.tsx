@@ -36,7 +36,7 @@ function twemojiUrl(emoji: string): string {
   return `https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/${cps.join("-")}.svg`;
 }
 
-const CYCLE_MS = 4200; // total lifetime of each flag before swapping
+const CYCLE_MS = 8000; // total lifetime of each flag before swapping
 
 function FlagSlot({ slot, index }: { slot: Slot; index: number }) {
   // Deterministic starting offset per slot so flags don't all swap in unison.
