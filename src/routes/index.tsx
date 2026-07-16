@@ -145,12 +145,13 @@ function Nav() {
           marginLeft: "clamp(12px, 3vw, 24px)",
           marginRight: "clamp(12px, 3vw, 24px)",
           background:
-            "linear-gradient(180deg, color-mix(in oklab, #FAF3E1 60%, transparent) 0%, color-mix(in oklab, #FAF3E1 38%, transparent) 100%)",
+            "linear-gradient(180deg, color-mix(in oklab, #2A2320 82%, transparent) 0%, color-mix(in oklab, #2A2320 68%, transparent) 100%)",
           backdropFilter: "saturate(180%) blur(22px)",
-          border: "1px solid rgba(255,255,255,0.55)",
+          border: "1px solid rgba(255,255,255,0.12)",
           boxShadow: scrolled
-            ? "inset 0 1px 0 rgba(255,255,255,0.7), inset 0 -1px 0 rgba(20,18,16,0.04), 0 20px 40px -20px rgba(20,18,16,0.22), 0 4px 12px -6px rgba(20,18,16,0.08)"
-            : "inset 0 1px 0 rgba(255,255,255,0.7), 0 12px 28px -18px rgba(20,18,16,0.18)",
+            ? "inset 0 1px 0 rgba(255,255,255,0.14), inset 0 -1px 0 rgba(0,0,0,0.2), 0 20px 40px -20px rgba(0,0,0,0.5), 0 4px 12px -6px rgba(0,0,0,0.25)"
+            : "inset 0 1px 0 rgba(255,255,255,0.14), 0 12px 28px -18px rgba(0,0,0,0.4)",
+
         }}
       >
         <Link to="/" className="flex items-center gap-2">
