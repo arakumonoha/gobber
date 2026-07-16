@@ -612,7 +612,7 @@ function TripCard({ t, idx }: { t: Trip; idx: number }) {
         className="pointer-events-none absolute inset-0 rounded-3xl"
         style={{ background: "linear-gradient(180deg, rgba(255,255,255,0.55) 0%, transparent 45%)" }}
       />
-      <span className="relative text-[44px] leading-none drop-shadow-sm sm:text-[52px]" aria-hidden>{t.flag}</span>
+      <img src={twemojiUrl(t.flag)} alt="" draggable={false} className="relative h-12 w-12 drop-shadow-sm sm:h-14 sm:w-14" />
       <span
         className="absolute -bottom-1.5 -right-1.5 min-w-[24px] rounded-full px-1.5 text-center text-[11px] font-bold leading-[20px] tracking-tight"
         style={{ background: theme.badge, color: theme.badgeFg, boxShadow: `0 4px 12px ${theme.ring}55`, border: "1.5px solid #fff" }}
