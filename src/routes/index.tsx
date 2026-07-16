@@ -212,7 +212,7 @@ function Hero({ stats, nearYou }: { stats: LandingStats | undefined; nearYou: Ne
           radial-gradient(70% 50% at 50% 110%, ${PALETTE.blueSoft} 0%, transparent 60%),
           radial-gradient(60% 50% at 10% 40%, ${PALETTE.amberSoft} 0%, transparent 65%),
           radial-gradient(60% 50% at 90% 60%, ${PALETTE.sageSoft} 0%, transparent 65%),
-          linear-gradient(180deg, ${PALETTE.cream} 0%, ${PALETTE.paper} 100%)
+          linear-gradient(180deg, ${PALETTE.cream} 0%, ${PALETTE.paper} 55%, ${PALETTE.cream} 100%)
         `,
       }}
     >
