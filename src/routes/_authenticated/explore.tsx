@@ -108,8 +108,8 @@ function Explore() {
       {/* Vignette */}
       <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-52 bg-gradient-to-b from-background/60 via-background/10 to-transparent" />
 
-      {/* Left column: stacked glass controls (zoom / locate / compass) */}
-      <div className="absolute bottom-28 left-5 z-30 flex flex-col gap-2 sm:left-7">
+      {/* Left flank: zoom stack */}
+      <div className="absolute bottom-32 left-5 z-30 sm:left-7">
         <div
           className="flex flex-col overflow-hidden rounded-2xl bg-white/85 ring-1 ring-black/[0.06] shadow-[0_18px_36px_-14px_rgba(60,42,20,0.28)]"
           style={{ backdropFilter: "saturate(180%) blur(20px)", WebkitBackdropFilter: "saturate(180%) blur(20px)" }}
@@ -132,6 +132,10 @@ function Explore() {
             <Minus className="h-4 w-4" strokeWidth={2.2} />
           </motion.button>
         </div>
+      </div>
+
+      {/* Right flank: locate + compass — mirrors the zoom stack */}
+      <div className="absolute bottom-32 right-5 z-30 flex flex-col gap-2 sm:right-7">
         <motion.button
           whileTap={{ scale: 0.92 }}
           onClick={handleLocate}
@@ -159,6 +163,7 @@ function Explore() {
           )}
         </AnimatePresence>
       </div>
+
 
 
       {/* Drop-mode banner */}
