@@ -347,6 +347,7 @@ function Discover() {
           </div>
 
           <div className="mt-4 space-y-2">
+            <AnimatePresence mode="popLayout" initial={false}>
             {filtered.map((a, i) => (
               <motion.button
                 key={"row-" + a.id}
