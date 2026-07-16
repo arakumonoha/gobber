@@ -13,7 +13,9 @@ export interface MapPin {
   lng: number;
   label?: string;
   category?: string;
+  mine?: boolean;
 }
+
 
 interface Props {
   pins: MapPin[];
@@ -92,7 +94,7 @@ const CLASSY_MAP_STYLES: any[] = [
   { featureType: "water", elementType: "labels.text.stroke", stylers: [{ color: "#e8f0f5" }, { weight: 2 }] },
 ];
 
-// Inject pin CSS once (hover/pop animation, drop-in)
+// Inject pin CSS once (Apple Maps-style teardrop with glass morphism)
 let __gobberPinStylesInjected = false;
 function ensurePinStyles() {
   if (typeof document === "undefined" || __gobberPinStylesInjected) return;
@@ -101,88 +103,119 @@ function ensurePinStyles() {
   style.setAttribute("data-gobber-pin", "");
   style.textContent = `
     @keyframes gobber-pin-drop {
-      0% { transform: translate(-50%, -140%) scale(0.6); opacity: 0; }
-      60% { transform: translate(-50%, -96%) scale(1.08); opacity: 1; }
+      0% { transform: translate(-50%, -180%) scale(0.4); opacity: 0; }
+      55% { transform: translate(-50%, -96%) scale(1.12); opacity: 1; }
+      78% { transform: translate(-50%, -102%) scale(0.96); }
       100% { transform: translate(-50%, -100%) scale(1); opacity: 1; }
     }
-    @keyframes gobber-pin-pulse {
-      0%, 100% { opacity: 0.55; transform: translate(-50%, -50%) scale(1); }
-      50% { opacity: 0; transform: translate(-50%, -50%) scale(2.2); }
+    @keyframes gobber-pin-halo {
+      0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+      50% { opacity: 0; transform: translate(-50%, -50%) scale(2.4); }
+    }
+    @keyframes gobber-pin-mine-glow {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(255,180,60,0.55), 0 14px 32px -10px rgba(20,14,8,0.5), 0 1px 0 rgba(255,255,255,0.9) inset; }
+      50% { box-shadow: 0 0 0 8px rgba(255,180,60,0), 0 14px 32px -10px rgba(20,14,8,0.5), 0 1px 0 rgba(255,255,255,0.9) inset; }
     }
     .gobber-pin {
       position: absolute;
       cursor: pointer;
       transform: translate(-50%, -100%);
-      animation: gobber-pin-drop 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+      animation: gobber-pin-drop 560ms cubic-bezier(0.22, 1, 0.36, 1) both;
       transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1), filter 260ms ease;
       will-change: transform;
+      -webkit-tap-highlight-color: transparent;
     }
-    .gobber-pin:hover { transform: translate(-50%, -108%) scale(1.06); filter: brightness(1.04); z-index: 10; }
-    .gobber-pin-body {
+    .gobber-pin:hover { transform: translate(-50%, -108%) scale(1.06); filter: brightness(1.05); z-index: 20; }
+
+    /* Teardrop body — apple maps silhouette */
+    .gobber-pin-drop {
       position: relative;
-      display: flex;
-      height: 44px;
       width: 44px;
-      align-items: center;
-      justify-content: center;
-      border-radius: 9999px;
-      background: rgba(255, 255, 255, 0.55);
-      backdrop-filter: blur(20px) saturate(180%);
-      box-shadow:
-        0 1px 0 rgba(255,255,255,0.9) inset,
-        0 0 0 1px rgba(255,255,255,0.55),
-        0 14px 32px -10px rgba(20,14,8,0.45),
-        0 4px 10px -4px rgba(20,14,8,0.35);
+      height: 54px;
+      filter: drop-shadow(0 10px 14px rgba(20,14,8,0.32)) drop-shadow(0 2px 4px rgba(20,14,8,0.28));
     }
-    .gobber-pin-ring {
-      position: absolute; inset: 3px; border-radius: 9999px;
+    .gobber-pin-drop svg { width: 100%; height: 100%; display: block; }
+
+    /* Inner glass disc sits inside the circular head of the teardrop */
+    .gobber-pin-face {
+      position: absolute;
+      top: 4px; left: 50%;
+      width: 36px; height: 36px;
+      transform: translateX(-50%);
+      border-radius: 9999px;
       display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 1px 0 rgba(255,255,255,0.9) inset;
+      background: rgba(255,255,255,0.42);
+      backdrop-filter: blur(14px) saturate(180%);
+      box-shadow:
+        0 1px 0 rgba(255,255,255,0.95) inset,
+        0 -1px 0 rgba(0,0,0,0.06) inset,
+        0 0 0 1px rgba(255,255,255,0.55);
     }
     .gobber-pin-icon {
-      position: relative; font-size: 20px; line-height: 1;
-      filter: drop-shadow(0 1px 2px rgba(0,0,0,0.25));
+      font-size: 18px; line-height: 1;
+      filter: drop-shadow(0 1px 1.5px rgba(0,0,0,0.28));
     }
-    .gobber-pin-stem {
-      position: absolute;
-      left: 50%; bottom: -5px;
-      width: 10px; height: 10px;
-      transform: translateX(-50%) rotate(45deg);
-      background: rgba(255, 255, 255, 0.55);
-      backdrop-filter: blur(20px) saturate(180%);
-      box-shadow: 0 8px 12px -4px rgba(20,14,8,0.35);
-      border-radius: 2px;
-    }
+
     .gobber-pin-halo {
-      position: absolute; left: 50%; top: 50%;
-      width: 44px; height: 44px; border-radius: 9999px;
+      position: absolute; left: 50%; top: 22px;
+      width: 40px; height: 40px; border-radius: 9999px;
       transform: translate(-50%, -50%);
       pointer-events: none;
-      animation: gobber-pin-pulse 2.6s ease-out infinite;
+      animation: gobber-pin-halo 2.8s ease-out infinite;
+      z-index: -1;
     }
-    .gobber-pin-ghost .gobber-pin-body { background: rgba(232, 90, 60, 0.9); }
-    .gobber-pin-ghost .gobber-pin-stem { background: rgba(232, 90, 60, 0.9); }
+
+    /* Ghost (placement preview) */
+    .gobber-pin-ghost { opacity: 0.92; }
+    .gobber-pin-ghost .gobber-pin-face { background: rgba(255,255,255,0.55); }
+
+    /* Mine: amber halo + amber ring around glass disc */
+    .gobber-pin-mine .gobber-pin-face {
+      background: rgba(255,247,232,0.62);
+      animation: gobber-pin-mine-glow 2.4s ease-in-out infinite;
+    }
+    .gobber-pin-mine-badge {
+      position: absolute;
+      top: -2px; right: -2px;
+      width: 14px; height: 14px;
+      border-radius: 9999px;
+      background: linear-gradient(180deg,#ffb640,#e88a1a);
+      box-shadow: 0 0 0 2px #fffaf0, 0 2px 4px rgba(20,14,8,0.35);
+    }
   `;
   document.head.appendChild(style);
 }
 
-function pinElement(category: string | undefined, ghost = false) {
+function pinElement(category: string | undefined, opts: { ghost?: boolean; mine?: boolean } = {}) {
   ensurePinStyles();
-  const { icon, tint, tintSoft } = categoryMeta(category);
+  const { ghost = false, mine = false } = opts;
+  const { icon, tint } = categoryMeta(category);
+  const fill = ghost ? "#e85a3c" : mine ? "#f0a020" : tint;
   const el = document.createElement("div");
-  el.className = `gobber-pin${ghost ? " gobber-pin-ghost" : ""}`;
+  el.className = `gobber-pin${ghost ? " gobber-pin-ghost" : ""}${mine ? " gobber-pin-mine" : ""}`;
   el.innerHTML = `
-    <div class="gobber-pin-body">
-      <span class="gobber-pin-halo" style="background:${ghost ? "rgba(232,90,60,0.35)" : tint + "55"};"></span>
-      <div class="gobber-pin-ring" style="background:${ghost ? "rgba(255,255,255,0.28)" : "linear-gradient(180deg," + tintSoft + "ee," + tintSoft + "aa)"};">
+    <span class="gobber-pin-halo" style="background:${fill}55;"></span>
+    <div class="gobber-pin-drop">
+      <svg viewBox="0 0 44 54" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="g-${Math.random().toString(36).slice(2, 8)}" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="${fill}" stop-opacity="1"/>
+            <stop offset="100%" stop-color="${fill}" stop-opacity="0.82"/>
+          </linearGradient>
+        </defs>
+        <path d="M22 1.5c11.32 0 20.5 8.7 20.5 19.42 0 7.9-5.05 15-11.4 21.3-3.4 3.37-6.9 6.06-8.35 7.14a1.25 1.25 0 0 1-1.5 0c-1.45-1.08-4.95-3.77-8.35-7.14C6.55 35.92 1.5 28.82 1.5 20.92 1.5 10.2 10.68 1.5 22 1.5z"
+              fill="${fill}"
+              stroke="rgba(255,255,255,0.85)" stroke-width="1.4"/>
+      </svg>
+      <div class="gobber-pin-face">
         <span class="gobber-pin-icon">${ghost ? "📍" : icon}</span>
       </div>
+      ${mine ? '<span class="gobber-pin-mine-badge"></span>' : ""}
     </div>
-    <div class="gobber-pin-stem" style="${ghost ? "" : "background:" + tintSoft + "cc;"}"></div>
   `;
-  el.style.setProperty("--tint", tint);
   return el;
 }
+
 
 
 export const GoogleMap = forwardRef<GoogleMapHandle, Props>(function GoogleMap({
@@ -328,7 +361,7 @@ export const GoogleMap = forwardRef<GoogleMapHandle, Props>(function GoogleMap({
         const overlay: any = new g.maps.OverlayView();
         overlay.onAdd = function () {
           const panes = this.getPanes();
-          this.div = pinElement(undefined, true);
+          this.div = pinElement(undefined, { ghost: true });
           this.div.style.position = "absolute";
           panes.floatPane.appendChild(this.div);
         };
@@ -369,7 +402,7 @@ export const GoogleMap = forwardRef<GoogleMapHandle, Props>(function GoogleMap({
         const overlay: any = new g.maps.OverlayView();
         overlay.onAdd = function () {
           const panes = this.getPanes();
-          const el = pinElement(pin.category);
+          const el = pinElement(pin.category, { mine: pin.mine });
           el.addEventListener("click", (ev) => {
             ev.stopPropagation();
             onPinClick?.(pin.id);

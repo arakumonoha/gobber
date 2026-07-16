@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, MapPin, Compass, Plus, X, Loader2 } from "lucide-react";
+import { Search, MapPin, Compass, Plus, X, Loader2, Trash2 } from "lucide-react";
 import { GoogleMap, type GoogleMapHandle } from "@/components/google-map";
 import { MapTypeToggle, type MapView } from "@/components/map-type-toggle";
 import { BottomNav } from "@/components/bottom-nav";
@@ -61,12 +61,57 @@ function Discover() {
     });
   }, [activities, category, query]);
 
-  const pins = filtered.map((a) => ({ id: a.id, lat: a.lat, lng: a.lng, label: a.title, category: a.category }));
+  // A user is only allowed one *active* pin at a time (starts_at + duration_hours > now)
+  const myActivePin = useMemo(() => {
+    if (!user) return null;
+    const now = Date.now();
+    return (
+      activities.find((a) => {
+        if (a.host_id !== user.id) return false;
+        const start = new Date(a.starts_at).getTime();
+        const durHrs = (a as unknown as { duration_hours?: number }).duration_hours ?? 2;
+        const end = start + durHrs * 60 * 60 * 1000;
+        return end > now;
+      }) ?? null
+    );
+  }, [activities, user]);
+
+  const pins = filtered.map((a) => ({
+    id: a.id,
+    lat: a.lat,
+    lng: a.lng,
+    label: a.title,
+    category: a.category,
+    mine: !!user && a.host_id === user.id,
+  }));
 
   function focusActivity(a: Activity) {
     setSelectedId(a.id);
     mapRef.current?.panTo(a.lat, a.lng, 12);
   }
+
+  async function removeMyPin() {
+    if (!myActivePin || !user) return;
+    const id = myActivePin.id;
+    try {
+      const { error } = await supabase.from("activities").delete().eq("id", id).eq("host_id", user.id);
+      if (error) throw error;
+      toast.success("Pin removed");
+      await qc.invalidateQueries({ queryKey: ["activities"] });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Could not remove");
+    }
+  }
+
+  function confirmRemovePin() {
+    if (!myActivePin) return;
+    toast(`Remove "${myActivePin.title}"?`, {
+      description: "This takes down your pin for everyone.",
+      action: { label: "Remove", onClick: removeMyPin },
+      duration: 6000,
+    });
+  }
+
 
   async function reverseGeocode(lat: number, lng: number): Promise<string> {
     try {
@@ -96,11 +141,18 @@ function Discover() {
   async function submitCreate(e: React.FormEvent) {
     e.preventDefault();
     if (!user || !ghostPin) return;
+    if (myActivePin) {
+      toast.error("You already have an active pin. Remove it first.");
+      setShowCreate(false);
+      setGhostPin(null);
+      return;
+    }
     if (!form.title) {
       toast.error("Add a title");
       return;
     }
     setCreating(true);
+
     try {
       const [city, country = ""] = placeLabel.split(",").map((s) => s.trim());
       const duration = Math.min(24, Math.max(1, form.duration_hours || 2));
@@ -180,9 +232,14 @@ function Discover() {
         ghostPin={ghostPin}
         onMapClick={handleMapClick}
         onPinClick={(id: string) => {
+          if (myActivePin && id === myActivePin.id) {
+            confirmRemovePin();
+            return;
+          }
           const a = filtered.find((x) => x.id === id);
           if (a) focusActivity(a);
         }}
+
         onHeadingChange={setHeading}
       />
 
@@ -243,11 +300,15 @@ function Discover() {
         )}
       </AnimatePresence>
 
-      {/* FAB — Add pin */}
+      {/* FAB — Add pin OR Remove your active pin */}
       <motion.button
         onClick={() => {
           if (!user) {
             toast.error("Sign in to drop a pin");
+            return;
+          }
+          if (myActivePin) {
+            confirmRemovePin();
             return;
           }
           setAddMode((v) => !v);
@@ -255,14 +316,17 @@ function Discover() {
         whileTap={{ scale: 0.92 }}
         className="absolute bottom-28 right-5 z-30 flex h-14 w-14 items-center justify-center rounded-full text-white shadow-[0_18px_36px_-14px_rgba(232,90,60,0.7)] transition sm:right-7"
         style={{
-          background: addMode
-            ? "linear-gradient(180deg,#1a1614,#0a0908)"
-            : "linear-gradient(180deg,#ff7a5c,#e85a3c)",
+          background: myActivePin
+            ? "linear-gradient(180deg,#f0a020,#c67a10)"
+            : addMode
+              ? "linear-gradient(180deg,#1a1614,#0a0908)"
+              : "linear-gradient(180deg,#ff7a5c,#e85a3c)",
         }}
-        aria-label={addMode ? "Cancel add pin" : "Add pin"}
+        aria-label={myActivePin ? "Remove your pin" : addMode ? "Cancel add pin" : "Add pin"}
       >
-        {addMode ? <X className="h-6 w-6" strokeWidth={2.4} /> : <Plus className="h-6 w-6" strokeWidth={2.4} />}
+        {myActivePin ? <Trash2 className="h-5 w-5" strokeWidth={2.2} /> : addMode ? <X className="h-6 w-6" strokeWidth={2.4} /> : <Plus className="h-6 w-6" strokeWidth={2.4} />}
       </motion.button>
+
 
       {/* Bottom sheet */}
       <DraggableSheet
