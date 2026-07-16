@@ -196,6 +196,51 @@ function Discover() {
     setGhostPin(null);
   }
 
+  const [locating, setLocating] = useState(false);
+  async function handleLocate() {
+    setLocating(true);
+    try {
+      const pos = await mapRef.current?.locate();
+      if (!pos) toast.error("Location unavailable");
+    } finally {
+      setLocating(false);
+    }
+  }
+
+  const [searching, setSearching] = useState(false);
+  async function handleSearchSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const q = query.trim();
+    if (!q) return;
+    // If any local activity matches, focus that first — cheapest hit.
+    const local = filtered[0] ?? activities.find((a) =>
+      `${a.title} ${a.city} ${a.country}`.toLowerCase().includes(q.toLowerCase()),
+    );
+    if (local) {
+      mapRef.current?.flyTo(local.lat, local.lng, 11);
+      setSelectedId(local.id);
+      return;
+    }
+    setSearching(true);
+    try {
+      const r = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(q)}`,
+        { headers: { "Accept-Language": "en" } },
+      );
+      const j = await r.json();
+      const hit = Array.isArray(j) ? j[0] : null;
+      if (!hit) {
+        toast.error(`Couldn't find "${q}"`);
+        return;
+      }
+      mapRef.current?.flyTo(parseFloat(hit.lat), parseFloat(hit.lon), 11);
+    } catch {
+      toast.error("Search failed");
+    } finally {
+      setSearching(false);
+    }
+  }
+
   function onRailScroll() {
     const el = railRef.current;
     if (!el) return;
