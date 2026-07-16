@@ -962,14 +962,25 @@ function ActivityCard({
       layout
       data-id={a.id}
       initial={{ opacity: 0, y: 18, filter: "blur(14px)", scale: 0.96 }}
-      animate={{ opacity: 1, y: 0, filter: "blur(0px)", scale: 1 }}
+      animate={{
+        opacity: 1,
+        y: active ? -4 : 0,
+        filter: "blur(0px)",
+        scale: active ? 1.02 : 0.97,
+      }}
       exit={{ opacity: 0, y: -8, filter: "blur(14px)", scale: 0.96 }}
-      transition={{ delay, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-      whileHover={{ y: -3 }}
-      whileTap={{ scale: 0.98 }}
+      transition={{
+        delay,
+        opacity: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
+        filter: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
+        y: { type: "spring", stiffness: 380, damping: 32, mass: 0.7 },
+        scale: { type: "spring", stiffness: 380, damping: 30, mass: 0.7 },
+      }}
+      whileHover={{ y: -6 }}
+      whileTap={{ scale: 0.96 }}
       onClick={onClick}
-      className={`group w-[260px] shrink-0 snap-center overflow-hidden rounded-[22px] text-left ring-1 ring-[#3a2a12]/[0.06] transition-shadow ${
-        active ? "shadow-[0_24px_54px_-24px_rgba(50,34,15,0.36)]" : "shadow-[0_10px_28px_-18px_rgba(50,34,15,0.18)]"
+      className={`group w-[260px] shrink-0 snap-center snap-always overflow-hidden rounded-[22px] text-left ring-1 ring-[#3a2a12]/[0.06] transition-shadow will-change-transform ${
+        active ? "shadow-[0_28px_60px_-24px_rgba(50,34,15,0.42)]" : "shadow-[0_10px_28px_-18px_rgba(50,34,15,0.18)]"
       }`}
       style={{
         background: "color-mix(in oklab, #fffaf0 88%, transparent)",
