@@ -171,38 +171,55 @@
   box-shadow: var(--shadow-lift);
 }
 
+/* ---------- Liquid glass system ----------
+ * One recipe, three densities. All share the same warm ivory→sand fill,
+ * hairline ring, inner top highlight, and warm drop shadow so glass
+ * surfaces read as a family across the app. */
+
 @utility glass {
-  background: color-mix(in oklab, var(--card) 68%, transparent);
-  backdrop-filter: saturate(180%) blur(24px);
+  background:
+    linear-gradient(180deg, rgba(255, 252, 246, 0.82) 0%, rgba(246, 238, 224, 0.68) 100%);
+  backdrop-filter: saturate(180%) blur(22px);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -1px 0 rgba(60, 40, 14, 0.05),
+    0 18px 40px -22px rgba(60, 40, 14, 0.35);
 }
 
 @utility glass-dark {
-  background: color-mix(in oklab, oklch(0.2 0.015 60) 55%, transparent);
+  background:
+    linear-gradient(180deg, rgba(28, 22, 14, 0.72) 0%, rgba(20, 16, 10, 0.55) 100%);
   backdrop-filter: saturate(180%) blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 24px 48px -24px rgba(0, 0, 0, 0.5);
 }
 
-/* Premium liquid-glass panel — subtle, layered, works on warm sand bg */
+/* Premium panel — larger surfaces (cards, sheets, modals) */
 @utility glass-panel {
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.72) 0%, rgba(255,255,255,0.42) 100%);
-  backdrop-filter: saturate(180%) blur(22px);
-  border: 1px solid rgba(255,255,255,0.7);
+    linear-gradient(180deg, rgba(255, 252, 246, 0.86) 0%, rgba(246, 238, 224, 0.72) 100%);
+  backdrop-filter: saturate(180%) blur(26px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.9),
-    inset 0 -1px 0 rgba(20,18,16,0.04),
-    0 12px 32px -18px rgba(20,18,16,0.22);
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 0 rgba(60, 40, 14, 0.06),
+    0 24px 56px -24px rgba(60, 40, 14, 0.38);
 }
 
-/* Compact glass for chips, pills, small toggles */
+/* Compact glass — chips, pills, tiny toggles */
 @utility glass-chip {
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.78) 0%, rgba(255,255,255,0.48) 100%);
-  backdrop-filter: saturate(170%) blur(14px);
-  border: 1px solid rgba(255,255,255,0.75);
+    linear-gradient(180deg, rgba(255, 252, 246, 0.88) 0%, rgba(246, 238, 224, 0.72) 100%);
+  backdrop-filter: saturate(170%) blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,1),
-    0 6px 14px -8px rgba(20,18,16,0.18);
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 10px 22px -14px rgba(60, 40, 14, 0.3);
 }
+
 
 /* Warm page background — atmospheric globe wash at the bottom */
 @utility page-wash {
