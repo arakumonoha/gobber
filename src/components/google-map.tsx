@@ -302,10 +302,11 @@ export const GoogleMap = forwardRef<GoogleMapHandle, Props>(function GoogleMap({
       const map = mapRef.current;
       if (!map) return;
       map.setHeading(0);
-      map.setTilt(mapTypeId === "roadmap" ? 0 : 45);
+      map.setTilt(0);
     },
     getHeading: () => mapRef.current?.getHeading?.() ?? 0,
   }), [mapTypeId]);
+
 
 
 
