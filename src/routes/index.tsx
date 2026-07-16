@@ -19,20 +19,33 @@ const GoogleMap = lazy(() => import("@/components/google-map").then((m) => ({ de
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Gobber — Visit n Vibe" },
+      { title: "Gobber — Meet strangers. Leave with friends." },
       {
         name: "description",
         content:
-          "Gobber turns cities into gathering places. Browse nearby tables, join one, and vibe with people around you. Today, not someday.",
+          "Gobber turns cities into gathering places. Browse nearby dinners, hikes and small adventures hosted by people around you — and become the reason someone remembers a city.",
       },
-      { property: "og:title", content: "Gobber — Visit n Vibe" },
+      { property: "og:title", content: "Gobber — Meet strangers. Leave with friends." },
       {
         property: "og:description",
         content:
-          "Browse nearby tables, join one, and vibe with people around you. Today, not someday.",
+          "Browse nearby dinners, hikes and small adventures hosted by people around you. Today, not someday.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://gobber.lovable.app/" },
       { name: "twitter:card", content: "summary_large_image" },
+    ],
+    links: [{ rel: "canonical", href: "https://gobber.lovable.app/" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "Gobber",
+          url: "https://gobber.lovable.app/",
+        }),
+      },
     ],
   }),
   component: Landing,

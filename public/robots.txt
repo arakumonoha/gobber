@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /discover
+Disallow: /explore
+Disallow: /host
+Disallow: /profile
+Disallow: /trips
+Disallow: /activity/
+Disallow: /auth
+
+Sitemap: https://gobber.lovable.app/sitemap.xml
