@@ -436,7 +436,7 @@ function Discover() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search a city or vibe — press enter to fly"
-              className="w-full bg-transparent text-[14px] tracking-[-0.01em] outline-none placeholder:text-[#3a2a18] text-[#1a1614]"
+              className="w-full bg-transparent text-[14px] tracking-[-0.01em] outline-none placeholder:text-[#6b5230] text-[#1a1614]"
               enterKeyHint="search"
             />
             {query && (
@@ -974,7 +974,7 @@ function GlassInput({ value, onChange, placeholder, autoFocus }: {
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
       autoFocus={autoFocus}
-      className="h-[48px] w-full rounded-[12px] px-4 text-[15px] tracking-[-0.01em] text-[#0f0d0b] placeholder:text-[#3a2a18] outline-none transition-all duration-300 focus:bg-white/45"
+      className="h-[48px] w-full rounded-[12px] px-4 text-[15px] tracking-[-0.01em] text-[#0f0d0b] placeholder:text-[#6b5230] outline-none transition-all duration-300 focus:bg-white/45"
       style={GLASS_INPUT_STYLE}
     />
   );
@@ -989,7 +989,7 @@ function GlassTextarea({ value, onChange, placeholder }: {
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
       rows={2}
-      className="w-full resize-none rounded-[12px] px-4 py-3 text-[14px] tracking-[-0.01em] text-[#0f0d0b] placeholder:text-[#3a2a18] outline-none transition-all duration-300 focus:bg-white/45"
+      className="w-full resize-none rounded-[12px] px-4 py-3 text-[14px] tracking-[-0.01em] text-[#0f0d0b] placeholder:text-[#6b5230] outline-none transition-all duration-300 focus:bg-white/45"
       style={GLASS_INPUT_STYLE}
     />
   );
