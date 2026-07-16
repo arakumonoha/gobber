@@ -83,20 +83,25 @@ function GoogleIcon({ className }: { className?: string }) {
 
 function OwlMark({ size = 32 }: { size?: number }) {
   return (
-    <img
+    <motion.img
       src={owlLogo.url}
       alt="Gobber"
       width={size}
       height={size}
+      whileHover={{ rotate: [-4, 4, -2, 2, 0], scale: 1.06 }}
+      whileTap={{ scale: 0.94 }}
+      transition={{ rotate: { duration: 0.6, ease: "easeInOut" }, scale: { type: "spring", stiffness: 380, damping: 18 } }}
       style={{
         width: size,
         height: size,
         objectFit: "contain",
         filter: "drop-shadow(0 6px 12px rgba(60,42,20,0.18))",
+        cursor: "pointer",
       }}
     />
   );
 }
+
 
 /* ───────────────────────── NAV ───────────────────────── */
 
@@ -172,42 +177,47 @@ function Nav() {
               "inset 0 1px 0 rgba(255,255,255,0.08), inset 0 -1px 0 rgba(0,0,0,0.2), 0 4px 12px -6px rgba(0,0,0,0.3)",
           }}
         >
-
           {links.map((l) => {
             const isActive = active === l.id;
             return (
-              <a
+              <motion.a
                 key={l.id}
                 href={l.href}
                 onClick={() => setActive(l.id)}
-                className="relative rounded-full px-4 py-1.5 transition"
-              style={{ color: isActive ? "#FAF3E1" : "rgba(250,243,225,0.65)" }}
-            >
-              {isActive && (
-                <motion.span
-                  layoutId="nav-glass-pill"
-                  className="absolute inset-0 rounded-full"
-                  transition={{ type: "spring", stiffness: 380, damping: 32 }}
-                  style={{
-                    background:
-                      "linear-gradient(180deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.08) 100%)",
-                    border: "1px solid rgba(255,255,255,0.2)",
-                    boxShadow:
-                      "inset 0 1px 0 rgba(255,255,255,0.25), inset 0 -1px 0 rgba(0,0,0,0.15), 0 6px 14px -6px rgba(0,0,0,0.35)",
-                  }}
-                />
-
+                whileHover={{ y: -1 }}
+                whileTap={{ scale: 0.94 }}
+                transition={{ type: "spring", stiffness: 500, damping: 26 }}
+                className="relative rounded-full px-4 py-1.5"
+                style={{ color: isActive ? "#FAF3E1" : "rgba(250,243,225,0.65)" }}
+              >
+                {isActive && (
+                  <motion.span
+                    layoutId="nav-glass-pill"
+                    className="absolute inset-0 rounded-full"
+                    transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                    style={{
+                      background:
+                        "linear-gradient(180deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.08) 100%)",
+                      border: "1px solid rgba(255,255,255,0.2)",
+                      boxShadow:
+                        "inset 0 1px 0 rgba(255,255,255,0.25), inset 0 -1px 0 rgba(0,0,0,0.15), 0 6px 14px -6px rgba(0,0,0,0.35)",
+                    }}
+                  />
                 )}
                 <span className="relative z-10 font-medium">{l.label}</span>
-              </a>
+              </motion.a>
             );
           })}
+
         </nav>
 
-        <button
+        <motion.button
           type="button"
           onClick={openAuth}
-          className="group relative inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[13px] font-medium transition hover:-translate-y-0.5"
+          whileHover={{ y: -1.5 }}
+          whileTap={{ scale: 0.96 }}
+          transition={{ type: "spring", stiffness: 420, damping: 24 }}
+          className="group relative inline-flex items-center gap-1.5 overflow-hidden rounded-full px-4 py-2 text-[13px] font-medium"
           style={{
             color: "#ffffff",
             background:
@@ -218,9 +228,15 @@ function Nav() {
               "inset 0 1px 0 rgba(255,255,255,0.12), inset 0 -1px 0 rgba(0,0,0,0.3), 0 10px 22px -12px rgba(20,18,16,0.4)",
           }}
         >
-          sign in
-          <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-        </button>
+          {/* sheen sweep */}
+          <span
+            aria-hidden
+            className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-700 group-hover:translate-x-full"
+          />
+          <span className="relative">sign in</span>
+          <ArrowRight className="relative h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
+        </motion.button>
+
       </div>
     </header>
   );
@@ -231,10 +247,13 @@ function Nav() {
 function AuthButtons() {
   return (
     <div className="flex w-full max-w-md flex-col items-center gap-3 sm:flex-row sm:justify-center">
-      <button
+      <motion.button
         type="button"
         onClick={openAuth}
-        className="inline-flex w-full items-center justify-center gap-2 rounded-full px-6 py-4 text-[15px] font-medium transition hover:-translate-y-0.5 sm:w-auto"
+        whileHover={{ y: -2 }}
+        whileTap={{ scale: 0.97 }}
+        transition={{ type: "spring", stiffness: 400, damping: 22 }}
+        className="group inline-flex w-full items-center justify-center gap-2 rounded-full px-6 py-4 text-[15px] font-medium sm:w-auto"
         style={{
           background: "linear-gradient(180deg,#1c1815 0%,#0a0908 100%)",
           color: "#ffffff",
@@ -242,13 +261,16 @@ function AuthButtons() {
             "inset 0 1px 0 rgba(255,255,255,0.15), 0 18px 40px -18px rgba(20,18,16,0.6), 0 4px 10px rgba(20,18,16,0.18)",
         }}
       >
-        <AppleIcon className="h-[19px] w-[19px] text-white" />
+        <AppleIcon className="h-[19px] w-[19px] text-white transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:scale-110" />
         Sign in with Apple
-      </button>
-      <button
+      </motion.button>
+      <motion.button
         type="button"
         onClick={openAuth}
-        className="inline-flex w-full items-center justify-center gap-2.5 rounded-full px-6 py-4 text-[15px] font-medium transition hover:-translate-y-0.5 sm:w-auto"
+        whileHover={{ y: -2 }}
+        whileTap={{ scale: 0.97 }}
+        transition={{ type: "spring", stiffness: 400, damping: 22 }}
+        className="group inline-flex w-full items-center justify-center gap-2.5 rounded-full px-6 py-4 text-[15px] font-medium sm:w-auto"
         style={{
           background: "color-mix(in oklab, white 96%, transparent)",
           color: PALETTE.ink,
@@ -256,12 +278,13 @@ function AuthButtons() {
           boxShadow: "0 10px 22px -14px rgba(20,18,16,0.22)",
         }}
       >
-        <GoogleIcon className="h-[19px] w-[19px]" />
+        <GoogleIcon className="h-[19px] w-[19px] transition-transform duration-500 group-hover:rotate-[20deg]" />
         Sign in with Google
-      </button>
+      </motion.button>
     </div>
   );
 }
+
 
 /* ───────────────────────── HERO ───────────────────────── */
 
@@ -466,8 +489,9 @@ function LivePill({ icon, value, label, tint }: { icon: React.ReactNode; value: 
       key={`${label}-${value}`}
       initial={{ scale: 0.94 }}
       animate={{ scale: 1 }}
+      whileHover={{ y: -2, scale: 1.03 }}
       transition={{ type: "spring", stiffness: 300, damping: 22 }}
-      className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12.5px]"
+      className="inline-flex cursor-default items-center gap-1.5 rounded-full px-3 py-1.5 text-[12.5px]"
       style={{ background: bg, border: `1px solid ${border}`, color: "#3a2f24" }}
     >
       {icon}
@@ -476,6 +500,7 @@ function LivePill({ icon, value, label, tint }: { icon: React.ReactNode; value: 
     </motion.div>
   );
 }
+
 
 /* ───────────────── LIVE MAP SECTION ───────────────── */
 

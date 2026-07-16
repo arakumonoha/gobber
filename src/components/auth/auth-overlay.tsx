@@ -38,7 +38,10 @@ function InlineField(props: {
 }) {
   const { type, placeholder, value, onChange, autoFocus, onSubmit, submitting, showSubmit, autoComplete } = props;
   return (
-    <div className="relative">
+    <motion.div
+      className="relative"
+      whileFocus={{ scale: 1.01 }}
+    >
       <input
         type={type}
         value={value}
@@ -47,7 +50,7 @@ function InlineField(props: {
         autoFocus={autoFocus}
         autoComplete={autoComplete}
         onKeyDown={(e) => { if (e.key === "Enter" && onSubmit) { e.preventDefault(); onSubmit(); } }}
-        className="h-[48px] w-full rounded-[12px] px-4 pr-12 text-[15px] tracking-[-0.01em] text-[#0f0d0b] placeholder:text-[#4a3d2a] outline-none transition focus:bg-white/40"
+        className="h-[48px] w-full rounded-[12px] px-4 pr-12 text-[15px] tracking-[-0.01em] text-[#0f0d0b] placeholder:text-[#4a3d2a] outline-none transition-all duration-300 focus:bg-white/45 focus:shadow-[0_0_0_3px_rgba(255,255,255,0.35),inset_0_1px_0_rgba(255,255,255,0.85)]"
         style={{
           background: "rgba(255,255,255,0.22)",
           border: "1px solid rgba(255,255,255,0.55)",
@@ -57,16 +60,19 @@ function InlineField(props: {
       />
       {showSubmit && (
         <motion.button
-          type="button" onClick={onSubmit} disabled={submitting || !value} whileTap={{ scale: 0.92 }}
+          type="button" onClick={onSubmit} disabled={submitting || !value}
+          whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.9 }}
+          transition={{ type: "spring", stiffness: 500, damping: 22 }}
           className="absolute right-1.5 top-1/2 flex h-[36px] w-[36px] -translate-y-1/2 items-center justify-center rounded-full bg-[#0f0d0b] text-white transition disabled:opacity-30"
           aria-label="Continue"
         >
           {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowRight className="h-4 w-4" strokeWidth={2.4} />}
         </motion.button>
       )}
-    </div>
+    </motion.div>
   );
 }
+
 
 function SocialButton({ children, onClick, loading, disabled, label }: {
   children: React.ReactNode; onClick: () => void; loading?: boolean; disabled?: boolean; label: string;
@@ -74,10 +80,10 @@ function SocialButton({ children, onClick, loading, disabled, label }: {
   return (
     <motion.button
       onClick={onClick} disabled={disabled}
-      whileHover={{ y: -1 }} whileTap={{ scale: 0.96 }}
-      transition={{ type: "spring", stiffness: 420, damping: 26 }}
+      whileHover={{ y: -2, scale: 1.02 }} whileTap={{ scale: 0.95 }}
+      transition={{ type: "spring", stiffness: 420, damping: 24 }}
       aria-label={label}
-      className="flex h-[48px] flex-1 items-center justify-center rounded-[12px] transition disabled:opacity-60"
+      className="group flex h-[48px] flex-1 items-center justify-center rounded-[12px] transition-colors hover:bg-white/35 disabled:opacity-60"
       style={{
         background: "rgba(255,255,255,0.22)",
         border: "1px solid rgba(255,255,255,0.55)",
@@ -85,10 +91,17 @@ function SocialButton({ children, onClick, loading, disabled, label }: {
         boxShadow: "inset 0 1px 0 rgba(255,255,255,0.75), 0 6px 18px -12px rgba(60,42,20,0.25)",
       }}
     >
-      {loading ? <Loader2 className="h-4 w-4 animate-spin text-[#0f0d0b]" /> : children}
+      {loading ? (
+        <Loader2 className="h-4 w-4 animate-spin text-[#0f0d0b]" />
+      ) : (
+        <span className="inline-flex transition-transform duration-500 group-hover:rotate-[12deg] group-hover:scale-110">
+          {children}
+        </span>
+      )}
     </motion.button>
   );
 }
+
 
 function AuthCard({ onClose }: { onClose: () => void }) {
   const navigate = useNavigate();
@@ -148,13 +161,17 @@ function AuthCard({ onClose }: { onClose: () => void }) {
         boxShadow: "0 1px 0 rgba(255,255,255,0.75) inset, 0 40px 90px -30px rgba(60,42,20,0.4), 0 10px 30px -18px rgba(60,42,20,0.18)",
       }}
     >
-      <button
+      <motion.button
         onClick={onClose}
         aria-label="Close"
-        className="absolute right-3 top-3 z-20 flex h-8 w-8 items-center justify-center rounded-full text-[#2b1d0f] transition hover:bg-black/5"
+        whileHover={{ rotate: 90, scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        transition={{ type: "spring", stiffness: 400, damping: 18 }}
+        className="absolute right-3 top-3 z-20 flex h-8 w-8 items-center justify-center rounded-full text-[#2b1d0f] transition-colors hover:bg-black/5"
       >
         <X className="h-4 w-4" />
-      </button>
+      </motion.button>
+
       <div className="px-7 pt-10 pb-6">
         <div className="space-y-2.5 text-left">
           <AnimatePresence mode="wait" initial={false}>
