@@ -7,7 +7,7 @@ import { GoogleMap, type GoogleMapHandle } from "@/components/google-map";
 import { activitiesQuery } from "@/lib/activities";
 import { getLandingStats, type LandingStats } from "@/lib/landing-stats.functions";
 import { FloatingFlags } from "@/components/landing/floating-flags";
-import { JoinsTicker, TrendingStrip } from "@/components/landing/live-signals";
+import { JoinsTicker, TrendingStrip, twemojiUrl } from "@/components/landing/live-signals";
 import owlLogo from "@/assets/gobber-owl.png.asset.json";
 
 export const Route = createFileRoute("/")({
