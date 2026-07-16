@@ -116,7 +116,6 @@ function Profile() {
         </div>
 
 
-        <BlockedPanel />
 
 
         <Button onClick={signOut} disabled={signingOut} variant="ghost" className="mt-4 h-11 w-full rounded-xl text-muted-foreground">
