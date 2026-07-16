@@ -315,7 +315,7 @@ function Discover() {
                 {isLoading ? "Loading…" : `${filtered.length} gathering${filtered.length === 1 ? "" : "s"}`}
               </h2>
             </div>
-            <span className="text-[11px] font-medium uppercase tracking-[0.16em] text-[#4a3820]">Swipe · Pull to refresh</span>
+            <span className="text-[11px] font-medium uppercase tracking-[0.16em] text-[#4a3820]"><span className="hidden lg:inline">Click to expand</span><span className="lg:hidden">Swipe · Pull to refresh</span></span>
           </div>
 
           <div
