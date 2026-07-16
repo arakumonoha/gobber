@@ -10,6 +10,7 @@ import { FloatingFlags } from "@/components/landing/floating-flags";
 import { JoinsTicker, TrendingStrip, twemojiUrl } from "@/components/landing/live-signals";
 import owlLogo from "@/assets/gobber-owl.png.asset.json";
 import { AuthOverlay, openAuth } from "@/components/auth/auth-overlay";
+import { supabase } from "@/integrations/supabase/client";
 
 // Heavy map/globe modules are split out of the landing bundle; both live
 // below the fold and the interactive map only mounts after user intent.
