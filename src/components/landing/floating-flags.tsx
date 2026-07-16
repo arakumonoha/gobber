@@ -6,19 +6,23 @@ import { useEffect, useState } from "react";
 // to the next flag in the pool — creating a soft, endless loop.
 type Slot = { top: string; left: string; size: number; delay: number; mobile?: boolean };
 
+// Mirrored left/right pairs for a balanced, symmetric composition.
 const SLOTS: Slot[] = [
-  { top: "12%", left: "8%",  size: 56, delay: 0.0, mobile: true },
-  { top: "18%", left: "88%", size: 64, delay: 0.6, mobile: true },
-  { top: "34%", left: "4%",  size: 48, delay: 1.2 },
-  { top: "28%", left: "93%", size: 52, delay: 1.8 },
-  { top: "58%", left: "6%",  size: 60, delay: 0.3, mobile: true },
-  { top: "62%", left: "90%", size: 54, delay: 0.9, mobile: true },
-  { top: "78%", left: "12%", size: 46, delay: 1.5 },
-  { top: "82%", left: "86%", size: 58, delay: 2.1 },
-  { top: "45%", left: "2%",  size: 42, delay: 1.1 },
-  { top: "48%", left: "95%", size: 50, delay: 0.4 },
-  { top: "8%",  left: "40%", size: 44, delay: 1.7 },
-  { top: "90%", left: "48%", size: 46, delay: 0.2, mobile: true },
+  // top band
+  { top: "12%", left: "7%",  size: 56, delay: 0.0, mobile: true },
+  { top: "12%", left: "93%", size: 56, delay: 0.6, mobile: true },
+  // upper-mid band
+  { top: "30%", left: "3%",  size: 48, delay: 1.2 },
+  { top: "30%", left: "97%", size: 48, delay: 1.8 },
+  // mid band
+  { top: "50%", left: "5%",  size: 52, delay: 0.4 },
+  { top: "50%", left: "95%", size: 52, delay: 1.0 },
+  // lower-mid band
+  { top: "70%", left: "8%",  size: 58, delay: 0.3, mobile: true },
+  { top: "70%", left: "92%", size: 58, delay: 0.9, mobile: true },
+  // bottom band
+  { top: "86%", left: "14%", size: 46, delay: 1.5 },
+  { top: "86%", left: "86%", size: 46, delay: 2.1 },
 ];
 
 const FLAG_POOL = [
