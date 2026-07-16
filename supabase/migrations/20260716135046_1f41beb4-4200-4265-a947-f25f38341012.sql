@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.remove_follows_on_block() FROM PUBLIC, anon, authenticated;

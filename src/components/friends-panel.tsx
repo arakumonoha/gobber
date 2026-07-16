@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Link } from "@tanstack/react-router";
 import { Search, UserPlus, Loader2, AtSign, X, Users, Sparkles, Check, ChevronRight } from "lucide-react";
 import { useUser } from "@/hooks/use-user";
 import {
@@ -111,14 +112,16 @@ function SuggestionCard({ profile, myId }: { profile: ProfileLite; myId: string 
       animate={{ opacity: 1, y: 0 }}
       className="relative w-[150px] shrink-0 rounded-2xl bg-card p-3 text-center shadow-glass"
     >
-      <div
-        className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-cover bg-center text-base font-semibold text-white ring-2 ring-white"
-        style={{ backgroundImage: profile.avatar_url ? `url(${profile.avatar_url})` : "linear-gradient(135deg, oklch(0.68 0.08 70), oklch(0.5 0.045 55))" }}
-      >
-        {!profile.avatar_url && initials}
-      </div>
-      <p className="mt-2 truncate text-[13px] font-semibold text-ink">{profile.display_name || profile.username}</p>
-      <p className="truncate text-[11px] text-muted-foreground">@{profile.username}</p>
+      <Link to="/u/$username" params={{ username: profile.username }} className="block">
+        <div
+          className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-cover bg-center text-base font-semibold text-white ring-2 ring-white"
+          style={{ backgroundImage: profile.avatar_url ? `url(${profile.avatar_url})` : "linear-gradient(135deg, oklch(0.68 0.08 70), oklch(0.5 0.045 55))" }}
+        >
+          {!profile.avatar_url && initials}
+        </div>
+        <p className="mt-2 truncate text-[13px] font-semibold text-ink">{profile.display_name || profile.username}</p>
+        <p className="truncate text-[11px] text-muted-foreground">@{profile.username}</p>
+      </Link>
       <FollowButton
         compact
         isFollowing={!!isFollowing}
@@ -327,24 +330,26 @@ function FriendRow({ profile, myId }: { profile: ProfileLite; myId: string | und
       exit={{ opacity: 0, x: -10 }}
       className="flex items-center gap-3 rounded-2xl px-3 py-2.5 transition hover:bg-secondary/50"
     >
-      <div
-        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-cover bg-center text-sm font-semibold text-white ring-1 ring-black/[0.04]"
-        style={{ backgroundImage: profile.avatar_url ? `url(${profile.avatar_url})` : "linear-gradient(135deg, oklch(0.68 0.08 70), oklch(0.5 0.045 55))" }}
-      >
-        {!profile.avatar_url && initials}
-      </div>
-      <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-1.5">
-          <p className="truncate text-[14px] font-semibold text-ink">{profile.username}</p>
-          {followsMe && !isMe && (
-            <span className="rounded-md bg-secondary px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">Follows you</span>
-          )}
+      <Link to="/u/$username" params={{ username: profile.username }} className="flex min-w-0 flex-1 items-center gap-3">
+        <div
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-cover bg-center text-sm font-semibold text-white ring-1 ring-black/[0.04]"
+          style={{ backgroundImage: profile.avatar_url ? `url(${profile.avatar_url})` : "linear-gradient(135deg, oklch(0.68 0.08 70), oklch(0.5 0.045 55))" }}
+        >
+          {!profile.avatar_url && initials}
         </div>
-        <p className="truncate text-[12px] text-muted-foreground">
-          {profile.display_name || "Traveler"}
-          {profile.home_city && <span> · {profile.home_city}</span>}
-        </p>
-      </div>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-1.5">
+            <p className="truncate text-[14px] font-semibold text-ink">{profile.username}</p>
+            {followsMe && !isMe && (
+              <span className="rounded-md bg-secondary px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">Follows you</span>
+            )}
+          </div>
+          <p className="truncate text-[12px] text-muted-foreground">
+            {profile.display_name || "Traveler"}
+            {profile.home_city && <span> · {profile.home_city}</span>}
+          </p>
+        </div>
+      </Link>
       {!isMe && (
         <FollowButton
           isFollowing={!!isFollowing}

@@ -187,6 +187,61 @@ export function useFollowMutation(myId: string | undefined) {
   });
 }
 
+/* ---------------- Blocks ---------------- */
+
+export function useIsBlocked(myId: string | undefined, otherId: string | undefined) {
+  return useQuery({
+    queryKey: ["blocks", "is", myId, otherId],
+    enabled: !!myId && !!otherId && myId !== otherId,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("blocks")
+        .select("id")
+        .eq("blocker_id", myId!)
+        .eq("blocked_id", otherId!)
+        .maybeSingle();
+      return !!data;
+    },
+  });
+}
+
+export function useBlockedByMe(myId: string | undefined) {
+  return useQuery({
+    queryKey: ["blocks", "list", myId],
+    enabled: !!myId,
+    queryFn: async () => {
+      const { data: rows } = await supabase.from("blocks").select("blocked_id").eq("blocker_id", myId!);
+      const ids = (rows ?? []).map((r) => r.blocked_id);
+      if (ids.length === 0) return [];
+      const { data: profs } = await supabase
+        .from("profiles")
+        .select("id, username, display_name, avatar_url, home_city")
+        .in("id", ids);
+      return (profs ?? []) as ProfileLite[];
+    },
+  });
+}
+
+export function useBlockMutation(myId: string | undefined) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ targetId, block }: { targetId: string; block: boolean }) => {
+      if (!myId) throw new Error("Not signed in");
+      if (block) {
+        const { error } = await supabase.from("blocks").insert({ blocker_id: myId, blocked_id: targetId });
+        if (error && !error.message.includes("duplicate")) throw error;
+      } else {
+        const { error } = await supabase.from("blocks").delete().eq("blocker_id", myId).eq("blocked_id", targetId);
+        if (error) throw error;
+      }
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["blocks"] });
+      qc.invalidateQueries({ queryKey: ["follows"] });
+    },
+  });
+}
+
 export async function checkUsernameAvailable(username: string, currentUserId?: string) {
   const clean = username.trim();
   if (!/^[a-zA-Z0-9_]{3,20}$/.test(clean)) return { ok: false, reason: "3–20 letters, numbers or _" };
