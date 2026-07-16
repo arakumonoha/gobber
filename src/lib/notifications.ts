@@ -115,6 +115,7 @@ export function useNotificationsRealtime(userId: string | undefined) {
         { event: "INSERT", schema: "public", table: "notifications", filter: `user_id=eq.${userId}` },
         async (payload) => {
           qc.invalidateQueries({ queryKey: ["notifications"] });
+          qc.invalidateQueries({ queryKey: ["notifications", "unread", userId] });
           const n = payload.new as NotificationRow;
           try {
             if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
