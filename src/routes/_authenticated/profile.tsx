@@ -67,7 +67,10 @@ function Profile() {
           </div>
           <div>
             <h1 className="text-2xl font-semibold tracking-tight text-ink">{profile.display_name || "Traveler"}</h1>
-            <p className="text-sm text-muted-foreground">{profile.home_city || user?.email}</p>
+            {profile.username && (
+              <p className="flex items-center gap-0.5 text-sm text-muted-foreground"><AtSign className="h-3.5 w-3.5" />{profile.username}</p>
+            )}
+            {profile.home_city && <p className="text-xs text-muted-foreground">{profile.home_city}</p>}
           </div>
         </motion.div>
 
