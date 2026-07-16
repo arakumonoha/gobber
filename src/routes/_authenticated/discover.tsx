@@ -15,6 +15,24 @@ import { useUser } from "@/hooks/use-user";
 import { toast } from "sonner";
 import { getLocationPhoto } from "@/lib/place-photo.functions";
 
+const TITLE_PLACEHOLDERS: Record<string, string> = {
+  Dinner: "Sunset ramen in Shibuya",
+  Adventure: "Sunrise hike above the fjord",
+  Coworking: "Slow mornings & flat whites",
+  Wellness: "Rooftop yoga before the heat",
+  Food: "Taco crawl through the old town",
+  Nightlife: "Rooftop cocktails, no phones",
+};
+
+const DESC_PLACEHOLDERS: Record<string, string> = {
+  Dinner: "Small table, big conversations. Bring an appetite. (optional)",
+  Adventure: "Bring shoes with grip and a light layer. (optional)",
+  Coworking: "Laptops open, small talk welcome. (optional)",
+  Wellness: "Mats provided. Come as you are. (optional)",
+  Food: "Five stops, one street, zero plans. (optional)",
+  Nightlife: "Dress how you feel. Stay as long as you like. (optional)",
+};
+
 export const Route = createFileRoute("/_authenticated/discover")({
   head: () => ({
     meta: [
@@ -705,12 +723,12 @@ function Discover() {
                     autoFocus
                     value={form.title}
                     onChange={(v) => setForm({ ...form, title: v })}
-                    placeholder="Sunset ramen in Shibuya"
+                    placeholder={TITLE_PLACEHOLDERS[form.category] ?? "What's happening?"}
                   />
                   <GlassTextarea
                     value={form.description}
                     onChange={(v) => setForm({ ...form, description: v })}
-                    placeholder="What's the vibe? (optional)"
+                    placeholder={DESC_PLACEHOLDERS[form.category] ?? "What's the vibe? (optional)"}
                   />
 
                   <div className="pt-1">
