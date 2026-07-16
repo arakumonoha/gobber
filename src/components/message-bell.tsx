@@ -208,8 +208,11 @@ function ChatView({ convId, onBack }: { convId: string; onBack: () => void }) {
   const markRead = useMarkConvRead(convId, user?.id);
   const leave = useLeaveConv();
   const [text, setText] = useState("");
+  const [file, setFile] = useState<File | null>(null);
+  const [filePreview, setFilePreview] = useState<string | null>(null);
   const [membersOpen, setMembersOpen] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     markRead.mutate();
@@ -219,6 +222,16 @@ function ChatView({ convId, onBack }: { convId: string; onBack: () => void }) {
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
   }, [msgs.length]);
+
+  useEffect(() => {
+    if (!file) {
+      setFilePreview(null);
+      return;
+    }
+    const url = URL.createObjectURL(file);
+    setFilePreview(url);
+    return () => URL.revokeObjectURL(url);
+  }, [file]);
 
   if (!conv) return <div className="p-6 text-center text-sm text-muted-foreground">Loading…</div>;
 
@@ -234,17 +247,35 @@ function ChatView({ convId, onBack }: { convId: string; onBack: () => void }) {
         ? `@${other.profile.username}`
         : "";
 
+  function pickFile(f: File | null) {
+    if (!f) return;
+    const MAX = 25 * 1024 * 1024;
+    if (f.size > MAX) {
+      toast.error("File too large (max 25MB)");
+      return;
+    }
+    if (!f.type.startsWith("image/") && !f.type.startsWith("video/")) {
+      toast.error("Only images and videos");
+      return;
+    }
+    setFile(f);
+  }
+
   async function handleSend() {
     const body = text.trim();
-    if (!body) return;
+    const f = file;
+    if (!body && !f) return;
     setText("");
+    setFile(null);
     try {
-      await send.mutateAsync(body);
+      await send.mutateAsync({ body, file: f });
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Failed to send");
       setText(body);
+      setFile(f);
     }
   }
+
 
   return (
     <div className="flex h-full flex-col">
