@@ -30,7 +30,11 @@ export type MessageRow = {
   sender_id: string;
   body: string;
   created_at: string;
+  media_url: string | null;
+  media_type: string | null;
+  signed_url?: string | null;
 };
+
 
 export type ConversationSummary = ConversationRow & {
   members: MemberRow[];
