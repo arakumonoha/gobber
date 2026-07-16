@@ -89,6 +89,82 @@ export type Database = {
         }
         Relationships: []
       }
+      conversation_members: {
+        Row: {
+          conversation_id: string
+          id: string
+          joined_at: string
+          last_read_at: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          conversation_id: string
+          id?: string
+          joined_at?: string
+          last_read_at?: string
+          role?: string
+          user_id: string
+        }
+        Update: {
+          conversation_id?: string
+          id?: string
+          joined_at?: string
+          last_read_at?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversation_members_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      conversations: {
+        Row: {
+          activity_id: string | null
+          created_at: string
+          created_by: string
+          expires_at: string | null
+          id: string
+          last_message_at: string
+          title: string | null
+          type: string
+        }
+        Insert: {
+          activity_id?: string | null
+          created_at?: string
+          created_by: string
+          expires_at?: string | null
+          id?: string
+          last_message_at?: string
+          title?: string | null
+          type: string
+        }
+        Update: {
+          activity_id?: string | null
+          created_at?: string
+          created_by?: string
+          expires_at?: string | null
+          id?: string
+          last_message_at?: string
+          title?: string | null
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversations_activity_id_fkey"
+            columns: ["activity_id"]
+            isOneToOne: false
+            referencedRelation: "activities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       follows: {
         Row: {
           created_at: string
@@ -109,6 +185,38 @@ export type Database = {
           id?: string
         }
         Relationships: []
+      }
+      messages: {
+        Row: {
+          body: string
+          conversation_id: string
+          created_at: string
+          id: string
+          sender_id: string
+        }
+        Insert: {
+          body: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          sender_id: string
+        }
+        Update: {
+          body?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       notifications: {
         Row: {
@@ -244,6 +352,12 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_conv_member: {
+        Args: { _conv: string; _uid: string }
+        Returns: boolean
+      }
+      is_conv_owner: { Args: { _conv: string; _uid: string }; Returns: boolean }
+      start_dm: { Args: { _other: string }; Returns: string }
       suggested_profiles: {
         Args: { _limit?: number; _user_id: string }
         Returns: {
