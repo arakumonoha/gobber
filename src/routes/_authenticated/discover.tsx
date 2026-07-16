@@ -495,44 +495,27 @@ function Discover() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2.5 pt-1">
-                    <div>
-                      <label className="mb-1 block px-1 text-[10.5px] font-semibold uppercase tracking-[0.2em] text-[#4a3820]">Starts</label>
-                      <GlassInputRaw
-                        type="datetime-local"
-                        value={form.starts_at}
-                        onChange={(v) => setForm({ ...form, starts_at: v })}
-                      />
-                    </div>
-                    <div>
-                      <label className="mb-1 block px-1 text-[10.5px] font-semibold uppercase tracking-[0.2em] text-[#4a3820]">
-                        Duration · max 24h
-                      </label>
-                      <GlassInputRaw
-                        type="number"
-                        min={1}
-                        max={24}
-                        value={String(form.duration_hours)}
-                        onChange={(v) => {
-                          const n = Math.min(24, Math.max(1, parseInt(v) || 1));
-                          setForm({ ...form, duration_hours: n });
-                        }}
-                        suffix="hrs"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="mb-1 block px-1 text-[10.5px] font-semibold uppercase tracking-[0.2em] text-[#4a3820]">Spots</label>
+                  <div className="pt-1">
+                    <label className="mb-1 block px-1 text-[10.5px] font-semibold uppercase tracking-[0.2em] text-[#4a3820]">
+                      Duration · max 24h
+                    </label>
                     <GlassInputRaw
                       type="number"
-                      min={2}
-                      max={30}
-                      value={String(form.max_spots)}
-                      onChange={(v) => setForm({ ...form, max_spots: Math.min(30, Math.max(2, parseInt(v) || 6)) })}
+                      min={1}
+                      max={24}
+                      value={String(form.duration_hours)}
+                      onChange={(v) => {
+                        const n = Math.min(24, Math.max(1, parseInt(v) || 1));
+                        setForm({ ...form, duration_hours: n });
+                      }}
+                      suffix="hrs"
                     />
+                    <p className="mt-2 px-1 text-[11px] text-[#5a4530]">
+                      Starts automatically 10 min after you drop the pin. Fine-tune schedule and spots later from Manage.
+                    </p>
                   </div>
                 </div>
+
 
                 <motion.button
                   type="submit"
