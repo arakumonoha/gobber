@@ -318,23 +318,35 @@ function ChatView({ convId, onBack }: { convId: string; onBack: () => void }) {
             {conv.type === "location" ? "Say hi to your fellow travellers." : "Say something nice."}
           </div>
         ) : (
-          <ul className="flex flex-col gap-1.5">
+          <ul className="flex flex-col gap-0.5">
             {msgs.map((m, i) => {
               const mine = m.sender_id === user?.id;
               const prev = msgs[i - 1];
-              const showName = conv.type === "location" && !mine && prev?.sender_id !== m.sender_id;
+              const next = msgs[i + 1];
+              const sameAsPrev = prev?.sender_id === m.sender_id;
+              const sameAsNext = next?.sender_id === m.sender_id;
+              const showName = conv.type === "location" && !mine && !sameAsPrev;
               const sender = conv.members.find((mm) => mm.user_id === m.sender_id);
+              const tailTight = sameAsNext;
+              const bubbleRadius = mine
+                ? `rounded-[22px] ${tailTight ? "rounded-br-md" : ""}`
+                : `rounded-[22px] ${tailTight ? "rounded-bl-md" : ""}`;
               return (
-                <li key={m.id} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
+                <li
+                  key={m.id}
+                  className={`flex ${mine ? "justify-end" : "justify-start"} ${
+                    sameAsPrev ? "mt-0" : "mt-2"
+                  }`}
+                >
                   <div className="max-w-[75%]">
                     {showName && (
-                      <p className="mb-0.5 pl-3 text-[10.5px] font-medium text-muted-foreground">
+                      <p className="mb-1 pl-3 text-[10.5px] font-medium text-muted-foreground">
                         {sender?.profile?.display_name || sender?.profile?.username || "Member"}
                       </p>
                     )}
                     {m.media_url && m.signed_url && (
                       <div
-                        className={`mb-1 overflow-hidden rounded-2xl border border-black/5 bg-black/[0.04] ${
+                        className={`mb-1 overflow-hidden rounded-[22px] ${
                           mine ? "ml-auto" : ""
                         }`}
                         style={{ maxWidth: 260 }}
@@ -360,8 +372,10 @@ function ChatView({ convId, onBack }: { convId: string; onBack: () => void }) {
                     )}
                     {m.body && (
                       <div
-                        className={`whitespace-pre-wrap break-words rounded-2xl px-3.5 py-2 text-[14px] leading-snug ${
-                          mine ? "bg-primary text-primary-foreground" : "bg-black/[0.06] text-ink"
+                        className={`whitespace-pre-wrap break-words px-3.5 py-2 text-[14.5px] leading-[1.35] ${bubbleRadius} ${
+                          mine
+                            ? "bg-primary text-white shadow-[0_1px_1px_rgba(0,0,0,0.06)]"
+                            : "bg-black/[0.06] text-ink"
                         }`}
                       >
                         {m.body}
