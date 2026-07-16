@@ -152,13 +152,34 @@
 @utility glass {
   background: color-mix(in oklab, var(--card) 68%, transparent);
   backdrop-filter: saturate(180%) blur(24px);
-  -webkit-backdrop-filter: saturate(180%) blur(24px);
 }
 
 @utility glass-dark {
   background: color-mix(in oklab, oklch(0.2 0.015 60) 55%, transparent);
   backdrop-filter: saturate(180%) blur(24px);
-  -webkit-backdrop-filter: saturate(180%) blur(24px);
+}
+
+/* Premium liquid-glass panel — subtle, layered, works on warm sand bg */
+@utility glass-panel {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.72) 0%, rgba(255,255,255,0.42) 100%);
+  backdrop-filter: saturate(180%) blur(22px);
+  border: 1px solid rgba(255,255,255,0.7);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.9),
+    inset 0 -1px 0 rgba(20,18,16,0.04),
+    0 12px 32px -18px rgba(20,18,16,0.22);
+}
+
+/* Compact glass for chips, pills, small toggles */
+@utility glass-chip {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.78) 0%, rgba(255,255,255,0.48) 100%);
+  backdrop-filter: saturate(170%) blur(14px);
+  border: 1px solid rgba(255,255,255,0.75);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,1),
+    0 6px 14px -8px rgba(20,18,16,0.18);
 }
 
 /* Warm page background — atmospheric globe wash at the bottom */
