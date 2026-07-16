@@ -209,10 +209,13 @@ function Nav() {
           })}
         </nav>
 
-        <button
+        <motion.button
           type="button"
           onClick={openAuth}
-          className="group relative inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[13px] font-medium transition hover:-translate-y-0.5"
+          whileHover={{ y: -1.5 }}
+          whileTap={{ scale: 0.96 }}
+          transition={{ type: "spring", stiffness: 420, damping: 24 }}
+          className="group relative inline-flex items-center gap-1.5 overflow-hidden rounded-full px-4 py-2 text-[13px] font-medium"
           style={{
             color: "#ffffff",
             background:
@@ -223,9 +226,15 @@ function Nav() {
               "inset 0 1px 0 rgba(255,255,255,0.12), inset 0 -1px 0 rgba(0,0,0,0.3), 0 10px 22px -12px rgba(20,18,16,0.4)",
           }}
         >
-          sign in
-          <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-        </button>
+          {/* sheen sweep */}
+          <span
+            aria-hidden
+            className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-700 group-hover:translate-x-full"
+          />
+          <span className="relative">sign in</span>
+          <ArrowRight className="relative h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
+        </motion.button>
+
       </div>
     </header>
   );
