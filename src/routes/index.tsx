@@ -585,27 +585,41 @@ function LiveMap({
 
 type Trip = { flag: string; city: string; count: number };
 
-function TripCard({ t }: { t: Trip }) {
+const CARD_THEMES = [
+  { grad: `linear-gradient(155deg, ${PALETTE.blueSoft} 0%, #FFFFFF 60%, ${PALETTE.blueSoft} 100%)`, ring: PALETTE.blue, badge: PALETTE.blue, badgeFg: "#FFFFFF", glow: "0 18px 36px -18px rgba(10,132,255,0.45)" },
+  { grad: `linear-gradient(155deg, ${PALETTE.amberSoft} 0%, #FFFFFF 60%, ${PALETTE.amberSoft} 100%)`, ring: PALETTE.amberDeep, badge: PALETTE.amber, badgeFg: PALETTE.ink, glow: "0 18px 36px -18px rgba(180,128,31,0.45)" },
+  { grad: `linear-gradient(155deg, ${PALETTE.sageSoft} 0%, #FFFFFF 60%, ${PALETTE.sageSoft} 100%)`, ring: PALETTE.sage, badge: PALETTE.sage, badgeFg: "#FFFFFF", glow: "0 18px 36px -18px rgba(125,168,142,0.5)" },
+  { grad: `linear-gradient(155deg, #FFF 0%, ${PALETTE.paper} 100%)`, ring: PALETTE.muted, badge: PALETTE.ink, badgeFg: PALETTE.cream, glow: "0 18px 36px -18px rgba(60,42,20,0.35)" },
+];
+
+function TripCard({ t, idx }: { t: Trip; idx: number }) {
+  const theme = CARD_THEMES[idx % CARD_THEMES.length];
   return (
-    <div
+    <motion.div
+      whileHover={{ y: -6, rotate: -2, scale: 1.06 }}
+      transition={{ type: "spring", stiffness: 300, damping: 18 }}
       className="relative flex h-24 w-24 shrink-0 items-center justify-center rounded-3xl sm:h-28 sm:w-28"
       style={{
-        background: "color-mix(in oklab, white 90%, transparent)",
-        border: "1px solid rgba(20,18,16,0.06)",
-        boxShadow: "0 14px 30px -18px rgba(60,42,20,0.25)",
+        background: theme.grad,
+        border: `1px solid color-mix(in oklab, ${theme.ring} 22%, transparent)`,
+        boxShadow: theme.glow,
       }}
       role="img"
       aria-label={`${t.city} — ${t.count} live gatherings this week`}
       title={`${t.city} · ${t.count} live`}
     >
-      <span className="text-[44px] leading-none sm:text-[52px]" aria-hidden>{t.flag}</span>
       <span
-        className="absolute -bottom-1.5 -right-1.5 min-w-[22px] rounded-full px-1.5 text-center text-[11px] font-semibold leading-[20px]"
-        style={{ background: PALETTE.amber, color: PALETTE.ink, boxShadow: "0 4px 10px rgba(60,42,20,0.25)" }}
+        className="pointer-events-none absolute inset-0 rounded-3xl"
+        style={{ background: "linear-gradient(180deg, rgba(255,255,255,0.55) 0%, transparent 45%)" }}
+      />
+      <span className="relative text-[44px] leading-none drop-shadow-sm sm:text-[52px]" aria-hidden>{t.flag}</span>
+      <span
+        className="absolute -bottom-1.5 -right-1.5 min-w-[24px] rounded-full px-1.5 text-center text-[11px] font-bold leading-[20px] tracking-tight"
+        style={{ background: theme.badge, color: theme.badgeFg, boxShadow: `0 4px 12px ${theme.ring}55`, border: "1.5px solid #fff" }}
       >
         {t.count}
       </span>
-    </div>
+    </motion.div>
   );
 }
 
