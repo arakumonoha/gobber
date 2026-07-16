@@ -3,6 +3,10 @@ import { CATEGORIES } from "@/lib/categories";
 
 export interface GoogleMapHandle {
   panTo: (lat: number, lng: number, zoom?: number) => void;
+  flyTo: (lat: number, lng: number, zoom?: number) => void;
+  zoomIn: () => void;
+  zoomOut: () => void;
+  locate: () => Promise<{ lat: number; lng: number } | null>;
   resetHeading: () => void;
   getHeading: () => number;
 }
