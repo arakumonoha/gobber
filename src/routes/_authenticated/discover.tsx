@@ -899,9 +899,11 @@ function CategoryChip({ active, onClick, children }: { active: boolean; onClick:
   return (
     <motion.button
       layout
-      whileTap={{ scale: 0.94 }}
+      whileHover={{ y: -2, scale: 1.03 }}
+      whileTap={{ scale: 0.92 }}
+      animate={active ? { scale: 1.04 } : { scale: 1 }}
       onClick={onClick}
-      transition={{ type: "spring", stiffness: 420, damping: 32 }}
+      transition={{ type: "spring", stiffness: 420, damping: 26 }}
       className="relative shrink-0 rounded-full px-4 py-1.5 text-[12.5px] font-medium tracking-[-0.005em]"
       style={{
         color: active ? "#fffaf0" : "#3d3120",
