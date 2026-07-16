@@ -475,7 +475,7 @@ function CategoryChip({ active, onClick, children }: { active: boolean; onClick:
       className={`shrink-0 rounded-full px-4 py-1.5 text-[12px] font-medium tracking-[-0.005em] transition ring-1 ${
         active
           ? "bg-[#1a1614] text-white ring-transparent shadow-[0_8px_20px_-10px_rgba(20,18,16,0.5)]"
-          : "bg-white/70 text-[#5a4a35] ring-black/[0.04] backdrop-blur-xl"
+          : "bg-white/70 text-[#3d3120] ring-black/[0.04] backdrop-blur-xl"
       }`}
     >
       {children}
@@ -513,9 +513,9 @@ function ActivityCard({
         style={{ backgroundImage: `url(${a.cover_url ?? "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=1200&q=80"})` }}
       />
       <div className="p-4">
-        <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-[#8b7355]">{a.category}</p>
+        <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-[#5a4a35]">{a.category}</p>
         <h3 className="mt-1 line-clamp-1 font-serif italic text-[19px] leading-tight tracking-[-0.02em] text-[#0f0d0b]">{a.title}</h3>
-        <div className="mt-2 flex items-center gap-1.5 text-[11.5px] text-[#9a8770]">
+        <div className="mt-2 flex items-center gap-1.5 text-[11.5px] text-[#6b5540]">
           <MapPin className="h-3 w-3" strokeWidth={2} />
           <span className="line-clamp-1">{a.city}, {a.country}</span>
           <span className="mx-0.5">·</span>
