@@ -49,7 +49,7 @@ const PALETTE = {
   amberSoft: "#FBF0D6",
   sage: "#7DA88E",
   sageSoft: "#EAF2E6",
-  muted: "#8b7355",
+  muted: "#5a4a38",
 };
 
 const COUNTRY_FLAGS: Record<string, string> = {
@@ -188,7 +188,7 @@ function Nav() {
                 whileTap={{ scale: 0.94 }}
                 transition={{ type: "spring", stiffness: 500, damping: 26 }}
                 className="relative rounded-full px-4 py-1.5"
-                style={{ color: isActive ? "#FAF3E1" : "rgba(250,243,225,0.65)" }}
+                style={{ color: isActive ? "#FAF3E1" : "rgba(250,243,225,0.88)" }}
               >
                 {isActive && (
                   <motion.span
@@ -328,7 +328,7 @@ function Hero({ stats, nearYou }: { stats: LandingStats | undefined; nearYou: Ne
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: EASE }}
           className="glass-chip inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-[13px]"
-          style={{ color: "#3a2f24" }}
+          style={{ color: "#241a10" }}
         >
           <span className="relative flex h-2 w-2">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#7DA88E] opacity-70" />
@@ -379,7 +379,7 @@ function Hero({ stats, nearYou }: { stats: LandingStats | undefined; nearYou: Ne
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: EASE, delay: 0.32 }}
           className="mt-6 max-w-[54ch] text-[17.5px] leading-[1.55]"
-          style={{ color: "#4a3f33" }}
+          style={{ color: "#2f2519" }}
         >
           browse nearby tables, join one, and vibe with people around you.
           today, not someday <span className="inline-block">:)</span>
@@ -427,7 +427,7 @@ function Hero({ stats, nearYou }: { stats: LandingStats | undefined; nearYou: Ne
             style={{
               background: "color-mix(in oklab, white 78%, transparent)",
               border: "1px solid rgba(20,18,16,0.06)",
-              color: "#3a2f24",
+              color: "#241a10",
             }}
           >
             🌍 <span className="font-semibold" style={{ color: PALETTE.ink }}>{totalCities}</span> cities
@@ -437,7 +437,7 @@ function Hero({ stats, nearYou }: { stats: LandingStats | undefined; nearYou: Ne
             style={{
               background: "color-mix(in oklab, white 78%, transparent)",
               border: "1px solid rgba(20,18,16,0.06)",
-              color: "#3a2f24",
+              color: "#241a10",
             }}
           >
             <span className="flex text-[#f5b301]">
@@ -492,7 +492,7 @@ function LivePill({ icon, value, label, tint }: { icon: React.ReactNode; value: 
       whileHover={{ y: -2, scale: 1.03 }}
       transition={{ type: "spring", stiffness: 300, damping: 22 }}
       className="inline-flex cursor-default items-center gap-1.5 rounded-full px-3 py-1.5 text-[12.5px]"
-      style={{ background: bg, border: `1px solid ${border}`, color: "#3a2f24" }}
+      style={{ background: bg, border: `1px solid ${border}`, color: "#241a10" }}
     >
       {icon}
       <span className="font-semibold" style={{ color: PALETTE.ink }}>{value.toLocaleString()}</span>
@@ -581,7 +581,7 @@ function LiveMap({
             viewport={{ once: true, margin: "-15% 0px" }}
             transition={{ duration: 0.8, ease: EASE, delay: 0.3 }}
             className="mt-4 text-[15.5px] leading-[1.55]"
-            style={{ color: "#4a3f33" }}
+            style={{ color: "#2f2519" }}
           >
             no algorithm, no feed — just an actual world map of tables you can sit at tonight.
           </motion.p>
@@ -703,7 +703,7 @@ function LiveMap({
                     key={v}
                     onClick={() => setView(v)}
                     className={`rounded-full px-3 py-1.5 text-[11.5px] font-medium transition ${
-                      view === v ? "text-white" : "text-[#4a3f33] hover:text-[#141210]"
+                      view === v ? "text-white" : "text-[#2f2519] hover:text-[#141210]"
                     }`}
                     style={view === v ? { background: PALETTE.blue } : undefined}
                   >
@@ -874,7 +874,7 @@ function How() {
                 </span>
               </div>
               <div className="mt-14 font-display text-[22px] font-semibold tracking-[-0.02em]" style={{ color: PALETTE.ink }}>{s.title}</div>
-              <p className="mt-2 text-[14px] leading-[1.55]" style={{ color: "#4a3f33" }}>{s.body}</p>
+              <p className="mt-2 text-[14px] leading-[1.55]" style={{ color: "#2f2519" }}>{s.body}</p>
             </motion.div>
           ))}
         </div>
@@ -902,7 +902,7 @@ function CTA() {
         <div className="mx-auto mb-6 flex justify-center">
           <OwlMark size={72} />
         </div>
-        <div className="text-[11.5px] font-medium uppercase tracking-[0.2em]" style={{ color: "#a8c7ff" }}>
+        <div className="text-[11.5px] font-medium uppercase tracking-[0.2em]" style={{ color: "#cfe0ff" }}>
           your seat is waiting
         </div>
         <h2 className="mt-4 font-display font-semibold leading-[1.02] tracking-[-0.03em] text-white" style={{ fontSize: "clamp(34px,5.5vw,60px)" }}>
@@ -912,7 +912,7 @@ function CTA() {
           </span>{" "}
           to meet someone.
         </h2>
-        <p className="mx-auto mt-5 max-w-[48ch] text-[15.5px] leading-[1.55]" style={{ color: "#e4d6c6" }}>
+        <p className="mx-auto mt-5 max-w-[48ch] text-[15.5px] leading-[1.55]" style={{ color: "#f2e3ce" }}>
           gobber is free. joining a table takes ten seconds. the memory lasts a lot longer.
         </p>
         <div className="mt-9 flex justify-center">
@@ -928,7 +928,7 @@ function CTA() {
 function Footer() {
   return (
     <footer className="px-6 pb-10">
-      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 border-t pt-8 text-[12.5px] sm:flex-row" style={{ borderColor: "#1a161410", color: "#6b5c48" }}>
+      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 border-t pt-8 text-[12.5px] sm:flex-row" style={{ borderColor: "#1a161410", color: "#3d3120" }}>
         <div className="flex items-center gap-2">
           <OwlMark size={22} />
           <span className="font-semibold" style={{ color: PALETTE.ink }}>gobber</span>
