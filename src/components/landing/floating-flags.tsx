@@ -84,7 +84,7 @@ function FlagSlot({ slot, index }: { slot: Slot; index: number }) {
           exit={{ opacity: 0, y: -60, scale: 0.85 }}
           transition={{
             duration: CYCLE_MS / 1000,
-            times: [0, 0.18, 0.75, 1],
+            times: [0, 0.12, 0.85, 1],
             ease: "easeInOut",
           }}
         />
