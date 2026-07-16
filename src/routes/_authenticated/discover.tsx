@@ -347,24 +347,36 @@ function Discover() {
           </div>
 
           <div className="mt-4 space-y-2">
-            {filtered.map((a) => (
-              <button
+            {filtered.map((a, i) => (
+              <motion.button
                 key={"row-" + a.id}
+                layout
+                initial={{ opacity: 0, y: 10, filter: "blur(10px)" }}
+                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                exit={{ opacity: 0, y: -6, filter: "blur(10px)" }}
+                transition={{ delay: i * 0.02, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
                 onClick={() => navigate({ to: "/activity/$id", params: { id: a.id } })}
-                className="flex w-full items-center gap-3 rounded-2xl bg-white/60 p-3 text-left shadow-glass transition hover:-translate-y-0.5"
+                className="flex w-full items-center gap-3 rounded-2xl p-3 text-left ring-1 ring-[#3a2a12]/[0.06] transition hover:-translate-y-0.5"
+                style={{
+                  background: "color-mix(in oklab, #fffaf0 70%, transparent)",
+                  backdropFilter: "saturate(180%) blur(22px)",
+                  WebkitBackdropFilter: "saturate(180%) blur(22px)",
+                  boxShadow:
+                    "inset 0 1px 0 rgba(255,255,255,0.6), 0 10px 26px -18px rgba(50,34,15,0.22)",
+                }}
               >
                 <div
-                  className="h-14 w-14 shrink-0 rounded-xl bg-cover bg-center"
+                  className="h-14 w-14 shrink-0 rounded-xl bg-cover bg-center ring-1 ring-[#3a2a12]/[0.06]"
                   style={{ backgroundImage: `url(${a.cover_url ?? "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=400&q=80"})` }}
                 />
                 <div className="min-w-0 flex-1">
-                  <p className="text-[10px] font-medium uppercase tracking-widest text-clay">{a.category}</p>
-                  <h4 className="line-clamp-1 text-sm font-semibold text-ink">{a.title}</h4>
-                  <p className="line-clamp-1 text-[11px] text-muted-foreground">
+                  <p className="text-[9.5px] font-semibold uppercase tracking-[0.22em] text-[#8a6b45]">{a.category}</p>
+                  <h4 className="line-clamp-1 text-[14px] font-semibold tracking-[-0.01em] text-[#0f0d0b]">{a.title}</h4>
+                  <p className="line-clamp-1 text-[11.5px] text-[#6b5540]">
                     {a.city}, {a.country} · {format(new Date(a.starts_at), "MMM d")}
                   </p>
                 </div>
-              </button>
+              </motion.button>
             ))}
           </div>
         </div>
