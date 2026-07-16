@@ -11,7 +11,7 @@ interface Props {
 export function MapTypeToggle({ value, onChange, className }: Props) {
   return (
     <div
-      className={`inline-flex items-center gap-0.5 rounded-full glass p-1 shadow-glass ring-1 ring-white/50 ${className ?? ""}`}
+      className={`glass-panel inline-flex items-center gap-0.5 rounded-full p-1 ${className ?? ""}`}
     >
       <button
         onClick={() => onChange("satellite")}
