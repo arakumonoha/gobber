@@ -487,8 +487,9 @@ function LivePill({ icon, value, label, tint }: { icon: React.ReactNode; value: 
       key={`${label}-${value}`}
       initial={{ scale: 0.94 }}
       animate={{ scale: 1 }}
+      whileHover={{ y: -2, scale: 1.03 }}
       transition={{ type: "spring", stiffness: 300, damping: 22 }}
-      className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12.5px]"
+      className="inline-flex cursor-default items-center gap-1.5 rounded-full px-3 py-1.5 text-[12.5px]"
       style={{ background: bg, border: `1px solid ${border}`, color: "#3a2f24" }}
     >
       {icon}
@@ -497,6 +498,7 @@ function LivePill({ icon, value, label, tint }: { icon: React.ReactNode; value: 
     </motion.div>
   );
 }
+
 
 /* ───────────────── LIVE MAP SECTION ───────────────── */
 
