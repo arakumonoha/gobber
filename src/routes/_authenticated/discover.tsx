@@ -181,44 +181,44 @@ function Discover() {
       />
 
       {/* Top gradient */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-48 bg-gradient-to-b from-[#f5eddc]/85 via-[#f5eddc]/40 to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-56 bg-gradient-to-b from-[#f5eddc]/92 via-[#f5eddc]/55 to-transparent" />
 
-      {/* Header */}
+      {/* Header — centered, symmetric */}
       <motion.div
         initial={{ y: -12, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-        className="relative z-30 px-5 pt-8 sm:px-7"
+        className="relative z-30 mx-auto w-full max-w-[720px] px-5 pt-9 sm:px-7"
       >
-        <div className="flex items-end justify-between gap-3">
-          <div>
-            <p className="text-[10.5px] font-medium uppercase tracking-[0.22em] text-[#9a8770]">Right now</p>
-            <h1 className="mt-1 font-serif italic text-[42px] leading-[0.95] tracking-[-0.028em] text-[#0f0d0b]">
-              Discover.
-            </h1>
+        <div className="flex flex-col items-center text-center">
+          <p className="text-[10.5px] font-semibold uppercase tracking-[0.28em] text-[#6b5540]">Right now</p>
+          <h1 className="mt-1.5 font-serif italic text-[44px] leading-[0.95] tracking-[-0.03em] text-[#0f0d0b] sm:text-[52px]">
+            Discover.
+          </h1>
+          <div className="mt-4">
+            <MapTypeToggle value={mapView} onChange={setMapView} />
           </div>
-          <MapTypeToggle value={mapView} onChange={setMapView} />
         </div>
 
         <div
-          className="mt-5 flex items-center gap-2.5 rounded-full px-4 py-3 ring-1 ring-black/[0.04]"
+          className="mx-auto mt-5 flex w-full max-w-[560px] items-center gap-2.5 rounded-full px-4 py-3 ring-1 ring-black/[0.05]"
           style={{
-            background: "color-mix(in oklab, white 72%, transparent)",
+            background: "color-mix(in oklab, white 78%, transparent)",
             backdropFilter: "saturate(180%) blur(24px)",
             WebkitBackdropFilter: "saturate(180%) blur(24px)",
-            boxShadow: "0 1px 2px rgba(60,42,20,0.04), 0 10px 30px -18px rgba(60,42,20,0.15)",
+            boxShadow: "0 1px 2px rgba(60,42,20,0.05), 0 12px 34px -18px rgba(60,42,20,0.2)",
           }}
         >
-          <Search className="h-4 w-4 text-[#9a8770]" strokeWidth={2} />
+          <Search className="h-4 w-4 text-[#6b5540]" strokeWidth={2} />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Where to? Lisbon, Tokyo, Bali…"
-            className="w-full bg-transparent text-[14px] outline-none placeholder:text-[#b3a48a] text-[#1a1614]"
+            className="w-full bg-transparent text-[14px] outline-none placeholder:text-[#8a7658] text-[#1a1614]"
           />
         </div>
 
-        <div className="mt-4 flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="mx-auto mt-4 flex w-full max-w-[640px] justify-start gap-2 overflow-x-auto pb-1 sm:justify-center [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <CategoryChip active={!category} onClick={() => setCategory(null)}>All</CategoryChip>
           {CATEGORIES.map((c) => (
             <CategoryChip
