@@ -294,22 +294,15 @@ function Discover() {
       {/* Top gradient */}
       <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-56 bg-gradient-to-b from-[#f5eddc]/92 via-[#f5eddc]/55 to-transparent" />
 
-      {/* Header — centered, symmetric */}
+      {/* Map style toggle — centered, no header text */}
       <motion.div
-        initial={{ y: -12, opacity: 0 }}
+        initial={{ y: -8, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-        className="relative z-30 mx-auto w-full max-w-[720px] px-5 pt-9 sm:px-7"
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        className="relative z-30 mx-auto flex w-full max-w-[720px] justify-center px-5 pt-9 sm:px-7"
       >
-        <div className="flex flex-col items-center text-center">
-          <p className="text-[10.5px] font-semibold uppercase tracking-[0.28em] text-[#4a3820]">Right now</p>
-          <h1 className="mt-1.5 font-serif italic text-[44px] leading-[0.95] tracking-[-0.03em] text-[#0f0d0b] sm:text-[52px]">
-            Discover.
-          </h1>
-          <div className="mt-4">
-            <MapTypeToggle value={mapView} onChange={setMapView} />
-          </div>
-        </div>
+        <h1 className="sr-only">Discover gatherings near you</h1>
+        <MapTypeToggle value={mapView} onChange={setMapView} />
       </motion.div>
 
 
