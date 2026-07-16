@@ -8,19 +8,19 @@ import {
   useFollowersList,
   useFollowingList,
   useSearchProfiles,
-  useSuggestedProfiles,
   useFollowMutation,
   useIsFollowing,
   useFollowsMe,
   type ProfileLite,
 } from "@/lib/follows";
+import { useRankedSuggestions } from "@/lib/notifications";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 export function FriendsPanel() {
   const { user } = useUser();
   const { data: counts } = useFollowCounts(user?.id);
-  const { data: suggested = [], isLoading: loadingSuggested } = useSuggestedProfiles(user?.id, 6);
+  const { data: suggested = [], isLoading: loadingSuggested } = useRankedSuggestions(user?.id, 8);
   const [openList, setOpenList] = useState<"followers" | "following" | null>(null);
   const [openFind, setOpenFind] = useState(false);
 
