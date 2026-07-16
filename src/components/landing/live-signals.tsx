@@ -124,7 +124,7 @@ export function TrendingStrip({
             aria-label={`${t.city} — ${t.count} trending`}
             title={`${t.city} · ${t.count} live`}
           >
-            <span aria-hidden>{flag}</span>
+            <img src={twemojiUrl(flag)} alt="" className="h-6 w-6" draggable={false} />
             <span
               className="absolute -bottom-1 -right-1 min-w-[18px] rounded-full px-1 text-center text-[10px] font-bold leading-[16px]"
               style={{ background: th.badge, color: th.fg, boxShadow: `0 2px 6px ${th.ring}55`, border: "1.5px solid #fff" }}
