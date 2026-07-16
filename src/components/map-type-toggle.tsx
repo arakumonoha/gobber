@@ -41,7 +41,10 @@ export function MapTypeToggle({ value, onChange, className }: Props) {
             )}
             <motion.span
               animate={{ scale: active ? 1.06 : 1, rotate: active ? [0, -8, 0] : 0 }}
-              transition={{ type: "spring", stiffness: 500, damping: 18 }}
+              transition={{
+                scale: { type: "spring", stiffness: 500, damping: 18 },
+                rotate: { duration: 0.45, ease: [0.22, 1, 0.36, 1], times: [0, 0.5, 1] },
+              }}
               className="relative z-10 inline-flex"
             >
               <Icon className={`h-3.5 w-3.5 ${active ? "text-[#2a1c0c]" : "text-foreground/60"}`} />
