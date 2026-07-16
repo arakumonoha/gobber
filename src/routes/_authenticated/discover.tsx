@@ -278,29 +278,34 @@ function Discover() {
     }
   }
 
+  const railRafRef = useRef<number | null>(null);
   function onRailScroll() {
-    const el = railRef.current;
-    if (!el) return;
-    const center = el.scrollLeft + el.clientWidth / 2;
-    const children = Array.from(el.children) as HTMLElement[];
-    let closest: HTMLElement | null = null;
-    let closestDist = Infinity;
-    for (const c of children) {
-      const cCenter = c.offsetLeft + c.clientWidth / 2;
-      const d = Math.abs(cCenter - center);
-      if (d < closestDist) {
-        closestDist = d;
-        closest = c;
+    if (railRafRef.current != null) return;
+    railRafRef.current = requestAnimationFrame(() => {
+      railRafRef.current = null;
+      const el = railRef.current;
+      if (!el) return;
+      const center = el.scrollLeft + el.clientWidth / 2;
+      const children = Array.from(el.children) as HTMLElement[];
+      let closest: HTMLElement | null = null;
+      let closestDist = Infinity;
+      for (const c of children) {
+        const cCenter = c.offsetLeft + c.clientWidth / 2;
+        const d = Math.abs(cCenter - center);
+        if (d < closestDist) {
+          closestDist = d;
+          closest = c;
+        }
       }
-    }
-    const id = closest?.dataset.id;
-    if (id && id !== selectedId) {
-      const a = filtered.find((x) => x.id === id);
-      if (a) {
-        setSelectedId(a.id);
-        mapRef.current?.panTo(a.lat, a.lng);
+      const id = closest?.dataset.id;
+      if (id && id !== selectedId) {
+        const a = filtered.find((x) => x.id === id);
+        if (a) {
+          setSelectedId(a.id);
+          mapRef.current?.panTo(a.lat, a.lng);
+        }
       }
-    }
+    });
   }
 
   return (
