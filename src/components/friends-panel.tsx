@@ -101,10 +101,11 @@ function StatButton({ value, label, onClick }: { value: number; label: string; o
   );
 }
 
-function SuggestionCard({ profile, myId }: { profile: ProfileLite; myId: string | undefined }) {
+function SuggestionCard({ profile, myId }: { profile: ProfileLite & { mutual_count?: number }; myId: string | undefined }) {
   const { data: isFollowing } = useIsFollowing(myId, profile.id);
   const mut = useFollowMutation(myId);
   const initials = (profile.display_name || profile.username).slice(0, 2).toUpperCase();
+  const mutuals = profile.mutual_count ?? 0;
 
   return (
     <motion.div
@@ -121,6 +122,13 @@ function SuggestionCard({ profile, myId }: { profile: ProfileLite; myId: string 
         </div>
         <p className="mt-2 truncate text-[13px] font-semibold text-ink">{profile.display_name || profile.username}</p>
         <p className="truncate text-[11px] text-muted-foreground">@{profile.username}</p>
+        {mutuals > 0 ? (
+          <p className="mt-0.5 truncate text-[10.5px] font-medium text-primary/80">
+            {mutuals} mutual{mutuals === 1 ? "" : "s"}
+          </p>
+        ) : (
+          <p className="mt-0.5 truncate text-[10.5px] text-muted-foreground/70">New on Gobber</p>
+        )}
       </Link>
       <FollowButton
         compact
