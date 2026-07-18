@@ -339,7 +339,7 @@ function Hero({ stats, nearYou }: { stats: LandingStats | undefined; nearYou: Ne
         `,
       }}
     >
-      <FloatingFlags />
+      
 
       <motion.div style={{ y }} className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center text-center">
         {/* Live counter pill */}
