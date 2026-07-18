@@ -405,15 +405,6 @@ function Hero({ stats, nearYou }: { stats: LandingStats | undefined; nearYou: Ne
           today, not someday <span className="inline-block">:)</span>
         </motion.p>
 
-        {/* Live joins ticker */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: EASE, delay: 0.4 }}
-          className="mt-6"
-        >
-          <JoinsTicker joins={stats?.joins ?? []} />
-        </motion.div>
 
         {/* Real-time trust pills */}
         <motion.div
