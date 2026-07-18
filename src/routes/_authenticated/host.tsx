@@ -224,6 +224,68 @@ function HostPage() {
   );
 }
 
+function DateTimePicker({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const date = value ? new Date(value) : undefined;
+  const time = value ? format(new Date(value), "HH:mm") : "";
+
+  function setDate(d: Date | undefined) {
+    if (!d) return;
+    const [h, m] = (time || "19:00").split(":").map(Number);
+    const next = new Date(d);
+    next.setHours(h || 19, m || 0, 0, 0);
+    onChange(toLocalIso(next));
+  }
+
+  function setTime(t: string) {
+    const base = date ?? new Date();
+    const [h, m] = t.split(":").map(Number);
+    const next = new Date(base);
+    next.setHours(h || 0, m || 0, 0, 0);
+    onChange(toLocalIso(next));
+  }
+
+  function toLocalIso(d: Date) {
+    const pad = (n: number) => String(n).padStart(2, "0");
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  }
+
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          className={cn(
+            "flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-input bg-background px-3 text-[13px] font-medium transition hover:bg-secondary/60",
+            !date && "text-muted-foreground"
+          )}
+        >
+          <CalendarIcon className="h-4 w-4 opacity-70" />
+          {date ? format(date, "MMM d · h:mm a") : "Pick date & time"}
+        </button>
+      </PopoverTrigger>
+      <PopoverContent align="start" className="w-auto p-0">
+        <Calendar
+          mode="single"
+          selected={date}
+          onSelect={setDate}
+          disabled={(d) => d < new Date(new Date().setHours(0, 0, 0, 0))}
+          initialFocus
+          className={cn("p-3 pointer-events-auto")}
+        />
+        <div className="flex items-center gap-2 border-t border-border/60 p-3">
+          <Label className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">Time</Label>
+          <Input
+            type="time"
+            value={time}
+            onChange={(e) => setTime(e.target.value)}
+            className="h-9 flex-1 rounded-lg"
+          />
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
 function Field({ label, children, center }: { label: string; children: React.ReactNode; center?: boolean }) {
   return (
     <div>
