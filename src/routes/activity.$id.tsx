@@ -92,6 +92,7 @@ function ActivityDetail() {
   const rsvpMut = useMutation({
     mutationFn: async () => {
       if (!user) throw new Error("Not signed in");
+      await RateLimit.rsvp();
       if (myRsvp) {
         const { error } = await supabase.from("rsvps").delete().eq("id", myRsvp.id);
         if (error) throw error;
