@@ -57,6 +57,8 @@ function UserProfile() {
   const { data: isBlocked } = useIsBlocked(me?.id, profile?.id);
   const followMut = useFollowMutation(me?.id);
   const blockMut = useBlockMutation(me?.id);
+  const { data: trust } = useTrustProfile(profile?.id);
+  const { data: reviewStats } = useHostReviewStats(profile?.id);
 
   if (isLoading) {
     return (
