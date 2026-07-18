@@ -22,6 +22,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
+import { ReportDialog } from "@/components/report-dialog";
 
 export const Route = createFileRoute("/_authenticated/u/$username")({
   head: ({ params }) => ({ meta: [{ title: `@${params.username} — Gobber` }] }),
