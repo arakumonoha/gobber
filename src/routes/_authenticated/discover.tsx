@@ -430,7 +430,7 @@ function Discover() {
       >
         <div className="px-5 pt-1">
           {/* Editorial sheet header — right side padded so the FAB never overlaps the count */}
-          <div className="mb-3 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-4 pr-16">
+          <div className="mb-3 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-4 pr-[88px]">
             <div className="min-w-0">
               <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#6b5230]">Gobber · Discover</p>
               <h2 className="mt-1 truncate font-serif text-[28px] italic leading-[1] tracking-[-0.025em] text-[#0f0d0b]">
