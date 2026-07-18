@@ -68,6 +68,47 @@ export type Database = {
         }
         Relationships: []
       }
+      activity_reviews: {
+        Row: {
+          activity_id: string
+          comment: string | null
+          created_at: string
+          direction: string
+          id: string
+          rating: number
+          reviewee_id: string
+          reviewer_id: string
+        }
+        Insert: {
+          activity_id: string
+          comment?: string | null
+          created_at?: string
+          direction: string
+          id?: string
+          rating: number
+          reviewee_id: string
+          reviewer_id: string
+        }
+        Update: {
+          activity_id?: string
+          comment?: string | null
+          created_at?: string
+          direction?: string
+          id?: string
+          rating?: number
+          reviewee_id?: string
+          reviewer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activity_reviews_activity_id_fkey"
+            columns: ["activity_id"]
+            isOneToOne: false
+            referencedRelation: "activities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       blocks: {
         Row: {
           blocked_id: string
@@ -186,6 +227,48 @@ export type Database = {
         }
         Relationships: []
       }
+      host_verifications: {
+        Row: {
+          created_at: string
+          full_name: string
+          id: string
+          id_document_url: string | null
+          note: string | null
+          phone: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          full_name: string
+          id?: string
+          id_document_url?: string | null
+          note?: string | null
+          phone: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          full_name?: string
+          id?: string
+          id_document_url?: string | null
+          note?: string | null
+          phone?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           body: string
@@ -268,8 +351,10 @@ export type Database = {
           display_name: string
           home_city: string | null
           id: string
+          superhost: boolean
           updated_at: string
           username: string
+          verified_at: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -278,8 +363,10 @@ export type Database = {
           display_name: string
           home_city?: string | null
           id: string
+          superhost?: boolean
           updated_at?: string
           username: string
+          verified_at?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -288,8 +375,10 @@ export type Database = {
           display_name?: string
           home_city?: string | null
           id?: string
+          superhost?: boolean
           updated_at?: string
           username?: string
+          verified_at?: string | null
         }
         Relationships: []
       }
@@ -425,12 +514,20 @@ export type Database = {
         }
         Returns: boolean
       }
+      host_review_stats: {
+        Args: { _user_id: string }
+        Returns: {
+          avg_rating: number
+          review_count: number
+        }[]
+      }
       is_conv_member: {
         Args: { _conv: string; _uid: string }
         Returns: boolean
       }
       is_conv_owner: { Args: { _conv: string; _uid: string }; Returns: boolean }
       pending_reports_count: { Args: never; Returns: number }
+      recompute_superhost: { Args: { _user_id: string }; Returns: boolean }
       start_dm: { Args: { _other: string }; Returns: string }
       suggested_profiles: {
         Args: { _limit?: number; _user_id: string }
