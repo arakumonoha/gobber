@@ -6,15 +6,18 @@ import { ArrowRight, Star, Coffee, Users, MapPin, Hand, Radio, Compass } from "l
 import type { GoogleMapHandle } from "@/components/google-map";
 import { activitiesQuery } from "@/lib/activities";
 import { getLandingStats, type LandingStats } from "@/lib/landing-stats.functions";
-import { FloatingFlags } from "@/components/landing/floating-flags";
-import { JoinsTicker, TrendingStrip, twemojiUrl } from "@/components/landing/live-signals";
 import owlLogo from "@/assets/gobber-owl.png.asset.json";
 import { AuthOverlay, openAuth } from "@/components/auth/auth-overlay";
 import { supabase } from "@/integrations/supabase/client";
 
-// Heavy map/globe modules are split out of the landing bundle; both live
-// below the fold and the interactive map only mounts after user intent.
-const ArcgisGlobe = lazy(() => import("@/components/arcgis-globe").then((m) => ({ default: m.ArcgisGlobe })));
+// Twemoji CDN URL for a flag emoji — used by the trending city tiles.
+function twemojiUrl(emoji: string): string {
+  const cp = Array.from(emoji).map((c) => c.codePointAt(0)?.toString(16)).filter(Boolean).join("-");
+  return `https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/${cp}.svg`;
+}
+
+// The interactive Google map is split out of the initial landing bundle and
+// only mounts after the user taps the ambient preview.
 const GoogleMap = lazy(() => import("@/components/google-map").then((m) => ({ default: m.GoogleMap })));
 
 export const Route = createFileRoute("/")({
@@ -336,7 +339,7 @@ function Hero({ stats, nearYou }: { stats: LandingStats | undefined; nearYou: Ne
         `,
       }}
     >
-      <FloatingFlags />
+      
 
       <motion.div style={{ y }} className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center text-center">
         {/* Live counter pill */}
@@ -402,15 +405,6 @@ function Hero({ stats, nearYou }: { stats: LandingStats | undefined; nearYou: Ne
           today, not someday <span className="inline-block">:)</span>
         </motion.p>
 
-        {/* Live joins ticker */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: EASE, delay: 0.4 }}
-          className="mt-6"
-        >
-          <JoinsTicker joins={stats?.joins ?? []} />
-        </motion.div>
 
         {/* Real-time trust pills */}
         <motion.div
@@ -593,18 +587,6 @@ function LiveMap({
             no algorithm, no feed — just an actual world map of tables you can sit at tonight.
           </motion.p>
 
-          {/* Trending strip pulled from live data */}
-          {stats && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-15% 0px" }}
-              transition={{ duration: 0.8, ease: EASE, delay: 0.42 }}
-              className="mt-6 flex justify-center"
-            >
-              <TrendingStrip trending={stats.trending} fallbackFlags={COUNTRY_FLAGS} />
-            </motion.div>
-          )}
         </motion.div>
 
 
@@ -630,9 +612,14 @@ function LiveMap({
               transition={{ duration: 0.6, ease: EASE }}
               className="absolute inset-0"
             >
-              <Suspense fallback={<div className="absolute inset-0" style={{ background: PALETTE.paper }} />}>
-                <ArcgisGlobe basemap="satellite" spin className="absolute inset-0" />
-              </Suspense>
+              <div
+                aria-hidden
+                className="absolute inset-0"
+                style={{
+                  background:
+                    "radial-gradient(circle at 30% 30%, rgba(255,220,180,0.35), rgba(30,22,12,0.85) 70%)",
+                }}
+              />
             </motion.div>
           )}
 
