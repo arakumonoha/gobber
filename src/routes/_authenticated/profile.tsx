@@ -138,3 +138,25 @@ function StatCard({ n, label }: { n: number; label: string }) {
     </div>
   );
 }
+
+function ModeratorTile() {
+  const { data: isMod } = useIsModerator();
+  const { data: pending = 0 } = usePendingReportsCount();
+  if (!isMod) return null;
+  return (
+    <Link
+      to="/moderation"
+      className="mt-6 flex items-center justify-between rounded-2xl glass px-4 py-3.5 transition hover:bg-white/70"
+    >
+      <span className="flex items-center gap-2.5">
+        <ShieldCheck className="h-4 w-4 text-clay" />
+        <span className="text-[14px] font-medium text-ink">Moderation queue</span>
+      </span>
+      {pending > 0 ? (
+        <span className="rounded-full bg-primary px-2 py-0.5 text-[11px] font-semibold text-primary-foreground">{pending}</span>
+      ) : (
+        <span className="text-[11.5px] text-muted-foreground">Clear</span>
+      )}
+    </Link>
+  );
+}
