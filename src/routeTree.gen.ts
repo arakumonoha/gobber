@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as CitiesRouteImport } from './routes/cities'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
@@ -25,6 +26,11 @@ import { Route as AuthenticatedUUsernameRouteImport } from './routes/_authentica
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CitiesRoute = CitiesRouteImport.update({
+  id: '/cities',
+  path: '/cities',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -85,6 +91,7 @@ const AuthenticatedUUsernameRoute = AuthenticatedUUsernameRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/cities': typeof CitiesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/discover': typeof AuthenticatedDiscoverRoute
   '/explore': typeof AuthenticatedExploreRoute
@@ -98,6 +105,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/cities': typeof CitiesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/discover': typeof AuthenticatedDiscoverRoute
   '/explore': typeof AuthenticatedExploreRoute
@@ -113,6 +121,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/cities': typeof CitiesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/discover': typeof AuthenticatedDiscoverRoute
   '/_authenticated/explore': typeof AuthenticatedExploreRoute
@@ -128,6 +137,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/cities'
     | '/sitemap.xml'
     | '/discover'
     | '/explore'
@@ -141,6 +151,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/cities'
     | '/sitemap.xml'
     | '/discover'
     | '/explore'
@@ -155,6 +166,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/cities'
     | '/sitemap.xml'
     | '/_authenticated/discover'
     | '/_authenticated/explore'
@@ -170,6 +182,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  CitiesRoute: typeof CitiesRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   ActivityIdRoute: typeof ActivityIdRoute
   CitySlugRoute: typeof CitySlugRoute
@@ -182,6 +195,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cities': {
+      id: '/cities'
+      path: '/cities'
+      fullPath: '/cities'
+      preLoaderRoute: typeof CitiesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -289,6 +309,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  CitiesRoute: CitiesRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   ActivityIdRoute: ActivityIdRoute,
   CitySlugRoute: CitySlugRoute,
