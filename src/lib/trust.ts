@@ -94,13 +94,16 @@ export function useHostReviewStats(userId: string | undefined) {
     staleTime: 5 * 60_000,
     queryFn: async () => {
       if (!userId) return { avg_rating: 0, review_count: 0 };
-      const { data, error } = await supabase.rpc("host_review_stats", { _user_id: userId });
+      const { data, error } = await supabase
+        .from("activity_reviews")
+        .select("rating")
+        .eq("reviewee_id", userId)
+        .eq("direction", "guest_to_host");
       if (error) throw error;
-      const row = Array.isArray(data) ? data[0] : data;
-      return {
-        avg_rating: Number(row?.avg_rating ?? 0),
-        review_count: Number(row?.review_count ?? 0),
-      };
+      const rows = (data ?? []) as { rating: number }[];
+      if (rows.length === 0) return { avg_rating: 0, review_count: 0 };
+      const avg = rows.reduce((s, r) => s + r.rating, 0) / rows.length;
+      return { avg_rating: avg, review_count: rows.length };
     },
   });
 }
