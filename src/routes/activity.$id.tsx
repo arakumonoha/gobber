@@ -9,6 +9,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { format } from "date-fns";
+import { RateLimit } from "@/lib/rate-limit";
+import { ReportDialog } from "@/components/report-dialog";
 
 const BASE_URL = "https://gobber.lovable.app";
 
