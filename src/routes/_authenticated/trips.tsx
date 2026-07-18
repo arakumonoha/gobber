@@ -26,10 +26,14 @@ function Trips() {
 
   return (
     <div className="min-h-[100dvh] bg-background pb-32">
-      <div className="mx-auto max-w-md px-5 pt-8">
-        <motion.div initial={{ y: 12, opacity: 0 }} animate={{ y: 0, opacity: 1 }}>
-          <p className="text-[11px] font-medium uppercase tracking-widest text-muted-foreground">My</p>
-          <h1 className="text-3xl font-semibold tracking-tight text-ink">Trips</h1>
+      <div className="mx-auto max-w-md px-5 pt-20">
+        <motion.div
+          initial={{ y: 12, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className="text-center"
+        >
+          <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-muted-foreground">My</p>
+          <h1 className="mt-1 text-3xl font-semibold tracking-tight text-ink">Trips</h1>
         </motion.div>
 
         <Section title="Upcoming" items={upcoming} empty="Nothing on the horizon yet. Head to Discover." />
