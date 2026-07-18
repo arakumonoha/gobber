@@ -66,42 +66,87 @@ function HostPage() {
 
   return (
     <div className="min-h-[100dvh] bg-background pb-32">
-      <div className="mx-auto max-w-md px-5 pt-8">
-        <button onClick={() => navigate({ to: "/discover" })} className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-secondary">
-          <ArrowLeft className="h-5 w-5" />
-        </button>
-        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }}>
-          <p className="text-[11px] font-medium uppercase tracking-widest text-muted-foreground">Host</p>
-          <h1 className="text-3xl font-semibold tracking-tight text-ink">A new gathering</h1>
-          <p className="mt-1 text-sm text-muted-foreground">What are you gathering strangers for?</p>
+      <div className="mx-auto max-w-md px-5 pt-6">
+        {/* Balanced 3-column header: back · label · spacer */}
+        <div className="grid grid-cols-[2.5rem_1fr_2.5rem] items-center">
+          <button
+            onClick={() => navigate({ to: "/discover" })}
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary/70 backdrop-blur transition hover:bg-secondary"
+            aria-label="Back"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </button>
+          <p className="text-center text-[11px] font-medium uppercase tracking-[0.22em] text-muted-foreground">
+            Host
+          </p>
+          <div className="h-10 w-10" aria-hidden />
+        </div>
+
+        {/* Centered intro */}
+        <motion.div
+          initial={{ y: 12, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className="mt-8 text-center"
+        >
+          <h1 className="font-serif text-[2.4rem] leading-[1.05] italic tracking-tight text-ink">
+            A new gathering
+          </h1>
+          <p className="mx-auto mt-2 max-w-[18rem] text-[13.5px] text-muted-foreground">
+            What are you gathering strangers for?
+          </p>
         </motion.div>
 
-        <form onSubmit={submit} className="mt-6 space-y-5">
-          <Field label="Title"><Input required value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Sunset ramen in Shibuya" className="h-11 rounded-xl" /></Field>
-          <Field label="Description"><Textarea required rows={3} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="What will the vibe be?" className="rounded-xl" /></Field>
-          <Field label="Category">
-            <div className="flex flex-wrap gap-2">
-              {CATEGORIES.map((c) => (
-                <button key={c.id} type="button" onClick={() => setForm({ ...form, category: c.id })}
-                  className={`rounded-full px-3.5 py-1.5 text-xs font-medium transition ${form.category === c.id ? "bg-primary text-primary-foreground" : "bg-secondary text-foreground"}`}>
-                  {c.icon} {c.label}
-                </button>
-              ))}
+        <form onSubmit={submit} className="mt-8 space-y-5">
+          <Field label="Title">
+            <Input required value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Sunset ramen in Shibuya" className="h-11 rounded-xl text-center" />
+          </Field>
+
+          <Field label="Description">
+            <Textarea required rows={3} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="What will the vibe be?" className="rounded-xl resize-none" />
+          </Field>
+
+          {/* Symmetric 2-col category grid — 6 chips fit as 3×2 */}
+          <Field label="Category" center>
+            <div className="grid grid-cols-2 gap-2">
+              {CATEGORIES.map((c) => {
+                const active = form.category === c.id;
+                return (
+                  <button
+                    key={c.id}
+                    type="button"
+                    onClick={() => setForm({ ...form, category: c.id })}
+                    className={`h-10 rounded-full text-[12.5px] font-medium tracking-tight transition ${
+                      active
+                        ? "bg-primary text-primary-foreground shadow-[0_6px_20px_-10px_theme(colors.primary.DEFAULT)]"
+                        : "bg-secondary/70 text-foreground hover:bg-secondary"
+                    }`}
+                  >
+                    {c.icon} {c.label}
+                  </button>
+                );
+              })}
             </div>
           </Field>
-          <div className="grid grid-cols-2 gap-3">
-            <Field label="City"><Input required value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} placeholder="Lisbon" className="h-11 rounded-xl" /></Field>
-            <Field label="Country"><Input required value={form.country} onChange={(e) => setForm({ ...form, country: e.target.value })} placeholder="Portugal" className="h-11 rounded-xl" /></Field>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <Field label="When"><Input required type="datetime-local" value={form.starts_at} onChange={(e) => setForm({ ...form, starts_at: e.target.value })} className="h-11 rounded-xl" /></Field>
-            <Field label="Max spots"><Input required type="number" min={2} max={30} value={form.max_spots} onChange={(e) => setForm({ ...form, max_spots: parseInt(e.target.value) || 6 })} className="h-11 rounded-xl" /></Field>
-          </div>
-          <Field label="Cover image URL (optional)"><Input value={form.cover_url} onChange={(e) => setForm({ ...form, cover_url: e.target.value })} placeholder="https://..." className="h-11 rounded-xl" /></Field>
 
-          <Button type="submit" disabled={loading} className="h-12 w-full rounded-full text-base font-medium">
-            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Post gathering"}
-          </Button>
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="City"><Input required value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} placeholder="Lisbon" className="h-11 rounded-xl text-center" /></Field>
+            <Field label="Country"><Input required value={form.country} onChange={(e) => setForm({ ...form, country: e.target.value })} placeholder="Portugal" className="h-11 rounded-xl text-center" /></Field>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="When"><Input required type="datetime-local" value={form.starts_at} onChange={(e) => setForm({ ...form, starts_at: e.target.value })} className="h-11 rounded-xl text-center" /></Field>
+            <Field label="Max spots"><Input required type="number" min={2} max={30} value={form.max_spots} onChange={(e) => setForm({ ...form, max_spots: parseInt(e.target.value) || 6 })} className="h-11 rounded-xl text-center" /></Field>
+          </div>
+
+          <Field label="Cover image (optional)">
+            <Input value={form.cover_url} onChange={(e) => setForm({ ...form, cover_url: e.target.value })} placeholder="https://…" className="h-11 rounded-xl text-center" />
+          </Field>
+
+          <div className="pt-2">
+            <Button type="submit" disabled={loading} className="mx-auto flex h-12 w-full items-center justify-center rounded-full text-[15px] font-medium">
+              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Post gathering"}
+            </Button>
+          </div>
         </form>
       </div>
       <BottomNav />
@@ -109,11 +154,13 @@ function HostPage() {
   );
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({ label, children, center }: { label: string; children: React.ReactNode; center?: boolean }) {
   return (
     <div>
-      <Label className="text-xs font-medium">{label}</Label>
-      <div className="mt-1.5">{children}</div>
+      <Label className={`text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground ${center ? "block text-center" : ""}`}>
+        {label}
+      </Label>
+      <div className="mt-2">{children}</div>
     </div>
   );
 }
