@@ -107,8 +107,19 @@ function UserProfile() {
             <DropdownMenuTrigger className="flex h-9 w-9 items-center justify-center rounded-full hover:bg-secondary/60" aria-label="More">
               <MoreHorizontal className="h-4 w-4 text-ink" />
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48 rounded-xl">
+            <DropdownMenuContent align="end" className="w-52 rounded-xl">
               <DropdownMenuItem onClick={handleShare}>Share profile</DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <div className="w-full">
+                  <ReportDialog
+                    entityType="user"
+                    entityId={profile.id}
+                    targetLabel={`@${profile.username}`}
+                    className="w-full justify-start rounded-md bg-transparent px-2 py-1.5 text-[13px] font-normal hover:bg-secondary/60"
+                    trigger={<><Flag className="mr-2 h-4 w-4" /> Report @{profile.username}</>}
+                  />
+                </div>
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={handleBlock} className={isBlocked ? "" : "text-destructive focus:text-destructive"}>
                 {isBlocked ? (<><ShieldOff className="mr-2 h-4 w-4" /> Unblock</>) : (<><Ban className="mr-2 h-4 w-4" /> Block @{profile.username}</>)}
               </DropdownMenuItem>
