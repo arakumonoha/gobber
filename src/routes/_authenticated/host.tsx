@@ -1,15 +1,19 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, ImagePlus, Loader2, X } from "lucide-react";
+import { ArrowLeft, CalendarIcon, ImagePlus, Loader2, X } from "lucide-react";
+import { format } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { useUser } from "@/hooks/use-user";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CATEGORIES } from "@/lib/categories";
 import { BottomNav } from "@/components/bottom-nav";
+import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/host")({
@@ -159,7 +163,12 @@ function HostPage() {
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <Field label="When"><Input required type="datetime-local" value={form.starts_at} onChange={(e) => setForm({ ...form, starts_at: e.target.value })} className="h-11 rounded-xl text-center" /></Field>
+            <Field label="When">
+              <DateTimePicker
+                value={form.starts_at}
+                onChange={(v) => setForm({ ...form, starts_at: v })}
+              />
+            </Field>
             <Field label="Max spots"><Input required type="number" min={2} max={30} value={form.max_spots} onChange={(e) => setForm({ ...form, max_spots: parseInt(e.target.value) || 6 })} className="h-11 rounded-xl text-center" /></Field>
           </div>
 
