@@ -70,7 +70,7 @@ export const GlassButton = React.forwardRef<HTMLButtonElement, GlassButtonProps>
 );
 GlassButton.displayName = "GlassButton";
 
-export interface SectionHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface SectionHeaderProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
   eyebrow?: string;
   title: React.ReactNode;
   subtitle?: React.ReactNode;
