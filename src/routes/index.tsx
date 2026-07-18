@@ -612,9 +612,14 @@ function LiveMap({
               transition={{ duration: 0.6, ease: EASE }}
               className="absolute inset-0"
             >
-              <Suspense fallback={<div className="absolute inset-0" style={{ background: PALETTE.paper }} />}>
-                <ArcgisGlobe basemap="satellite" spin className="absolute inset-0" />
-              </Suspense>
+              <div
+                aria-hidden
+                className="absolute inset-0"
+                style={{
+                  background:
+                    "radial-gradient(circle at 30% 30%, rgba(255,220,180,0.35), rgba(30,22,12,0.85) 70%)",
+                }}
+              />
             </motion.div>
           )}
 
