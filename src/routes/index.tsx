@@ -6,15 +6,18 @@ import { ArrowRight, Star, Coffee, Users, MapPin, Hand, Radio, Compass } from "l
 import type { GoogleMapHandle } from "@/components/google-map";
 import { activitiesQuery } from "@/lib/activities";
 import { getLandingStats, type LandingStats } from "@/lib/landing-stats.functions";
-import { FloatingFlags } from "@/components/landing/floating-flags";
-import { JoinsTicker, TrendingStrip, twemojiUrl } from "@/components/landing/live-signals";
 import owlLogo from "@/assets/gobber-owl.png.asset.json";
 import { AuthOverlay, openAuth } from "@/components/auth/auth-overlay";
 import { supabase } from "@/integrations/supabase/client";
 
-// Heavy map/globe modules are split out of the landing bundle; both live
-// below the fold and the interactive map only mounts after user intent.
-const ArcgisGlobe = lazy(() => import("@/components/arcgis-globe").then((m) => ({ default: m.ArcgisGlobe })));
+// Twemoji CDN URL for a flag emoji — used by the trending city tiles.
+function twemojiUrl(emoji: string): string {
+  const cp = Array.from(emoji).map((c) => c.codePointAt(0)?.toString(16)).filter(Boolean).join("-");
+  return `https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/${cp}.svg`;
+}
+
+// The interactive Google map is split out of the initial landing bundle and
+// only mounts after the user taps the ambient preview.
 const GoogleMap = lazy(() => import("@/components/google-map").then((m) => ({ default: m.GoogleMap })));
 
 export const Route = createFileRoute("/")({
