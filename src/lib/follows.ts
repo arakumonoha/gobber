@@ -1,5 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { RateLimit } from "./rate-limit";
 
 export type ProfileLite = {
   id: string;
@@ -174,6 +175,7 @@ export function useFollowMutation(myId: string | undefined) {
     mutationFn: async ({ targetId, follow }: { targetId: string; follow: boolean }) => {
       if (!myId) throw new Error("Not signed in");
       if (follow) {
+        await RateLimit.follow();
         const { error } = await supabase.from("follows").insert({ follower_id: myId, following_id: targetId });
         if (error && !error.message.includes("duplicate")) throw error;
       } else {

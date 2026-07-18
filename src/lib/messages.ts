@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { RateLimit } from "./rate-limit";
 
 export type ConversationType = "dm" | "location";
 
@@ -157,6 +158,8 @@ export function useSendMessage(conversationId?: string) {
       const { data: userRes } = await supabase.auth.getUser();
       const uid = userRes.user?.id;
       if (!uid || !conversationId) return;
+      await RateLimit.message();
+
 
       let media_url: string | null = null;
       let media_type: string | null = null;

@@ -1,7 +1,8 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { LogOut, Loader2, AtSign, Pencil, ChevronDown } from "lucide-react";
+import { LogOut, Loader2, AtSign, Pencil, ChevronDown, ShieldCheck } from "lucide-react";
+import { useIsModerator, usePendingReportsCount } from "@/lib/reports";
 import { useUser } from "@/hooks/use-user";
 import { supabase } from "@/integrations/supabase/client";
 import { useMyRsvps, useActivities } from "@/lib/activities";
@@ -118,6 +119,7 @@ function Profile() {
 
 
 
+        <ModeratorTile />
 
         <Button onClick={signOut} disabled={signingOut} variant="ghost" className="mt-4 h-11 w-full rounded-xl text-muted-foreground">
           <LogOut className="mr-2 h-4 w-4" /> Sign out
@@ -134,5 +136,27 @@ function StatCard({ n, label }: { n: number; label: string }) {
       <p className="text-3xl font-semibold tracking-tight text-ink">{n}</p>
       <p className="mt-1 text-xs text-muted-foreground">{label}</p>
     </div>
+  );
+}
+
+function ModeratorTile() {
+  const { data: isMod } = useIsModerator();
+  const { data: pending = 0 } = usePendingReportsCount();
+  if (!isMod) return null;
+  return (
+    <Link
+      to="/moderation"
+      className="mt-6 flex items-center justify-between rounded-2xl glass px-4 py-3.5 transition hover:bg-white/70"
+    >
+      <span className="flex items-center gap-2.5">
+        <ShieldCheck className="h-4 w-4 text-clay" />
+        <span className="text-[14px] font-medium text-ink">Moderation queue</span>
+      </span>
+      {pending > 0 ? (
+        <span className="rounded-full bg-primary px-2 py-0.5 text-[11px] font-semibold text-primary-foreground">{pending}</span>
+      ) : (
+        <span className="text-[11.5px] text-muted-foreground">Clear</span>
+      )}
+    </Link>
   );
 }

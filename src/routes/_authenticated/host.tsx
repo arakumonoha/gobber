@@ -15,6 +15,7 @@ import { CATEGORIES } from "@/lib/categories";
 import { BottomNav } from "@/components/bottom-nav";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { RateLimit } from "@/lib/rate-limit";
 
 export const Route = createFileRoute("/_authenticated/host")({
   head: () => ({ meta: [{ title: "Host a gathering — Gobber" }] }),
@@ -73,6 +74,7 @@ function HostPage() {
     try {
       const coords = await geocodeCity();
       if (!coords) { toast.error("Couldn't find that city. Try again."); setLoading(false); return; }
+      await RateLimit.createActivity();
       const { data, error } = await supabase.from("activities").insert({
         host_id: user.id,
         title: form.title,

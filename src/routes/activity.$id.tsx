@@ -9,6 +9,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { format } from "date-fns";
+import { RateLimit } from "@/lib/rate-limit";
+import { ReportDialog } from "@/components/report-dialog";
 
 const BASE_URL = "https://gobber.lovable.app";
 
@@ -90,6 +92,7 @@ function ActivityDetail() {
   const rsvpMut = useMutation({
     mutationFn: async () => {
       if (!user) throw new Error("Not signed in");
+      await RateLimit.rsvp();
       if (myRsvp) {
         const { error } = await supabase.from("rsvps").delete().eq("id", myRsvp.id);
         if (error) throw error;
@@ -158,6 +161,12 @@ function ActivityDetail() {
           </div>
 
           <p className="mt-5 text-[15px] leading-relaxed text-foreground/85">{activity.description}</p>
+
+          {user && user.id !== activity.host_id ? (
+            <div className="mt-6 flex justify-end">
+              <ReportDialog entityType="activity" entityId={activity.id} targetLabel={activity.title} />
+            </div>
+          ) : null}
         </div>
       </motion.div>
 
