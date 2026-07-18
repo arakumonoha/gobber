@@ -11,18 +11,27 @@ export type PublicHost = {
 
 export type PublicActivity = Activity & { host: PublicHost | null };
 
+async function attachHosts(rows: Activity[]): Promise<PublicActivity[]> {
+  if (rows.length === 0) return [];
+  const hostIds = Array.from(new Set(rows.map((r) => r.host_id)));
+  const { data: hosts } = await supabase
+    .from("profiles")
+    .select("id, username, display_name, avatar_url")
+    .in("id", hostIds);
+  const byId = new Map((hosts ?? []).map((h) => [h.id, h as PublicHost]));
+  return rows.map((r) => ({ ...r, host: byId.get(r.host_id) ?? null }));
+}
+
 /** Public: full activity + narrow host projection. Used by /activity/$id SSR. */
 export function publicActivityQuery(id: string) {
   return {
     queryKey: ["public-activity", id],
     queryFn: async (): Promise<PublicActivity | null> => {
-      const { data, error } = await supabase
-        .from("activities")
-        .select("*, host:profiles!activities_host_id_fkey(id, username, display_name, avatar_url)")
-        .eq("id", id)
-        .maybeSingle();
+      const { data, error } = await supabase.from("activities").select("*").eq("id", id).maybeSingle();
       if (error) throw error;
-      return (data as unknown as PublicActivity) ?? null;
+      if (!data) return null;
+      const [enriched] = await attachHosts([data as Activity]);
+      return enriched;
     },
     staleTime: 60_000,
   };
@@ -70,14 +79,14 @@ export function cityQuery(slug: string) {
     queryFn: async (): Promise<{ city: string; country: string; activities: PublicActivity[] } | null> => {
       const { data, error } = await supabase
         .from("activities")
-        .select("*, host:profiles!activities_host_id_fkey(id, username, display_name, avatar_url)")
+        .select("*")
         .gte("starts_at", new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString())
         .order("starts_at", { ascending: true });
       if (error) throw error;
-      const rows = (data as unknown as PublicActivity[]) ?? [];
-      const match = rows.filter((r) => slugify(`${r.city}-${r.country}`) === slug);
-      if (match.length === 0) return null;
-      return { city: match[0].city, country: match[0].country, activities: match };
+      const rows = ((data as Activity[]) ?? []).filter((r) => slugify(`${r.city}-${r.country}`) === slug);
+      if (rows.length === 0) return null;
+      const enriched = await attachHosts(rows);
+      return { city: enriched[0].city, country: enriched[0].country, activities: enriched };
     },
     staleTime: 60_000,
   };
