@@ -1,9 +1,8 @@
 import { createFileRoute, Link, useNavigate, notFound } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { ArrowLeft, MapPin, Calendar, Users, Loader2 } from "lucide-react";
+import { ArrowLeft, MapPin, Calendar, Users, Loader2, ShieldCheck, Sparkles, Star } from "lucide-react";
 import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { publicActivityQuery } from "@/lib/public-catalog";
-import { useRsvpsForActivity } from "@/lib/activities";
 import { useUser } from "@/hooks/use-user";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -11,6 +10,16 @@ import { toast } from "sonner";
 import { format } from "date-fns";
 import { RateLimit } from "@/lib/rate-limit";
 import { ReportDialog } from "@/components/report-dialog";
+import {
+  useAllRsvpsForActivity,
+  useTrustProfile,
+  useHostReviewStats,
+  useMyReviewForActivity,
+  useSubmitReview,
+} from "@/lib/trust";
+import { useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 
 const BASE_URL = "https://gobber.lovable.app";
 
