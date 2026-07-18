@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, AtSign, MapPin, Loader2, MoreHorizontal, Ban, Check, UserPlus, ShieldOff } from "lucide-react";
+import { ArrowLeft, AtSign, MapPin, Loader2, MoreHorizontal, Ban, Check, UserPlus, ShieldOff, Flag } from "lucide-react";
 import { useUser } from "@/hooks/use-user";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
