@@ -19,7 +19,6 @@ import { Route as AuthenticatedHostRouteImport } from './routes/_authenticated/h
 import { Route as AuthenticatedExploreRouteImport } from './routes/_authenticated/explore'
 import { Route as AuthenticatedDiscoverRouteImport } from './routes/_authenticated/discover'
 import { Route as AuthenticatedUUsernameRouteImport } from './routes/_authenticated/u.$username'
-import { Route as AuthenticatedActivityIdRouteImport } from './routes/_authenticated/activity.$id'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -70,11 +69,6 @@ const AuthenticatedUUsernameRoute = AuthenticatedUUsernameRouteImport.update({
   path: '/u/$username',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedActivityIdRoute = AuthenticatedActivityIdRouteImport.update({
-  id: '/activity/$id',
-  path: '/activity/$id',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -85,7 +79,6 @@ export interface FileRoutesByFullPath {
   '/host': typeof AuthenticatedHostRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/trips': typeof AuthenticatedTripsRoute
-  '/activity/$id': typeof AuthenticatedActivityIdRoute
   '/u/$username': typeof AuthenticatedUUsernameRoute
 }
 export interface FileRoutesByTo {
@@ -97,7 +90,6 @@ export interface FileRoutesByTo {
   '/host': typeof AuthenticatedHostRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/trips': typeof AuthenticatedTripsRoute
-  '/activity/$id': typeof AuthenticatedActivityIdRoute
   '/u/$username': typeof AuthenticatedUUsernameRoute
 }
 export interface FileRoutesById {
@@ -111,7 +103,6 @@ export interface FileRoutesById {
   '/_authenticated/host': typeof AuthenticatedHostRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/trips': typeof AuthenticatedTripsRoute
-  '/_authenticated/activity/$id': typeof AuthenticatedActivityIdRoute
   '/_authenticated/u/$username': typeof AuthenticatedUUsernameRoute
 }
 export interface FileRouteTypes {
@@ -125,7 +116,6 @@ export interface FileRouteTypes {
     | '/host'
     | '/profile'
     | '/trips'
-    | '/activity/$id'
     | '/u/$username'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -137,7 +127,6 @@ export interface FileRouteTypes {
     | '/host'
     | '/profile'
     | '/trips'
-    | '/activity/$id'
     | '/u/$username'
   id:
     | '__root__'
@@ -150,7 +139,6 @@ export interface FileRouteTypes {
     | '/_authenticated/host'
     | '/_authenticated/profile'
     | '/_authenticated/trips'
-    | '/_authenticated/activity/$id'
     | '/_authenticated/u/$username'
   fileRoutesById: FileRoutesById
 }
@@ -233,13 +221,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedUUsernameRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/activity/$id': {
-      id: '/_authenticated/activity/$id'
-      path: '/activity/$id'
-      fullPath: '/activity/$id'
-      preLoaderRoute: typeof AuthenticatedActivityIdRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
   }
 }
 
@@ -249,7 +230,6 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedHostRoute: typeof AuthenticatedHostRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedTripsRoute: typeof AuthenticatedTripsRoute
-  AuthenticatedActivityIdRoute: typeof AuthenticatedActivityIdRoute
   AuthenticatedUUsernameRoute: typeof AuthenticatedUUsernameRoute
 }
 
@@ -259,7 +239,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedHostRoute: AuthenticatedHostRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedTripsRoute: AuthenticatedTripsRoute,
-  AuthenticatedActivityIdRoute: AuthenticatedActivityIdRoute,
   AuthenticatedUUsernameRoute: AuthenticatedUUsernameRoute,
 }
 
