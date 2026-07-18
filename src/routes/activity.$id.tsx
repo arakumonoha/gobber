@@ -93,10 +93,19 @@ function ActivityDetail() {
   const qc = useQueryClient();
   const { user } = useUser();
   const { data: activity } = useSuspenseQuery(publicActivityQuery(id));
-  const { data: rsvps = [] } = useRsvpsForActivity(id);
+  const { data: allRsvps = [] } = useAllRsvpsForActivity(id);
+  const goingRsvps = allRsvps.filter((r) => r.status === "going");
+  const waitlistRsvps = allRsvps.filter((r) => r.status === "waitlisted");
 
-  const myRsvp = user ? rsvps.find((r) => r.user_id === user.id) : undefined;
-  const spotsLeft = activity ? activity.max_spots - rsvps.length : 0;
+  const myRsvp = user ? allRsvps.find((r) => r.user_id === user.id) : undefined;
+  const spotsLeft = activity ? Math.max(0, activity.max_spots - goingRsvps.length) : 0;
+  const isFull = spotsLeft <= 0;
+  const isPast = activity ? new Date(activity.starts_at).getTime() < Date.now() : false;
+  const attended = !!myRsvp && myRsvp.status === "going" && isPast;
+
+  const { data: hostTrust } = useTrustProfile(activity?.host_id);
+  const { data: hostStats } = useHostReviewStats(activity?.host_id);
+  const { data: myReview } = useMyReviewForActivity(id, user?.id);
 
   const rsvpMut = useMutation({
     mutationFn: async () => {
@@ -106,14 +115,19 @@ function ActivityDetail() {
         const { error } = await supabase.from("rsvps").delete().eq("id", myRsvp.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("rsvps").insert({ activity_id: id, user_id: user.id, status: "going" });
+        const status = isFull ? "waitlisted" : "going";
+        const { error } = await supabase.from("rsvps").insert({ activity_id: id, user_id: user.id, status });
         if (error) throw error;
       }
     },
     onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["rsvps-all", id] });
       qc.invalidateQueries({ queryKey: ["rsvps", id] });
       qc.invalidateQueries({ queryKey: ["my-rsvps"] });
-      toast.success(myRsvp ? "RSVP cancelled" : "You're in ✨");
+      const msg = myRsvp
+        ? myRsvp.status === "waitlisted" ? "Removed from waitlist" : "RSVP cancelled"
+        : isFull ? "Added to waitlist — we'll notify you if a spot opens" : "You're in ✨";
+      toast.success(msg);
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Failed"),
   });
