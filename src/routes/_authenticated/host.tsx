@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, ImagePlus, Loader2, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useUser } from "@/hooks/use-user";
 import { Button } from "@/components/ui/button";
@@ -26,6 +26,31 @@ function HostPage() {
     cover_url: "",
   });
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  async function handleFileUpload(file: File) {
+    if (!user) return;
+    if (!file.type.startsWith("image/")) { toast.error("Please choose an image file."); return; }
+    if (file.size > 8 * 1024 * 1024) { toast.error("Image must be under 8 MB."); return; }
+    setUploading(true);
+    try {
+      const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
+      const path = `${user.id}/${crypto.randomUUID()}.${ext}`;
+      const { error: upErr } = await supabase.storage.from("activity-covers").upload(path, file, {
+        cacheControl: "3600", upsert: false, contentType: file.type,
+      });
+      if (upErr) throw upErr;
+      const { data: signed, error: sErr } = await supabase.storage
+        .from("activity-covers")
+        .createSignedUrl(path, 60 * 60 * 24 * 365);
+      if (sErr || !signed) throw sErr ?? new Error("Could not generate URL");
+      setForm((f) => ({ ...f, cover_url: signed.signedUrl }));
+      toast.success("Cover image uploaded");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Upload failed");
+    } finally { setUploading(false); }
+  }
 
   async function geocodeCity(): Promise<{ lat: number; lng: number } | null> {
     if (!form.city) return null;
@@ -139,7 +164,43 @@ function HostPage() {
           </div>
 
           <Field label="Cover image (optional)">
-            <Input value={form.cover_url} onChange={(e) => setForm({ ...form, cover_url: e.target.value })} placeholder="https://…" className="h-11 rounded-xl text-center" />
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFileUpload(f); e.target.value = ""; }}
+            />
+            {form.cover_url ? (
+              <div className="relative overflow-hidden rounded-xl border border-border/60">
+                <img src={form.cover_url} alt="Cover preview" className="h-40 w-full object-cover" />
+                <button
+                  type="button"
+                  onClick={() => setForm({ ...form, cover_url: "" })}
+                  className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur transition hover:bg-black/70"
+                  aria-label="Remove cover"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                disabled={uploading}
+                onClick={() => fileInputRef.current?.click()}
+                className="flex h-40 w-full flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border/70 bg-secondary/40 text-muted-foreground transition hover:bg-secondary/70 disabled:opacity-60"
+              >
+                {uploading ? (
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                ) : (
+                  <>
+                    <ImagePlus className="h-5 w-5" />
+                    <span className="text-[13px] font-medium">Tap to upload from your device</span>
+                    <span className="text-[11px] text-muted-foreground/70">PNG or JPG · up to 8 MB</span>
+                  </>
+                )}
+              </button>
+            )}
           </Field>
 
           <div className="pt-2">
