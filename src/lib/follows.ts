@@ -1,5 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { RateLimit } from "./rate-limit";
 
 export type ProfileLite = {
   id: string;

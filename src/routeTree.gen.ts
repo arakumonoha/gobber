@@ -18,6 +18,7 @@ import { Route as CitySlugRouteImport } from './routes/city.$slug'
 import { Route as ActivityIdRouteImport } from './routes/activity.$id'
 import { Route as AuthenticatedTripsRouteImport } from './routes/_authenticated/trips'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
+import { Route as AuthenticatedModerationRouteImport } from './routes/_authenticated/moderation'
 import { Route as AuthenticatedHostRouteImport } from './routes/_authenticated/host'
 import { Route as AuthenticatedExploreRouteImport } from './routes/_authenticated/explore'
 import { Route as AuthenticatedDiscoverRouteImport } from './routes/_authenticated/discover'
@@ -67,6 +68,11 @@ const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedModerationRoute = AuthenticatedModerationRouteImport.update({
+  id: '/moderation',
+  path: '/moderation',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedHostRoute = AuthenticatedHostRouteImport.update({
   id: '/host',
   path: '/host',
@@ -96,6 +102,7 @@ export interface FileRoutesByFullPath {
   '/discover': typeof AuthenticatedDiscoverRoute
   '/explore': typeof AuthenticatedExploreRoute
   '/host': typeof AuthenticatedHostRoute
+  '/moderation': typeof AuthenticatedModerationRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/trips': typeof AuthenticatedTripsRoute
   '/activity/$id': typeof ActivityIdRoute
@@ -110,6 +117,7 @@ export interface FileRoutesByTo {
   '/discover': typeof AuthenticatedDiscoverRoute
   '/explore': typeof AuthenticatedExploreRoute
   '/host': typeof AuthenticatedHostRoute
+  '/moderation': typeof AuthenticatedModerationRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/trips': typeof AuthenticatedTripsRoute
   '/activity/$id': typeof ActivityIdRoute
@@ -126,6 +134,7 @@ export interface FileRoutesById {
   '/_authenticated/discover': typeof AuthenticatedDiscoverRoute
   '/_authenticated/explore': typeof AuthenticatedExploreRoute
   '/_authenticated/host': typeof AuthenticatedHostRoute
+  '/_authenticated/moderation': typeof AuthenticatedModerationRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/trips': typeof AuthenticatedTripsRoute
   '/activity/$id': typeof ActivityIdRoute
@@ -142,6 +151,7 @@ export interface FileRouteTypes {
     | '/discover'
     | '/explore'
     | '/host'
+    | '/moderation'
     | '/profile'
     | '/trips'
     | '/activity/$id'
@@ -156,6 +166,7 @@ export interface FileRouteTypes {
     | '/discover'
     | '/explore'
     | '/host'
+    | '/moderation'
     | '/profile'
     | '/trips'
     | '/activity/$id'
@@ -171,6 +182,7 @@ export interface FileRouteTypes {
     | '/_authenticated/discover'
     | '/_authenticated/explore'
     | '/_authenticated/host'
+    | '/_authenticated/moderation'
     | '/_authenticated/profile'
     | '/_authenticated/trips'
     | '/activity/$id'
@@ -253,6 +265,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProfileRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/moderation': {
+      id: '/_authenticated/moderation'
+      path: '/moderation'
+      fullPath: '/moderation'
+      preLoaderRoute: typeof AuthenticatedModerationRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/host': {
       id: '/_authenticated/host'
       path: '/host'
@@ -288,6 +307,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDiscoverRoute: typeof AuthenticatedDiscoverRoute
   AuthenticatedExploreRoute: typeof AuthenticatedExploreRoute
   AuthenticatedHostRoute: typeof AuthenticatedHostRoute
+  AuthenticatedModerationRoute: typeof AuthenticatedModerationRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedTripsRoute: typeof AuthenticatedTripsRoute
   AuthenticatedUUsernameRoute: typeof AuthenticatedUUsernameRoute
@@ -297,6 +317,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDiscoverRoute: AuthenticatedDiscoverRoute,
   AuthenticatedExploreRoute: AuthenticatedExploreRoute,
   AuthenticatedHostRoute: AuthenticatedHostRoute,
+  AuthenticatedModerationRoute: AuthenticatedModerationRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedTripsRoute: AuthenticatedTripsRoute,
   AuthenticatedUUsernameRoute: AuthenticatedUUsernameRoute,
