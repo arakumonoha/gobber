@@ -119,6 +119,7 @@ function Profile() {
 
 
 
+        <ModeratorTile />
 
         <Button onClick={signOut} disabled={signingOut} variant="ghost" className="mt-4 h-11 w-full rounded-xl text-muted-foreground">
           <LogOut className="mr-2 h-4 w-4" /> Sign out
