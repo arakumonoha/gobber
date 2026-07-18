@@ -73,6 +73,7 @@ function HostPage() {
     try {
       const coords = await geocodeCity();
       if (!coords) { toast.error("Couldn't find that city. Try again."); setLoading(false); return; }
+      await RateLimit.createActivity();
       const { data, error } = await supabase.from("activities").insert({
         host_id: user.id,
         title: form.title,
