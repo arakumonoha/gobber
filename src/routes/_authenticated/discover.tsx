@@ -338,16 +338,17 @@ function Discover() {
       {/* Top gradient */}
       <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-56 bg-gradient-to-b from-[#f5eddc]/92 via-[#f5eddc]/55 to-transparent" />
 
-      {/* Map style toggle — centered, no header text */}
+      {/* Map style toggle — centered, below the bell cluster */}
       <motion.div
         initial={{ y: -8, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        className="relative z-30 mx-auto flex w-full max-w-[720px] justify-center px-5 pt-9 sm:px-7"
+        className="relative z-30 mx-auto flex w-full max-w-[720px] justify-center px-5 pt-20 sm:px-7"
       >
         <h1 className="sr-only">Discover gatherings near you</h1>
         <MapTypeToggle value={mapView} onChange={setMapView} />
       </motion.div>
+
 
 
 
@@ -428,15 +429,15 @@ function Discover() {
         }}
       >
         <div className="px-5 pt-1">
-          {/* Editorial sheet header */}
-          <div className="mb-3 flex items-end justify-between">
-            <div>
+          {/* Editorial sheet header — right side padded so the FAB never overlaps the count */}
+          <div className="mb-3 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-4 pr-16">
+            <div className="min-w-0">
               <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#6b5230]">Gobber · Discover</p>
-              <h2 className="mt-1 font-serif text-[28px] italic leading-[1] tracking-[-0.025em] text-[#0f0d0b]">
+              <h2 className="mt-1 truncate font-serif text-[28px] italic leading-[1] tracking-[-0.025em] text-[#0f0d0b]">
                 Around you
               </h2>
             </div>
-            <div className="text-right tabular-nums">
+            <div className="shrink-0 text-right tabular-nums">
               <AnimatePresence mode="popLayout" initial={false}>
                 <motion.span
                   key={isLoading ? "loading" : `${filtered.length}`}
@@ -454,6 +455,7 @@ function Discover() {
               </p>
             </div>
           </div>
+
 
           {/* Search + categories live inside the sheet, beneath the handle */}
           <motion.form
