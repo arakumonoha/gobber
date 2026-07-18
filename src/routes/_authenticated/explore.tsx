@@ -188,26 +188,25 @@ function Explore() {
         )}
       </AnimatePresence>
 
-      {/* Top-left flank: Drop-a-pin FAB — mirrors the notification bell top-right */}
-      <div className="absolute left-5 top-5 z-30 sm:left-7">
+      {/* Top-left flank: Drop-a-pin FAB — matches the bell cluster's size and vertical position */}
+      <div className="absolute left-4 top-[calc(env(safe-area-inset-top,0px)+12px)] z-30">
         <motion.button
           whileTap={{ scale: 0.92 }}
           onClick={() => { setDropMode((v) => !v); setDrop(null); setSelectedId(null); }}
           aria-pressed={dropMode}
           aria-label={dropMode ? "Cancel pin" : "Drop a pin"}
-          className="flex h-11 w-11 items-center justify-center rounded-full bg-white/85 text-[#1a1614] ring-1 ring-black/[0.06] shadow-[0_18px_36px_-14px_rgba(60,42,20,0.28)] transition hover:bg-white"
-          style={{ backdropFilter: "saturate(180%) blur(20px)", WebkitBackdropFilter: "saturate(180%) blur(20px)" }}
+          className="flex h-11 w-11 items-center justify-center rounded-full border border-white/40 bg-white/55 text-[#1a1614] shadow-glass backdrop-blur-2xl transition active:scale-95"
         >
           <Plus className={`h-4 w-4 transition-transform ${dropMode ? "rotate-45" : ""}`} strokeWidth={2.2} aria-hidden="true" />
         </motion.button>
       </div>
 
-      {/* Header — editorial, centered */}
+      {/* Header — editorial, centered, cleared below the bell zone */}
       <motion.div
         initial={{ y: -12, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-        className="relative z-20 mx-auto w-full max-w-[720px] px-5 pt-9 sm:px-7"
+        className="relative z-20 mx-auto w-full max-w-[720px] px-5 pt-20 sm:px-7"
       >
         <div className="flex flex-col items-center text-center">
           <p className="text-[10.5px] font-semibold uppercase tracking-[0.3em] text-[#3a2a12]">Right now</p>
@@ -217,6 +216,7 @@ function Explore() {
           <div className="mt-4">
             <MapTypeToggle value={mapView} onChange={setMapView} />
           </div>
+
 
           <div
             className="relative mt-5 w-full"

@@ -66,9 +66,9 @@ function HostPage() {
 
   return (
     <div className="min-h-[100dvh] bg-background pb-32">
-      <div className="mx-auto max-w-md px-5 pt-6">
-        {/* Balanced 3-column header: back · label · spacer */}
-        <div className="grid grid-cols-[2.5rem_1fr_2.5rem] items-center">
+      <div className="mx-auto max-w-md px-5 pt-20">
+        {/* Balanced header: back button aligned left, section label centered */}
+        <div className="relative flex h-10 items-center">
           <button
             onClick={() => navigate({ to: "/discover" })}
             className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary/70 backdrop-blur transition hover:bg-secondary"
@@ -76,11 +76,11 @@ function HostPage() {
           >
             <ArrowLeft className="h-5 w-5" />
           </button>
-          <p className="text-center text-[11px] font-medium uppercase tracking-[0.22em] text-muted-foreground">
+          <p className="pointer-events-none absolute inset-x-0 text-center text-[11px] font-medium uppercase tracking-[0.22em] text-muted-foreground">
             Host
           </p>
-          <div className="h-10 w-10" aria-hidden />
         </div>
+
 
         {/* Centered intro */}
         <motion.div
