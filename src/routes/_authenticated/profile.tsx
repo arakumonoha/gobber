@@ -1,11 +1,12 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { LogOut, Loader2, AtSign, Pencil, ChevronDown, ShieldCheck } from "lucide-react";
+import { LogOut, Loader2, AtSign, Pencil, ChevronDown, ShieldCheck, Sparkles, BadgeCheck, Star } from "lucide-react";
 import { useIsModerator, usePendingReportsCount } from "@/lib/reports";
 import { useUser } from "@/hooks/use-user";
 import { supabase } from "@/integrations/supabase/client";
 import { useMyRsvps, useActivities } from "@/lib/activities";
+import { useMyVerification, useSubmitVerification, useTrustProfile, useHostReviewStats } from "@/lib/trust";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
