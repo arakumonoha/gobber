@@ -61,7 +61,8 @@ function Profile() {
 
   return (
     <div className="min-h-[100dvh] bg-background pb-32">
-      <div className="mx-auto max-w-md px-5 pt-8">
+      <div className="mx-auto max-w-md px-5 pt-20">
+
         <motion.div initial={{ y: 12, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="flex items-center gap-4">
           <div className="flex h-20 w-20 items-center justify-center rounded-full bg-cover bg-center text-2xl font-semibold text-primary-foreground shadow-float"
             style={{ backgroundImage: profile.avatar_url ? `url(${profile.avatar_url})` : "linear-gradient(135deg, oklch(0.68 0.08 70), oklch(0.5 0.045 55))" }}>
