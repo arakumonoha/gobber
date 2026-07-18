@@ -58,6 +58,13 @@
   --shadow-lift: 0 2px 6px rgba(60, 42, 20, 0.05), 0 20px 50px -24px rgba(60, 42, 20, 0.18);
   --shadow-float: 0 30px 70px -30px rgba(50, 34, 15, 0.28), 0 6px 16px -8px rgba(50, 34, 15, 0.10);
   --gradient-warm: linear-gradient(135deg, oklch(0.68 0.08 70), oklch(0.55 0.09 55));
+
+  /* Motion tokens — Apple-style easing + tiered durations */
+  --ease-apple: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --duration-fast: 120ms;
+  --duration-base: 220ms;
+  --duration-slow: 420ms;
 }
 
 :root {
