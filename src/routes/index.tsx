@@ -587,18 +587,6 @@ function LiveMap({
             no algorithm, no feed — just an actual world map of tables you can sit at tonight.
           </motion.p>
 
-          {/* Trending strip pulled from live data */}
-          {stats && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-15% 0px" }}
-              transition={{ duration: 0.8, ease: EASE, delay: 0.42 }}
-              className="mt-6 flex justify-center"
-            >
-              <TrendingStrip trending={stats.trending} fallbackFlags={COUNTRY_FLAGS} />
-            </motion.div>
-          )}
         </motion.div>
 
 
