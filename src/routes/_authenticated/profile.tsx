@@ -76,6 +76,7 @@ function Profile() {
               <p className="flex items-center gap-0.5 text-sm text-muted-foreground"><AtSign className="h-3.5 w-3.5" />{profile.username}</p>
             )}
             {profile.home_city && <p className="text-xs text-muted-foreground">{profile.home_city}</p>}
+            <TrustBadges userId={user?.id} />
           </div>
         </motion.div>
 
