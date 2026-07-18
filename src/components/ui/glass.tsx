@@ -17,7 +17,7 @@ const densityClass: Record<Density, string> = {
 
 export interface GlassCardProps extends React.HTMLAttributes<HTMLDivElement> {
   density?: Density;
-  as?: keyof JSX.IntrinsicElements;
+  as?: React.ElementType;
 }
 
 export const GlassCard = React.forwardRef<HTMLDivElement, GlassCardProps>(
