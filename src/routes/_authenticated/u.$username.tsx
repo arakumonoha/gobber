@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, AtSign, MapPin, Loader2, MoreHorizontal, Ban, Check, UserPlus, ShieldOff, Flag } from "lucide-react";
+import { ArrowLeft, AtSign, MapPin, Loader2, MoreHorizontal, Ban, Check, UserPlus, ShieldOff, Flag, BadgeCheck, Sparkles, Star } from "lucide-react";
 import { useUser } from "@/hooks/use-user";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
@@ -14,6 +14,7 @@ import {
   useBlockMutation,
   type ProfileLite,
 } from "@/lib/follows";
+import { useTrustProfile, useHostReviewStats } from "@/lib/trust";
 import { BottomNav } from "@/components/bottom-nav";
 import {
   DropdownMenu,
@@ -56,6 +57,8 @@ function UserProfile() {
   const { data: isBlocked } = useIsBlocked(me?.id, profile?.id);
   const followMut = useFollowMutation(me?.id);
   const blockMut = useBlockMutation(me?.id);
+  const { data: trust } = useTrustProfile(profile?.id);
+  const { data: reviewStats } = useHostReviewStats(profile?.id);
 
   if (isLoading) {
     return (
@@ -136,11 +139,37 @@ function UserProfile() {
           >
             {!profile.avatar_url && initials}
           </div>
-          <h1 className="mt-3 text-xl font-semibold tracking-tight text-ink">{profile.display_name || profile.username}</h1>
+          <h1 className="mt-3 flex items-center justify-center gap-1.5 text-xl font-semibold tracking-tight text-ink">
+            {profile.display_name || profile.username}
+            {trust?.superhost ? (
+              <Sparkles className="h-4 w-4 text-clay" aria-label="Superhost" />
+            ) : trust?.verified_at ? (
+              <BadgeCheck className="h-4 w-4 text-emerald-600" aria-label="Verified" />
+            ) : null}
+          </h1>
           <div className="mt-0.5 flex items-center gap-1.5 text-sm text-muted-foreground">
             <span className="flex items-center"><AtSign className="h-3 w-3" />{profile.username}</span>
             {followsMe && !isMe && <span className="rounded-md bg-secondary px-1.5 py-0.5 text-[10px] font-medium">Follows you</span>}
           </div>
+          {(trust?.superhost || trust?.verified_at || (reviewStats && reviewStats.review_count > 0)) && (
+            <div className="mt-2 flex flex-wrap items-center justify-center gap-1.5">
+              {trust?.superhost && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-clay/15 px-2 py-0.5 text-[10.5px] font-semibold text-clay">
+                  <Sparkles className="h-3 w-3" /> Superhost
+                </span>
+              )}
+              {trust?.verified_at && !trust?.superhost && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10.5px] font-semibold text-emerald-700">
+                  <BadgeCheck className="h-3 w-3" /> Verified
+                </span>
+              )}
+              {reviewStats && reviewStats.review_count > 0 && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-secondary px-2 py-0.5 text-[10.5px] font-medium text-ink">
+                  <Star className="h-3 w-3 fill-current" /> {reviewStats.avg_rating.toFixed(1)} · {reviewStats.review_count}
+                </span>
+              )}
+            </div>
+          )}
           {profile.home_city && (
             <p className="mt-2 flex items-center gap-1 text-[13px] text-muted-foreground"><MapPin className="h-3.5 w-3.5" />{profile.home_city}</p>
           )}

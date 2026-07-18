@@ -1,11 +1,12 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { LogOut, Loader2, AtSign, Pencil, ChevronDown, ShieldCheck } from "lucide-react";
+import { LogOut, Loader2, AtSign, Pencil, ChevronDown, ShieldCheck, Sparkles, BadgeCheck, Star } from "lucide-react";
 import { useIsModerator, usePendingReportsCount } from "@/lib/reports";
 import { useUser } from "@/hooks/use-user";
 import { supabase } from "@/integrations/supabase/client";
 import { useMyRsvps, useActivities } from "@/lib/activities";
+import { useMyVerification, useSubmitVerification, useTrustProfile, useHostReviewStats } from "@/lib/trust";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -75,6 +76,7 @@ function Profile() {
               <p className="flex items-center gap-0.5 text-sm text-muted-foreground"><AtSign className="h-3.5 w-3.5" />{profile.username}</p>
             )}
             {profile.home_city && <p className="text-xs text-muted-foreground">{profile.home_city}</p>}
+            <TrustBadges userId={user?.id} />
           </div>
         </motion.div>
 
@@ -116,8 +118,7 @@ function Profile() {
             </div>
           </motion.div>
         </div>
-
-
+        <HostVerificationCard userId={user?.id} />
 
         <ModeratorTile />
 
@@ -158,5 +159,106 @@ function ModeratorTile() {
         <span className="text-[11.5px] text-muted-foreground">Clear</span>
       )}
     </Link>
+  );
+}
+
+function TrustBadges({ userId }: { userId: string | undefined }) {
+  const { data: trust } = useTrustProfile(userId);
+  const { data: stats } = useHostReviewStats(userId);
+  if (!trust) return null;
+  const showVerified = !!trust.verified_at;
+  const showSuperhost = trust.superhost;
+  const showRating = stats && stats.review_count > 0;
+  if (!showVerified && !showSuperhost && !showRating) return null;
+  return (
+    <div className="mt-2 flex flex-wrap gap-1.5">
+      {showSuperhost && (
+        <span className="inline-flex items-center gap-1 rounded-full bg-clay/15 px-2 py-0.5 text-[10.5px] font-semibold text-clay">
+          <Sparkles className="h-3 w-3" /> Superhost
+        </span>
+      )}
+      {showVerified && !showSuperhost && (
+        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10.5px] font-semibold text-emerald-700">
+          <BadgeCheck className="h-3 w-3" /> Verified
+        </span>
+      )}
+      {showRating && (
+        <span className="inline-flex items-center gap-1 rounded-full bg-secondary px-2 py-0.5 text-[10.5px] font-medium text-ink">
+          <Star className="h-3 w-3 fill-current" /> {stats!.avg_rating.toFixed(1)} · {stats!.review_count}
+        </span>
+      )}
+    </div>
+  );
+}
+
+function HostVerificationCard({ userId }: { userId: string | undefined }) {
+  const { data: verification } = useMyVerification(userId);
+  const { data: trust } = useTrustProfile(userId);
+  const submit = useSubmitVerification(userId);
+  const [open, setOpen] = useState(false);
+  const [fullName, setFullName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [note, setNote] = useState("");
+
+  if (trust?.verified_at) {
+    return (
+      <div className="mt-6 flex items-center justify-between rounded-2xl glass px-4 py-3.5">
+        <span className="flex items-center gap-2.5">
+          <BadgeCheck className="h-4 w-4 text-emerald-600" />
+          <span className="text-[14px] font-medium text-ink">Verified host</span>
+        </span>
+        <span className="text-[11.5px] text-muted-foreground">Trusted</span>
+      </div>
+    );
+  }
+
+  const status = verification?.status;
+
+  async function handleSubmit() {
+    if (!fullName.trim() || !phone.trim()) {
+      toast.error("Name and phone are required");
+      return;
+    }
+    try {
+      await submit.mutateAsync({ full_name: fullName.trim(), phone: phone.trim(), note: note.trim() || undefined });
+      toast.success("Verification request submitted");
+      setOpen(false);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Failed");
+    }
+  }
+
+  return (
+    <div className="mt-6 overflow-hidden rounded-2xl glass">
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="flex w-full items-center justify-between px-4 py-3.5 text-left transition hover:bg-white/60"
+      >
+        <span className="flex items-center gap-2.5">
+          <ShieldCheck className="h-4 w-4 text-clay" />
+          <span className="text-[14px] font-medium text-ink">
+            {status === "pending" ? "Verification pending" : status === "rejected" ? "Reapply for verification" : "Become a verified host"}
+          </span>
+        </span>
+        <motion.span animate={{ rotate: open ? 180 : 0 }} className="text-muted-foreground">
+          <ChevronDown className="h-4 w-4" />
+        </motion.span>
+      </button>
+      <motion.div initial={false} animate={{ height: open ? "auto" : 0, opacity: open ? 1 : 0 }} style={{ overflow: "hidden" }}>
+        <div className="space-y-3 px-4 pb-4">
+          {status === "pending" && (
+            <p className="rounded-xl bg-secondary/60 px-3 py-2 text-[12px] text-muted-foreground">
+              Your request is being reviewed. We'll notify you when it's approved.
+            </p>
+          )}
+          <div><Label className="text-xs">Legal name</Label><Input value={fullName} onChange={(e) => setFullName(e.target.value)} className="mt-1 h-10 rounded-xl" placeholder="As shown on your ID" /></div>
+          <div><Label className="text-xs">Phone</Label><Input value={phone} onChange={(e) => setPhone(e.target.value)} className="mt-1 h-10 rounded-xl" placeholder="+1 555 123 4567" /></div>
+          <div><Label className="text-xs">Anything we should know? (optional)</Label><Textarea rows={2} value={note} onChange={(e) => setNote(e.target.value)} className="mt-1 rounded-xl" /></div>
+          <Button onClick={handleSubmit} disabled={submit.isPending} className="h-10 w-full rounded-xl">
+            {submit.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : status === "pending" ? "Update request" : "Submit for verification"}
+          </Button>
+        </div>
+      </motion.div>
+    </div>
   );
 }
