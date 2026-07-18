@@ -268,7 +268,7 @@ function DateTimePicker({ value, onChange }: { value: string; onChange: (v: stri
         <button
           type="button"
           className={cn(
-            "flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-input bg-background px-3 text-[13px] font-medium transition hover:bg-secondary/60",
+            "flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-white/50 bg-white/60 px-3 text-[13px] font-medium backdrop-blur-md transition hover:bg-white/80",
             !date && "text-muted-foreground"
           )}
         >
