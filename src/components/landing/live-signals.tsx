@@ -13,6 +13,6 @@ export function JoinsTicker(_props: { joins: unknown[] }) {
   return null;
 }
 
-export function TrendingStrip(_props: { trending: unknown; fallbackFlags: string[] }) {
+export function TrendingStrip(_props: { trending: unknown; fallbackFlags: unknown }) {
   return null;
 }
