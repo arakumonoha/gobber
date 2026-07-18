@@ -15,6 +15,7 @@ import { CATEGORIES } from "@/lib/categories";
 import { BottomNav } from "@/components/bottom-nav";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { RateLimit } from "@/lib/rate-limit";
 
 export const Route = createFileRoute("/_authenticated/host")({
   head: () => ({ meta: [{ title: "Host a gathering — Gobber" }] }),
