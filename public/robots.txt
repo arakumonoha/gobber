@@ -5,7 +5,7 @@ Disallow: /explore
 Disallow: /host
 Disallow: /profile
 Disallow: /trips
-Disallow: /activity/
+Disallow: /u/
 Disallow: /auth
 
 Sitemap: https://gobber.lovable.app/sitemap.xml

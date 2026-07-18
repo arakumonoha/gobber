@@ -10,20 +10,27 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as CitiesRouteImport } from './routes/cities'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CitySlugRouteImport } from './routes/city.$slug'
+import { Route as ActivityIdRouteImport } from './routes/activity.$id'
 import { Route as AuthenticatedTripsRouteImport } from './routes/_authenticated/trips'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedHostRouteImport } from './routes/_authenticated/host'
 import { Route as AuthenticatedExploreRouteImport } from './routes/_authenticated/explore'
 import { Route as AuthenticatedDiscoverRouteImport } from './routes/_authenticated/discover'
 import { Route as AuthenticatedUUsernameRouteImport } from './routes/_authenticated/u.$username'
-import { Route as AuthenticatedActivityIdRouteImport } from './routes/_authenticated/activity.$id'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CitiesRoute = CitiesRouteImport.update({
+  id: '/cities',
+  path: '/cities',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -38,6 +45,16 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CitySlugRoute = CitySlugRouteImport.update({
+  id: '/city/$slug',
+  path: '/city/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ActivityIdRoute = ActivityIdRouteImport.update({
+  id: '/activity/$id',
+  path: '/activity/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedTripsRoute = AuthenticatedTripsRouteImport.update({
@@ -70,34 +87,33 @@ const AuthenticatedUUsernameRoute = AuthenticatedUUsernameRouteImport.update({
   path: '/u/$username',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedActivityIdRoute = AuthenticatedActivityIdRouteImport.update({
-  id: '/activity/$id',
-  path: '/activity/$id',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/cities': typeof CitiesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/discover': typeof AuthenticatedDiscoverRoute
   '/explore': typeof AuthenticatedExploreRoute
   '/host': typeof AuthenticatedHostRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/trips': typeof AuthenticatedTripsRoute
-  '/activity/$id': typeof AuthenticatedActivityIdRoute
+  '/activity/$id': typeof ActivityIdRoute
+  '/city/$slug': typeof CitySlugRoute
   '/u/$username': typeof AuthenticatedUUsernameRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/cities': typeof CitiesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/discover': typeof AuthenticatedDiscoverRoute
   '/explore': typeof AuthenticatedExploreRoute
   '/host': typeof AuthenticatedHostRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/trips': typeof AuthenticatedTripsRoute
-  '/activity/$id': typeof AuthenticatedActivityIdRoute
+  '/activity/$id': typeof ActivityIdRoute
+  '/city/$slug': typeof CitySlugRoute
   '/u/$username': typeof AuthenticatedUUsernameRoute
 }
 export interface FileRoutesById {
@@ -105,13 +121,15 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/cities': typeof CitiesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/discover': typeof AuthenticatedDiscoverRoute
   '/_authenticated/explore': typeof AuthenticatedExploreRoute
   '/_authenticated/host': typeof AuthenticatedHostRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/trips': typeof AuthenticatedTripsRoute
-  '/_authenticated/activity/$id': typeof AuthenticatedActivityIdRoute
+  '/activity/$id': typeof ActivityIdRoute
+  '/city/$slug': typeof CitySlugRoute
   '/_authenticated/u/$username': typeof AuthenticatedUUsernameRoute
 }
 export interface FileRouteTypes {
@@ -119,6 +137,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/cities'
     | '/sitemap.xml'
     | '/discover'
     | '/explore'
@@ -126,11 +145,13 @@ export interface FileRouteTypes {
     | '/profile'
     | '/trips'
     | '/activity/$id'
+    | '/city/$slug'
     | '/u/$username'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
+    | '/cities'
     | '/sitemap.xml'
     | '/discover'
     | '/explore'
@@ -138,19 +159,22 @@ export interface FileRouteTypes {
     | '/profile'
     | '/trips'
     | '/activity/$id'
+    | '/city/$slug'
     | '/u/$username'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/cities'
     | '/sitemap.xml'
     | '/_authenticated/discover'
     | '/_authenticated/explore'
     | '/_authenticated/host'
     | '/_authenticated/profile'
     | '/_authenticated/trips'
-    | '/_authenticated/activity/$id'
+    | '/activity/$id'
+    | '/city/$slug'
     | '/_authenticated/u/$username'
   fileRoutesById: FileRoutesById
 }
@@ -158,7 +182,10 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  CitiesRoute: typeof CitiesRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  ActivityIdRoute: typeof ActivityIdRoute
+  CitySlugRoute: typeof CitySlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -168,6 +195,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cities': {
+      id: '/cities'
+      path: '/cities'
+      fullPath: '/cities'
+      preLoaderRoute: typeof CitiesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -189,6 +223,20 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/city/$slug': {
+      id: '/city/$slug'
+      path: '/city/$slug'
+      fullPath: '/city/$slug'
+      preLoaderRoute: typeof CitySlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/activity/$id': {
+      id: '/activity/$id'
+      path: '/activity/$id'
+      fullPath: '/activity/$id'
+      preLoaderRoute: typeof ActivityIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/trips': {
@@ -233,13 +281,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedUUsernameRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/activity/$id': {
-      id: '/_authenticated/activity/$id'
-      path: '/activity/$id'
-      fullPath: '/activity/$id'
-      preLoaderRoute: typeof AuthenticatedActivityIdRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
   }
 }
 
@@ -249,7 +290,6 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedHostRoute: typeof AuthenticatedHostRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedTripsRoute: typeof AuthenticatedTripsRoute
-  AuthenticatedActivityIdRoute: typeof AuthenticatedActivityIdRoute
   AuthenticatedUUsernameRoute: typeof AuthenticatedUUsernameRoute
 }
 
@@ -259,7 +299,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedHostRoute: AuthenticatedHostRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedTripsRoute: AuthenticatedTripsRoute,
-  AuthenticatedActivityIdRoute: AuthenticatedActivityIdRoute,
   AuthenticatedUUsernameRoute: AuthenticatedUUsernameRoute,
 }
 
@@ -270,7 +309,10 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  CitiesRoute: CitiesRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  ActivityIdRoute: ActivityIdRoute,
+  CitySlugRoute: CitySlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
