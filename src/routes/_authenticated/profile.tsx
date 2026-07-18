@@ -118,8 +118,7 @@ function Profile() {
             </div>
           </motion.div>
         </div>
-
-
+        <HostVerificationCard userId={user?.id} />
 
         <ModeratorTile />
 
