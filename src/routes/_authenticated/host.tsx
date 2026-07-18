@@ -94,13 +94,20 @@ function HostPage() {
   }
 
   return (
-    <div className="min-h-[100dvh] bg-background pb-32">
+    <div className="relative min-h-[100dvh] overflow-hidden bg-background pb-32">
+      {/* Ambient glass backdrop */}
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute -top-32 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-primary/25 blur-[120px]" />
+        <div className="absolute top-1/3 -right-24 h-[380px] w-[380px] rounded-full bg-accent/20 blur-[110px]" />
+        <div className="absolute bottom-0 -left-24 h-[360px] w-[360px] rounded-full bg-primary/15 blur-[120px]" />
+      </div>
+
       <div className="mx-auto max-w-md px-5 pt-20">
         {/* Balanced header: back button aligned left, section label centered */}
         <div className="relative flex h-10 items-center">
           <button
             onClick={() => navigate({ to: "/discover" })}
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary/70 backdrop-blur transition hover:bg-secondary"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-white/40 bg-white/50 shadow-[0_6px_20px_-12px_rgba(0,0,0,0.25)] backdrop-blur-xl transition hover:bg-white/70"
             aria-label="Back"
           >
             <ArrowLeft className="h-5 w-5" />
@@ -125,13 +132,19 @@ function HostPage() {
           </p>
         </motion.div>
 
-        <form onSubmit={submit} className="mt-8 space-y-5">
+        <motion.form
+          initial={{ y: 16, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.05, duration: 0.4 }}
+          onSubmit={submit}
+          className="mt-8 space-y-5 rounded-3xl border border-white/40 bg-white/55 p-5 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.35)] backdrop-blur-2xl"
+        >
           <Field label="Title">
-            <Input required value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Sunset ramen in Shibuya" className="h-11 rounded-xl text-center" />
+            <Input required value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Sunset ramen in Shibuya" className="h-11 rounded-xl border-white/50 bg-white/60 text-center backdrop-blur-md" />
           </Field>
 
           <Field label="Description">
-            <Textarea required rows={3} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="What will the vibe be?" className="rounded-xl resize-none" />
+            <Textarea required rows={3} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="What will the vibe be?" className="rounded-xl resize-none border-white/50 bg-white/60 backdrop-blur-md" />
           </Field>
 
           {/* Symmetric 2-col category grid — 6 chips fit as 3×2 */}
@@ -144,10 +157,10 @@ function HostPage() {
                     key={c.id}
                     type="button"
                     onClick={() => setForm({ ...form, category: c.id })}
-                    className={`h-10 rounded-full text-[12.5px] font-medium tracking-tight transition ${
+                    className={`h-10 rounded-full text-[12.5px] font-medium tracking-tight backdrop-blur-md transition ${
                       active
-                        ? "bg-primary text-primary-foreground shadow-[0_6px_20px_-10px_theme(colors.primary.DEFAULT)]"
-                        : "bg-secondary/70 text-foreground hover:bg-secondary"
+                        ? "bg-primary text-primary-foreground shadow-[0_8px_24px_-10px_theme(colors.primary.DEFAULT)]"
+                        : "border border-white/50 bg-white/50 text-foreground hover:bg-white/70"
                     }`}
                   >
                     {c.icon} {c.label}
@@ -158,8 +171,8 @@ function HostPage() {
           </Field>
 
           <div className="grid grid-cols-2 gap-3">
-            <Field label="City"><Input required value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} placeholder="Lisbon" className="h-11 rounded-xl text-center" /></Field>
-            <Field label="Country"><Input required value={form.country} onChange={(e) => setForm({ ...form, country: e.target.value })} placeholder="Portugal" className="h-11 rounded-xl text-center" /></Field>
+            <Field label="City"><Input required value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} placeholder="Lisbon" className="h-11 rounded-xl border-white/50 bg-white/60 text-center backdrop-blur-md" /></Field>
+            <Field label="Country"><Input required value={form.country} onChange={(e) => setForm({ ...form, country: e.target.value })} placeholder="Portugal" className="h-11 rounded-xl border-white/50 bg-white/60 text-center backdrop-blur-md" /></Field>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
@@ -169,7 +182,7 @@ function HostPage() {
                 onChange={(v) => setForm({ ...form, starts_at: v })}
               />
             </Field>
-            <Field label="Max spots"><Input required type="number" min={2} max={30} value={form.max_spots} onChange={(e) => setForm({ ...form, max_spots: parseInt(e.target.value) || 6 })} className="h-11 rounded-xl text-center" /></Field>
+            <Field label="Max spots"><Input required type="number" min={2} max={30} value={form.max_spots} onChange={(e) => setForm({ ...form, max_spots: parseInt(e.target.value) || 6 })} className="h-11 rounded-xl border-white/50 bg-white/60 text-center backdrop-blur-md" /></Field>
           </div>
 
           <Field label="Cover image (optional)">
@@ -181,12 +194,12 @@ function HostPage() {
               onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFileUpload(f); e.target.value = ""; }}
             />
             {form.cover_url ? (
-              <div className="relative overflow-hidden rounded-xl border border-border/60">
+              <div className="relative overflow-hidden rounded-xl border border-white/50 shadow-[0_10px_30px_-18px_rgba(0,0,0,0.4)]">
                 <img src={form.cover_url} alt="Cover preview" className="h-40 w-full object-cover" />
                 <button
                   type="button"
                   onClick={() => setForm({ ...form, cover_url: "" })}
-                  className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur transition hover:bg-black/70"
+                  className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-md transition hover:bg-black/60"
                   aria-label="Remove cover"
                 >
                   <X className="h-4 w-4" />
@@ -197,7 +210,7 @@ function HostPage() {
                 type="button"
                 disabled={uploading}
                 onClick={() => fileInputRef.current?.click()}
-                className="flex h-40 w-full flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border/70 bg-secondary/40 text-muted-foreground transition hover:bg-secondary/70 disabled:opacity-60"
+                className="flex h-40 w-full flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-white/60 bg-white/40 text-muted-foreground backdrop-blur-md transition hover:bg-white/60 disabled:opacity-60"
               >
                 {uploading ? (
                   <Loader2 className="h-5 w-5 animate-spin" />
@@ -213,11 +226,11 @@ function HostPage() {
           </Field>
 
           <div className="pt-2">
-            <Button type="submit" disabled={loading} className="mx-auto flex h-12 w-full items-center justify-center rounded-full text-[15px] font-medium">
+            <Button type="submit" disabled={loading} className="mx-auto flex h-12 w-full items-center justify-center rounded-full text-[15px] font-medium shadow-[0_12px_30px_-14px_theme(colors.primary.DEFAULT)]">
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Post gathering"}
             </Button>
           </div>
-        </form>
+        </motion.form>
       </div>
       <BottomNav />
     </div>
