@@ -161,6 +161,12 @@ function ActivityDetail() {
           </div>
 
           <p className="mt-5 text-[15px] leading-relaxed text-foreground/85">{activity.description}</p>
+
+          {user && user.id !== activity.host_id ? (
+            <div className="mt-6 flex justify-end">
+              <ReportDialog entityType="activity" entityId={activity.id} targetLabel={activity.title} />
+            </div>
+          ) : null}
         </div>
       </motion.div>
 
